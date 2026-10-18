@@ -18,6 +18,8 @@ class PersistenceUnitTest {
                 log.debug("entity: {}", entity);
                 log.debug("\tname: {}", entity.getName());
                 log.debug("\tidType: {}", entity.getIdType());
+                log.debug("\tbindableJavaType: {}", entity.getBindableJavaType());
+                log.debug("\tjavaType: {}", entity.getJavaType());
                 final var attributes = entity.getAttributes();
                 int attributeIndex = 0;
                 for (final var attribute : attributes) {
