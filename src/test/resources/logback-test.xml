@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Picked up by logback-classic ahead of logback.xml; test classpath only. -->
+<configuration>
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%msg%n</pattern>
+    </encoder>
+  </appender>
+  <!-- Providers are quiet except for warnings; Hibernate's SQL logger is the one kept at DEBUG so each statement
+       shows once (hibernate.show_sql is off). EclipseLink's SQL goes through its own session log, not through here. -->
+  <logger name="org.hibernate" level="WARN"/>
+  <logger name="org.hibernate.SQL" level="DEBUG"/>
+  <logger name="org.eclipse.persistence" level="WARN"/>
+  <root level="DEBUG">
+    <appender-ref ref="CONSOLE"/>
+  </root>
+</configuration>
