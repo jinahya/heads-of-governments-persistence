@@ -1,0 +1,6 @@
+[submodule "db-sample-schemas"]
+	path = db-sample-schemas
+	url = git@github.com:oracle-samples/db-sample-schemas.git
+[submodule ".idea/codeStyles"]
+	path = .idea/codeStyles
+	url = git@github.com:onacit/dot-idea-codestyles.git

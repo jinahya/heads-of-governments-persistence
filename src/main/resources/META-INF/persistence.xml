@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  heads-of-governments-persistence
+  %%
+  Copyright (C) 2026 Jinahya, Inc.
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<!-- https://jakarta.ee/xml/ns/persistence/ -->
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence ${persistence.schemaLocation}"
+             version="${persistence.version}">
+  <!-- One unit, against the SQLite file under db/. The file already holds the schema and the data, so the
+       provider only validates the mappings against it and never generates DDL. -->
+  <persistence-unit name="heads-of-governments" transaction-type="RESOURCE_LOCAL">
+    <description>Persistence Unit for db/heads_of_governments.sqlite3</description>
+    <provider>${persistence-unit.provider}</provider>
+    <!-- One <class> per entity: GOVERNMENT, then HEAD. -->
+    <class>com.github.jinahya.headsofgovernments.persistence.Government</class>
+    <class>com.github.jinahya.headsofgovernments.persistence.Head</class>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+    <shared-cache-mode>NONE</shared-cache-mode>
+    <!-- no Jakarta Validation provider on the classpath, so the provider must not look for one -->
+    <validation-mode>NONE</validation-mode>
+    <properties>
+      <!-- org.xerial:sqlite-jdbc; the path is relative to the working directory, the project root under Maven.
+           open_mode=1 is SQLITE_OPEN_READONLY: the file is read, never written, so an INSERT fails at the driver. -->
+      <property name="jakarta.persistence.jdbc.driver" value="org.sqlite.JDBC"/>
+      <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlite:db/heads_of_governments.sqlite3?open_mode=1"/>
+      <!-- ///////////////////////////////////////////////////////////////////////////////////////////// eclipselink -->
+      <!-- EclipseLink ships no SQLite platform; DatabasePlatform is the generic fallback. -->
+      <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.DatabasePlatform"/>
+      <property name="eclipselink.ddl-generation" value="none"/>
+      <property name="eclipselink.logging.level.sql" value="FINE"/>
+      <property name="eclipselink.logging.parameters" value="true"/>
+      <!-- /////////////////////////////////////////////////////////////////////////////////////////////// hibernate -->
+      <!-- SQLiteDialect lives in org.hibernate.orm:hibernate-community-dialects, not in hibernate-core. -->
+      <property name="hibernate.dialect" value="org.hibernate.community.dialect.SQLiteDialect"/>
+      <property name="hibernate.hbm2ddl.auto" value="validate"/>
+      <property name="hibernate.format_sql" value="true"/>
+      <property name="hibernate.highlight_sql" value="true"/>
+      <property name="hibernate.show_sql" value="true"/>
+      <property name="hibernate.use_sql_comment" value="true"/>
+    </properties>
+  </persistence-unit>
+</persistence>
