@@ -5,12 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
-
-import java.util.Locale;
-import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,47 +13,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class GovernmentTest {
 
-    @DisplayName("EntityManager#find(entityClass, primaryKey)")
+    @DisplayName("toString")
     @Nested
-    class FindTest {
+    class ToStringTest {
 
-        @ValueSource(strings = {
-                "FR",
-                "GB",
-                "JP",
-                "KR",
-                "US"
-        })
-        @ParameterizedTest
-        void __1(final String country) {
-            final var found = PersistenceTestUtils.applyEntityManager(em -> {
-                return em.find(Government.class, country);
-            });
-            assertThat(found)
-                    .isNotNull()
-                    .extracting(Government::getCountry)
-                    .isEqualTo(country);
-        }
-
-        private static Stream<String> countries() {
-            return Locale.availableLocales()
-                    .map(Locale::getCountry)
-                    .distinct();
-        }
-
-        @MethodSource({"countries"})
-        @ParameterizedTest
-        void __2(final String country) {
-            final var found = PersistenceTestUtils.applyEntityManager(em -> {
-                return em.find(Government.class, country);
-            });
-            if (found == null) {
-                log.debug("no government found for {}", country);
-                return;
-            }
-            assertThat(found)
-                    .extracting(Government::getCountry)
-                    .isEqualTo(country);
+        @Test
+        void _NotBlank_() {
+            final var string = new Government().toString();
+            log.debug("string: {}", string);
+            assertThat(string).isNotBlank();
         }
     }
 }

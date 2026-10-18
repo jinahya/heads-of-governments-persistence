@@ -2,100 +2,36 @@ package com.github.jinahya.headsofgovernments.persistence;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
+@NamedQuery(name = "Head.selectAll_WhereGovenmentEqual_OrderByTermStartAsc",
+            query = """
+                    SELECT e
+                    FROM Government AS e
+                    WHERE e.headKind = :headKind""")
 @Entity(name = "Head")
 @Table(
         name = "head",
         catalog = "",
         schema = ""
 )
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class Head {
 
-    // -----------------------------------------------------------------------------------------------------------------
-    protected Head() {
-        super();
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(final Integer id) {
-        this.id = id;
-    }
-
-    public Government getGovernment() {
-        return government;
-    }
-
-    public void setGovernment(final Government government) {
-        this.government = government;
-    }
-
-    public Integer getNumber() {
-        return number;
-    }
-
-    public void setNumber(final Integer number) {
-        this.number = number;
-    }
-
-    public String getTermStart() {
-        return termStart;
-    }
-
-    public void setTermStart(final String termStart) {
-        this.termStart = termStart;
-    }
-
-    public String getTermEnd() {
-        return termEnd;
-    }
-
-    public void setTermEnd(final String termEnd) {
-        this.termEnd = termEnd;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getParty() {
-        return party;
-    }
-
-    public void setParty(final String party) {
-        this.party = party;
-    }
-
-    public Integer getBorn() {
-        return born;
-    }
-
-    public void setBorn(final Integer born) {
-        this.born = born;
-    }
-
-    public Integer getDied() {
-        return died;
-    }
-
-    public void setDied(final Integer died) {
-        this.died = died;
-    }
     // -----------------------------------------------------------------------------------------------------------------
     @Id
     @Basic(fetch = FetchType.EAGER, optional = false)
@@ -124,6 +60,8 @@ public class Head {
             insertable = false,
             updatable = false
     )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Government government;
 
     // -----------------------------------------------------------------------------------------------------------------

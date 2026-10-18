@@ -5,74 +5,38 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@NamedQuery(name = "Government.selectAll_WhereHeadKindEqual_OrderByCountryAsc",
+            query = """
+                    SELECT e
+                    FROM Government AS e
+                    WHERE e.headKind = :headKind
+                    ORDER BY e.country ASC""")
 @Entity(name = "Government")
 @Table(
         name = "government",
         catalog = "",
         schema = ""
 )
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class Government {
 
     public enum HeadKind {
         PRESIDENT,
         PRIME_MINISTER
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    protected Government() {
-        super();
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(final String country) {
-        this.country = country;
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public String getHeadKind() {
-        return headKind;
-    }
-
-    public void setHeadKind(final String headKind) {
-        this.headKind = headKind;
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public String getHeadTitle() {
-        return headTitle;
-    }
-
-    public void setHeadTitle(final String headTitle) {
-        this.headTitle = headTitle;
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public String getNumbering() {
-        return numbering;
-    }
-
-    public void setNumbering(final String numbering) {
-        this.numbering = numbering;
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public List<Head> getHeads() {
-        return heads;
-    }
-
-    public void setHeads(final List<Head> heads) {
-        this.heads = heads;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -130,5 +94,7 @@ public class Government {
             mappedBy = "government",
             orphanRemoval = false
     )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private List<Head> heads;
 }

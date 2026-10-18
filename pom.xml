@@ -297,12 +297,12 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>${version.org.projectlombok}</version>
-      <scope>test</scope>
+      <scope>provided</scope><!-- compile-time only, for main and test sources alike; never transitive -->
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <scope>test</scope>
+      <scope>provided</scope><!-- for @Slf4j on main classes; the binding (logback) stays test scope -->
     </dependency>
     <dependency>
       <groupId>uk.co.jemos.podam</groupId>
