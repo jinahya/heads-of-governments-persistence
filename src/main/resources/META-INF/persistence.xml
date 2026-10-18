@@ -24,21 +24,15 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence ${persistence.schemaLocation}"
              version="${persistence.version}">
-  <!-- One unit, against the SQLite file under db/. The file already holds the schema and the data, so the
-       provider only validates the mappings against it and never generates DDL. -->
   <persistence-unit name="heads-of-governments" transaction-type="RESOURCE_LOCAL">
     <description>Persistence Unit for db/heads_of_governments.sqlite3</description>
     <provider>${persistence-unit.provider}</provider>
-    <!-- One <class> per entity: GOVERNMENT, then HEAD. -->
     <class>com.github.jinahya.headsofgovernments.persistence.Government</class>
     <class>com.github.jinahya.headsofgovernments.persistence.Head</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <shared-cache-mode>NONE</shared-cache-mode>
-    <!-- no Jakarta Validation provider on the classpath, so the provider must not look for one -->
     <validation-mode>NONE</validation-mode>
     <properties>
-      <!-- org.xerial:sqlite-jdbc; the path is relative to the working directory, the project root under Maven.
-           open_mode=1 is SQLITE_OPEN_READONLY: the file is read, never written, so an INSERT fails at the driver. -->
       <property name="jakarta.persistence.jdbc.driver" value="org.sqlite.JDBC"/>
       <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlite:db/heads_of_governments.sqlite3?open_mode=1"/>
       <!-- ///////////////////////////////////////////////////////////////////////////////////////////// eclipselink -->
