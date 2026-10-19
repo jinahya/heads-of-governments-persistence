@@ -1,5 +1,6 @@
 package com.github.jinahya.headsofgovernments.persistence;
 
+import jakarta.persistence.Persistence;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +12,12 @@ class PersistenceUnitTest {
 
     @Test
     void __() {
-        PersistenceTestUtils.applyEntityManagerFactory(emf -> {
+        try (var factory = Persistence.createEntityManagerFactory("heads-of-governments")) {
             log.debug("properties");
-            emf.getProperties().forEach((k, v) -> {
+            factory.getProperties().forEach((k, v) -> {
                 log.debug("\tproperty: {}: {}", k, v);
             });
-            final var metamodel = emf.getMetamodel();
+            final var metamodel = factory.getMetamodel();
             log.debug("entities");
             final var entities = metamodel.getEntities();
             for (final var entity : entities) {
@@ -31,7 +32,6 @@ class PersistenceUnitTest {
                     log.debug("\t\tattribute: {}", attribute);
                 }
             }
-            return null;
-        });
+        }
     }
 }
