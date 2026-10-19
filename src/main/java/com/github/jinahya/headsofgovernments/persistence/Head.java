@@ -5,12 +5,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,140 +19,64 @@ import lombok.extern.slf4j.Slf4j;
  * is the country's own ordinal and is not unique, which is why the table carries a surrogate {@code id}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see Government
+ * @see Office
  */
-@NamedQuery(name = "Head.selectAll_WhereGovernmentEqual_OrderByTermStartAsc",
+@NamedQuery(name = "Head.selectAll_WhereOfficeEqual_OrderByTermStartAsc",
             query = """
                     SELECT e
                     FROM Head AS e
-                    WHERE e.government = :government
+                    WHERE e.office = :office
                     ORDER BY e.termStart ASC""")
-@Entity(name = "Head")
-@Table(
-        name = "head",
-        catalog = "",
-        schema = ""
-)
+@Entity
+@Table(name = "head")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public class Head {
 
     // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Creates a new instance.
-     */
-    protected Head() {
-        super();
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
     @Id
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(
-            name = "id",
-            unique = false,
-            nullable = false,
-            insertable = true,
-            updatable = true,
-            length = 255
-    )
-    private Integer id;
-
-    // -----------------------------------------------------------------------------------------------------------------
-    @ManyToOne(
-            targetEntity = Government.class,
-            cascade = {},
-            fetch = FetchType.LAZY,
-            optional = false
-    )
-    @JoinColumn(
-            name = "country",
-            referencedColumnName = "country",
-            unique = false,
-            nullable = false,
-            insertable = false,
-            updatable = false
-    )
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Government government;
+    @Column(name = "id", nullable = false, updatable = false)
+    private Long id;
 
     // -----------------------------------------------------------------------------------------------------------------
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(
-            name = "number",
-            unique = false,
-            nullable = false,
-            insertable = false,
-            updatable = false,
-            length = 255
-    )
+    @Column(name = "country", nullable = false, insertable = false, updatable = false)
+    private String country;
+
+    @jakarta.persistence.ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @jakarta.persistence.JoinColumn(name = "country", nullable = false, insertable = false, updatable = false)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Office office;
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @Basic(fetch = FetchType.EAGER, optional = false)
+    @Column(name = "number", nullable = false, insertable = false, updatable = false)
     private Integer number;
 
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(
-            name = "term_start",
-            unique = false,
-            nullable = false,
-            insertable = false,
-            updatable = false,
-            length = 255
-    )
+    @Column(name = "term_start", nullable = false, insertable = false, updatable = false)
     private String termStart;
 
     @Basic(fetch = FetchType.EAGER, optional = true)
-    @Column(
-            name = "term_end",
-            unique = false,
-            nullable = true,
-            insertable = false,
-            updatable = false,
-            length = 255
-    )
+    @Column(name = "term_end", nullable = true, insertable = false, updatable = false)
     private String termEnd;
 
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(
-            name = "name",
-            unique = false,
-            nullable = false,
-            insertable = false,
-            updatable = false,
-            length = 255
-    )
+    @Column(name = "name", nullable = false, insertable = false, updatable = false)
     private String name;
 
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(
-            name = "party",
-            unique = false,
-            nullable = false,
-            insertable = false,
-            updatable = false,
-            length = 255
-    )
+    @Column(name = "party", nullable = false, insertable = false, updatable = false)
     private String party;
 
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(
-            name = "born",
-            unique = false,
-            nullable = false,
-            insertable = false,
-            updatable = false,
-            length = 255
-    )
+    @Column(name = "born", nullable = false, insertable = false, updatable = false)
     private Integer born;
 
     @Basic(fetch = FetchType.EAGER, optional = true)
-    @Column(
-            name = "died",
-            unique = false,
-            nullable = true,
-            insertable = false,
-            updatable = false,
-            length = 255
-    )
+    @Column(name = "died", nullable = true, insertable = false, updatable = false)
     private Integer died;
 }

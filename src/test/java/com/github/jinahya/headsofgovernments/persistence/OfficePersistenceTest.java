@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Slf4j
-class GovernmentPersistenceTest {
+class OfficePersistenceTest {
 
     @DisplayName("EntityManager#find(entityClass, primaryKey)")
     @Nested
@@ -36,11 +36,11 @@ class GovernmentPersistenceTest {
         @ParameterizedTest
         void __1(final String country) {
             final var found = PersistenceTestUtils.applyEntityManager(em -> {
-                return em.find(Government.class, country);
+                return em.find(Office.class, country);
             });
             assertThat(found)
                     .isNotNull()
-                    .extracting(Government::getCountry)
+                    .extracting(Office::getCountry)
                     .isEqualTo(country);
         }
 
@@ -54,14 +54,14 @@ class GovernmentPersistenceTest {
         @ParameterizedTest
         void __2(final String country) {
             final var found = PersistenceTestUtils.applyEntityManager(em -> {
-                return em.find(Government.class, country);
+                return em.find(Office.class, country);
             });
             if (found == null) {
-                log.debug("no government found for {}", country);
+                log.debug("no office found for {}", country);
                 return;
             }
             assertThat(found)
-                    .extracting(Government::getCountry)
+                    .extracting(Office::getCountry)
                     .isEqualTo(country);
         }
     }
@@ -71,21 +71,21 @@ class GovernmentPersistenceTest {
 
         @Test
         void __() {
-            final var random = PersistenceTestUtils.selectRandom(Government.class);
+            final var random = PersistenceTestUtils.selectRandom(Office.class);
             assumeThat(random).isNotEmpty();
             final var found = random.get();
         }
     }
 
-    @DisplayName("SELECT e FROM Government AS e WHERE e.headKind = :headKind ORDER BY e.country ASC")
+    @DisplayName("SELECT e FROM Office AS e WHERE e.headKind = :headKind ORDER BY e.country ASC")
     @Nested
     class SelectAll_WhereHeadKindEqual_OrderByCountryAsc_Test {
 
-        private static void verify(final List<Government> list, final String headKind) {
+        private static void verify(final List<Office> list, final String headKind) {
             assertThat(list)
                     .isNotEmpty()
                     .allSatisfy(e -> assertThat(e.getHeadKind()).isEqualTo(headKind))
-                    .isSortedAccordingTo(Comparator.comparing(Government::getCountry));
+                    .isSortedAccordingTo(Comparator.comparing(Office::getCountry));
         }
 
         @ValueSource(strings = {
@@ -96,8 +96,8 @@ class GovernmentPersistenceTest {
         void __NamedQuery(final String headKind) {
             final var list = PersistenceTestUtils.applyEntityManager(em -> {
                 return em.createNamedQuery(
-                                "Government.selectAll_WhereHeadKindEqual_OrderByCountryAsc",
-                                Government.class
+                                "Office.selectAll_WhereHeadKindEqual_OrderByCountryAsc",
+                                Office.class
                         )
                         .setParameter("headKind", headKind)
                         .getResultList();
@@ -115,10 +115,10 @@ class GovernmentPersistenceTest {
                 return em.createQuery(
                                 """
                                         SELECT e
-                                        FROM Government AS e
+                                        FROM Office AS e
                                         WHERE e.headKind = :headKind
                                         ORDER BY e.country ASC""",
-                                Government.class
+                                Office.class
                         )
                         .setParameter("headKind", headKind)
                         .getResultList();
@@ -134,11 +134,11 @@ class GovernmentPersistenceTest {
         void __CriteriaApi(final String headKind) {
             final var list = PersistenceTestUtils.applyEntityManager(em -> {
                 final var builder = em.getCriteriaBuilder();
-                final var query = builder.createQuery(Government.class);
-                final var root = query.from(Government.class);
+                final var query = builder.createQuery(Office.class);
+                final var root = query.from(Office.class);
                 query.select(root)
-                        .where(builder.equal(root.get(Government_.headKind), headKind))
-                        .orderBy(builder.asc(root.get(Government_.country)));
+                        .where(builder.equal(root.get(Office_.headKind), headKind))
+                        .orderBy(builder.asc(root.get(Office_.country)));
                 return em.createQuery(query).getResultList();
             });
             verify(list, headKind);

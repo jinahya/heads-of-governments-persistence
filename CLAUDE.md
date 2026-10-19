@@ -10,14 +10,14 @@ one package, `com.github.jinahya.headsofgovernments.persistence`, two entities. 
 consumes the jar; the project exists to be read, built and run against the file.
 
 The file is the database. It already holds the schema and the data, and the persistence unit opens it
-read-only (`open_mode=1`), so the provider validates the mappings against it and never generates DDL.
+read-only (`open_mode=1`), so the providers only read from it and never generate DDL.
 The raw lists the rows came from are the tab-separated files under `docs/`, one per country, each
 headed by the web pages it was transcribed from and a description of its columns.
 
 ### The schema
 
 ```sql
-CREATE TABLE government (
+CREATE TABLE office (
     country    TEXT NOT NULL PRIMARY KEY,
     head_kind  TEXT NOT NULL CHECK (head_kind IN ('PRESIDENT', 'PRIME_MINISTER')),
     head_title TEXT NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE government (
 
 CREATE TABLE head (
     id         INTEGER PRIMARY KEY,
-    country    TEXT    NOT NULL REFERENCES government (country),
+    country    TEXT    NOT NULL REFERENCES office (country),
     number     INTEGER NOT NULL,
     term_start TEXT    NOT NULL,
     term_end   TEXT,
@@ -41,43 +41,57 @@ CREATE INDEX idx_head_country_number ON head (country, number);
 CREATE INDEX idx_head_name ON head (name);
 ```
 
-`government` has one row per country (`FR`, `GB`, `JP`, `KR`, `US`): what its head is called, and a
+`office` has one row per country (`FR`, `GB`, `JP`, `KR`, `US`): what its head is called, and a
 sentence saying how that country numbers them. `head` has one row per term of office. `number` is the
 country's own ordinal and is **not unique** -- a person re-elected or re-appointed keeps a number across
 several rows -- which is why `head` carries a surrogate `id`.
 
 Dates are ISO-8601 text and years are integers, exactly as SQLite stores them; the mappings follow
 that (`String termStart`, `Integer born`) rather than converting. `head_kind` is likewise bound as a
-`String`, with the nested `Government.HeadKind` enum kept beside it as the list of values.
+`String`, with the nested `Office.HeadKind` enum kept beside it as the list of values.
 
 When the file changes, dump its schema (`sqlite3 db/heads_of_governments.sqlite3 .schema`) and bring the
-entities back into line with it; `hbm2ddl.auto=validate` under the Hibernate profile is the check.
+entities back into line with it, then run the tests under both profiles. The unit sets no
+`hibernate.hbm2ddl.auto`, so nothing checks the mappings at startup; a wrong column shows up as an
+SQLite error from the first query that reads it.
 
 ### The entities
 
 | table | entity | identifier | association |
 | --- | --- | --- | --- |
-| `government` | `Government` | `@Id String country` | `@OneToMany(mappedBy = "government") List<Head> heads` |
-| `head` | `Head` | `@Id Integer id` | `@ManyToOne Government government` over `country` |
+| `office` | `Office` | `@Id String country` | `@OneToMany(mappedBy = "office") List<Head> heads` |
+| `head` | `Head` | `@Id Long id` | `@ManyToOne Office office` over `country` |
 
-Both are standalone: no superclass, no shared base, no id class. `Head`'s identifier is `Integer`, not
-`Long`, because Hibernate's schema validation reports SQLite's `INTEGER` as `Types#INTEGER` and refuses
-a `bigint` mapping over it.
+Both are standalone: no superclass, no shared base, no id class. `Head`'s identifier is `Long`: `id` is an
+`INTEGER PRIMARY KEY`, an alias for SQLite's signed 64-bit `rowid`, and the row count does not bound its
+values. Hibernate's `hibernate.hbm2ddl.auto=validate`, which the unit does not set, would refuse it, since
+the driver reports the column as `Types#INTEGER` ("found integer, but expecting bigint").
 
 Conventions the two classes follow, and new members must keep:
 
-- **Only the `@Id` column is writable.** Every other `@Column` and the `@JoinColumn` carry
-  `insertable = false, updatable = false`. The file is opened read-only, so nothing is lost; the
-  mappings say so explicitly rather than relying on the driver to refuse.
-- **Annotation elements are kept to the ones that mean something here.** A `@Column` carries `name`,
-  `unique`, `nullable`, `insertable`, `updatable` and `length`; a `@Table` carries `name`, `catalog`
-  and `schema`. Do not add `columnDefinition`, `options`, `check`, `comment`, `table`, `precision`,
-  `scale`, `secondPrecision`, `indexes` or `uniqueConstraints`. The database's own `CHECK` constraints
+- **Nothing is updatable, and only the `@Id` column is insertable.** Every `@Column` and the
+  `@JoinColumn` carry `insertable = false, updatable = false`, except the `@Id` column, which carries
+  only `updatable = false` and so stays insertable by default. The file is opened read-only, so nothing is lost; the
+  mappings say so explicitly rather than relying on the driver to refuse. The `@Id` exception is
+  EclipseLink's: with both flags false it fails predeployment with `EclipseLink-46` ("There should be
+  one non-read-only mapping defined for the primary key field"), since it counts a mapping as
+  read-only only when both are false.
+- **An element is left out only when its default is the right value.** So there is no
+  `unique = false`, `length = 255`, `cascade = {}`, `catalog`/`schema`, `targetEntity` (the field
+  type gives it), `referencedColumnName` (the referenced primary key), `@Entity` name (the class
+  name). Names are always written
+  out: `@Table(name = ...)` on both entities and `name` on every `@Column` and the `@JoinColumn`,
+  even where the column matches the field. A `NOT NULL` column carries `@Basic(optional = false)` and
+  `@Column(nullable = false)`, ids included, as do the `@ManyToOne`/`@JoinColumn` pair; a nullable column
+  says `nullable = true` and `@Basic(optional = true)` explicitly. Every `@Basic`,
+  `@ManyToOne` and `@OneToMany` names its `fetch` explicitly, default or not: `EAGER` on the basics
+  and on `office`, `LAZY` on `heads`. Do not add
+  `columnDefinition`, `options`, `check`, `comment`, `table`, `precision`, `scale`, `secondPrecision`, `indexes` or `uniqueConstraints`. The database's own `CHECK` constraints
   and indexes are not repeated in the annotations -- and EclipseLink 5.0.2 throws a
   `NullPointerException` from `DatabaseTable.getCheckConstraints()` at predeployment if a
   `@CheckConstraint` is present, so that one is not merely noise.
 - **Attributes are declared in table column order**, accessors and fields alike, with an association
-  placed directly after the column it maps (`government` right after `id`, as the next thing in `head`
+  placed directly after the column it maps (`office` right after `id`, as the next thing in `head`
   is `country`). `Head` does not map `country` as a basic attribute; the association owns the column.
 - **Member order inside a class**: nested types, then `// ----` the `protected` no-arg constructor,
   then the accessors under `// ----` markers, then the `private` fields last. Markers are line comments
@@ -88,7 +102,9 @@ Conventions the two classes follow, and new members must keep:
 ### The persistence unit and the static metamodel
 
 `src/main/resources/META-INF/persistence.xml` declares the single unit, `heads-of-governments`,
-listing both entities with `<exclude-unlisted-classes>true</exclude-unlisted-classes>`. Its JDBC URL is
+listing both entities. It sets no `<exclude-unlisted-classes>`, `<shared-cache-mode>` or `<validation-mode>`:
+the classes directory holds only the two entities, so scanning finds the same list, and the defaults suit
+a read-only file with no validator on the classpath. Its JDBC URL is
 relative to the working directory, which is the project root under Maven and in the IDE.
 
 The descriptor lives under **main**, not test, resources, on purpose. EclipseLink's metamodel
@@ -101,7 +117,7 @@ jar. That would be wrong for a library -- Spring's `DefaultPersistenceUnitManage
 accepted. Resource filtering is on for main resources, which is what resolves `${persistence-unit.provider}`
 and `${persistence.version}` in it.
 
-The generated `Government_` and `Head_` are what persistence-context code uses for criteria paths;
+The generated `Office_` and `Head_` are what persistence-context code uses for criteria paths;
 `mappedBy` and other annotation values stay string literals, since an annotation value must be a
 compile-time constant.
 
@@ -125,7 +141,7 @@ and any IT read the SQLite file in `db/`. As of maven-failsafe-plugin 3.6.0 `-Ds
 surefire alone, so dropping the ITs from a `_verify_` run takes `-DskipITs`.
 
 A check against the file that proves a mapping change is sound: open the unit, `find` a `Head` by id,
-walk to its `Government` and back to `getHeads()`, and count both tables -- 285 heads, 5 governments --
+walk to its `Office` and back to `getHeads()`, and count both tables -- 285 heads, 5 offices --
 under each profile in turn.
 
 ## Dependency convergence
@@ -142,8 +158,7 @@ build and is not skipped; treat a divergence as a build defect, not a warning.
 - **The persistence provider is the only implementation axis**, with exactly two profiles:
   `jakarta-ee-11-hibernate-orm` (`activeByDefault`) and `jakarta-ee-11-eclipselink`. Jakarta
   Persistence is the only spec implemented here -- there is no Jakarta Validation and no CDI on any
-  classpath, and the unit's `<validation-mode>` is `NONE` so neither provider goes looking for a
-  validator -- so nothing else gets a profile. A provider profile picks no version either: it decides which provider is on the
+  classpath, so the unit's default `<validation-mode>` of `AUTO` finds nothing to use -- so nothing else gets a profile. A provider profile picks no version either: it decides which provider is on the
   test classpath, which `persistence-unit.provider` the descriptor names, and which
   `metamodel.generator.*` the annotation processor path uses.
 - Do not add a profile to test a second version of anything. Any profile that is added must carry the

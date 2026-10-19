@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Slf4j
-class GovernmentTest {
+class OfficeTest {
 
     @DisplayName("toString")
     @Nested
@@ -19,7 +19,7 @@ class GovernmentTest {
 
         @Test
         void _NotBlank_() {
-            final var string = new Government().toString();
+            final var string = new Office().toString();
             log.debug("string: {}", string);
             assertThat(string).isNotBlank();
         }

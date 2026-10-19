@@ -16,27 +16,23 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 /**
- * An entity for the {@code government} table: one row per country, saying what that country's head of government is
- * called and how the country numbers them.
+ * An entity for the {@code office} table: one row per country, saying what that country's head of government is called
+ * and how the country numbers them.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see Head
  */
-@NamedQuery(name = "Government.selectAll_WhereHeadKindEqual_OrderByCountryAsc",
+@NamedQuery(name = "Office.selectAll_WhereHeadKindEqual_OrderByCountryAsc",
             query = """
                     SELECT e
-                    FROM Government AS e
+                    FROM Office AS e
                     WHERE e.headKind = :headKind
                     ORDER BY e.country ASC""")
-@Entity(name = "Government")
-@Table(
-        name = "government",
-        catalog = "",
-        schema = ""
-)
+@Entity
+@Table(name = "office")
 @Getter
 @Slf4j
-public class Government {
+public class Office {
 
     /**
      * Constants for the {@code head_kind} column: what kind of office the head of a government holds. The column is
@@ -60,65 +56,31 @@ public class Government {
     /**
      * Creates a new instance.
      */
-    protected Government() {
+    protected Office() {
         super();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    @Id
-    @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(
-            name = "country",
-            unique = false,
-            nullable = false,
-            insertable = true,
-            updatable = true,
-            length = 255
-    )
+    @jakarta.persistence.Id
+    @jakarta.persistence.Basic(fetch = FetchType.EAGER, optional = false)
+    @jakarta.persistence.Column(name = "country", nullable = false, updatable = false)
     private String country;
 
     // -----------------------------------------------------------------------------------------------------------------
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(
-            name = "head_kind",
-            unique = false,
-            nullable = false,
-            insertable = false,
-            updatable = false,
-            length = 255
-    )
+    @Column(name = "head_kind", nullable = false, insertable = false, updatable = false)
     private String headKind;
 
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(
-            name = "head_title",
-            unique = false,
-            nullable = false,
-            insertable = false,
-            updatable = false,
-            length = 255
-    )
+    @Column(name = "head_title", nullable = false, insertable = false, updatable = false)
     private String headTitle;
 
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(
-            name = "numbering",
-            unique = false,
-            nullable = false,
-            insertable = false,
-            updatable = false,
-            length = 255
-    )
+    @Column(name = "numbering", nullable = false, insertable = false, updatable = false)
     private String numbering;
 
     // -----------------------------------------------------------------------------------------------------------------
-    @OneToMany(
-            targetEntity = Head.class,
-            cascade = {},
-            fetch = FetchType.LAZY,
-            mappedBy = "government",
-            orphanRemoval = false
-    )
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "office")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private List<Head> heads;

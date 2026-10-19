@@ -29,12 +29,12 @@ class HeadPersistenceTest {
     @Nested
     class FindTest {
 
-        @ValueSource(ints = {
+        @ValueSource(longs = {
                 1,
                 HEAD_COUNT
         })
         @ParameterizedTest
-        void __1(final int id) {
+        void __1(final long id) {
             final var found = PersistenceTestUtils.applyEntityManager(em -> {
                 return em.find(Head.class, id);
             });
@@ -76,12 +76,12 @@ class HeadPersistenceTest {
                     });
         }
 
-        @ValueSource(ints = {
+        @ValueSource(longs = {
                 0,
                 HEAD_COUNT + 1
         })
         @ParameterizedTest
-        void _Null_Absent(final int id) {
+        void _Null_Absent(final long id) {
             final var found = PersistenceTestUtils.applyEntityManager(em -> {
                 return em.find(Head.class, id);
             });
@@ -89,13 +89,13 @@ class HeadPersistenceTest {
         }
 
         @Test
-        void _Government_Walkable() {
+        void _Office_Walkable() {
             PersistenceTestUtils.applyEntityManager(em -> {
-                final var head = em.find(Head.class, 1);
+                final var head = em.find(Head.class, 1L);
                 assertThat(head).isNotNull();
-                final var government = head.getGovernment();
-                assertThat(government).isNotNull();
-                assertThat(government.getHeads())
+                final var office = head.getOffice();
+                assertThat(office).isNotNull();
+                assertThat(office.getHeads())
                         .isNotEmpty()
                         .anySatisfy(h -> assertThat(h.getId()).isEqualTo(head.getId()));
                 return null;
@@ -114,14 +114,14 @@ class HeadPersistenceTest {
         }
     }
 
-    @DisplayName("SELECT e FROM Head AS e WHERE e.government = :government ORDER BY e.termStart ASC")
+    @DisplayName("SELECT e FROM Head AS e WHERE e.office = :office ORDER BY e.termStart ASC")
     @Nested
-    class SelectAll_WhereGovernmentEqual_OrderByTermStartAsc_Test {
+    class SelectAll_WhereOfficeEqual_OrderByTermStartAsc_Test {
 
-        private static void verify(final List<Head> list, final Government government) {
+        private static void verify(final List<Head> list, final Office office) {
             assertThat(list)
                     .isNotEmpty()
-                    .allSatisfy(e -> assertThat(e.getGovernment().getCountry()).isEqualTo(government.getCountry()))
+                    .allSatisfy(e -> assertThat(e.getOffice().getCountry()).isEqualTo(office.getCountry()))
                     .isSortedAccordingTo(Comparator.comparing(Head::getTermStart));
         }
 
@@ -135,15 +135,15 @@ class HeadPersistenceTest {
         @ParameterizedTest
         void __NamedQuery(final String country) {
             PersistenceTestUtils.applyEntityManager(em -> {
-                final var government = em.find(Government.class, country);
-                assertThat(government).isNotNull();
+                final var office = em.find(Office.class, country);
+                assertThat(office).isNotNull();
                 final var list = em.createNamedQuery(
-                                "Head.selectAll_WhereGovernmentEqual_OrderByTermStartAsc",
+                                "Head.selectAll_WhereOfficeEqual_OrderByTermStartAsc",
                                 Head.class
                         )
-                        .setParameter("government", government)
+                        .setParameter("office", office)
                         .getResultList();
-                verify(list, government);
+                verify(list, office);
                 return null;
             });
         }
@@ -158,19 +158,19 @@ class HeadPersistenceTest {
         @ParameterizedTest
         void __QueryLanguage(final String country) {
             PersistenceTestUtils.applyEntityManager(em -> {
-                final var government = em.find(Government.class, country);
-                assertThat(government).isNotNull();
+                final var office = em.find(Office.class, country);
+                assertThat(office).isNotNull();
                 final var list = em.createQuery(
                                 """
                                         SELECT e
                                         FROM Head AS e
-                                        WHERE e.government = :government
+                                        WHERE e.office = :office
                                         ORDER BY e.termStart ASC""",
                                 Head.class
                         )
-                        .setParameter("government", government)
+                        .setParameter("office", office)
                         .getResultList();
-                verify(list, government);
+                verify(list, office);
                 return null;
             });
         }
@@ -185,16 +185,16 @@ class HeadPersistenceTest {
         @ParameterizedTest
         void __CriteriaApi(final String country) {
             PersistenceTestUtils.applyEntityManager(em -> {
-                final var government = em.find(Government.class, country);
-                assertThat(government).isNotNull();
+                final var office = em.find(Office.class, country);
+                assertThat(office).isNotNull();
                 final var builder = em.getCriteriaBuilder();
                 final var query = builder.createQuery(Head.class);
                 final var root = query.from(Head.class);
                 query.select(root)
-                        .where(builder.equal(root.get(Head_.government), government))
+                        .where(builder.equal(root.get(Head_.office), office))
                         .orderBy(builder.asc(root.get(Head_.termStart)));
                 final var list = em.createQuery(query).getResultList();
-                verify(list, government);
+                verify(list, office);
                 return null;
             });
         }
