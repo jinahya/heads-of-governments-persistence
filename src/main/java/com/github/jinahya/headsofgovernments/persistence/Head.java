@@ -9,18 +9,24 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-@NamedQuery(name = "Head.selectAll_WhereGovenmentEqual_OrderByTermStartAsc",
+/**
+ * An entity for the {@code head} table: one row per term of office of a head of government. The {@code number} column
+ * is the country's own ordinal and is not unique, which is why the table carries a surrogate {@code id}.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see Government
+ */
+@NamedQuery(name = "Head.selectAll_WhereGovernmentEqual_OrderByTermStartAsc",
             query = """
                     SELECT e
-                    FROM Government AS e
-                    WHERE e.headKind = :headKind""")
+                    FROM Head AS e
+                    WHERE e.government = :government
+                    ORDER BY e.termStart ASC""")
 @Entity(name = "Head")
 @Table(
         name = "head",
@@ -28,9 +34,17 @@ import lombok.extern.slf4j.Slf4j;
         schema = ""
 )
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public class Head {
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a new instance.
+     */
+    protected Head() {
+        super();
+    }
 
     // -----------------------------------------------------------------------------------------------------------------
     @Id

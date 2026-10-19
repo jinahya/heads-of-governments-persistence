@@ -80,6 +80,10 @@ resources rather than test resources because EclipseLink's metamodel processor h
 annotation-processor path; the jar carries it as a result, which is fine for a module nothing
 depends on.
 
+## Exercises
+
+_To be written._
+
 ## Things that bit us
 
 - **SQLite `INTEGER` validates as `Types#INTEGER`.** Hibernate's `hbm2ddl.auto=validate` rejects a
@@ -88,6 +92,13 @@ depends on.
   which moves in step with `hibernate-core`.
 - **EclipseLink has no SQLite platform.** The unit sets `eclipselink.target-database` to the generic
   `org.eclipse.persistence.platform.database.DatabasePlatform`, which is enough for reads.
+- **`Query#setFirstResult` fails under EclipseLink on SQLite.** The generic platform has no `LIMIT`/`OFFSET`
+  syntax, so it asks the driver for a scrollable result set and skips with `ResultSet#absolute`; the
+  driver refuses at `prepareStatement` with "SQLite only supports TYPE_FORWARD_ONLY cursors", which
+  surfaces as a `PersistenceException` wrapping `EclipseLink-4002`. `setMaxResults` alone is fine, since
+  it goes through `Statement#setMaxRows`. Hibernate's `SQLiteDialect` renders `limit ? offset ?` and is
+  unaffected. The test helper `PersistenceTestUtils.selectRandom` tries the standard call first and, on
+  that exception, fetches `offset + 1` rows and takes the last.
 - **EclipseLink 5.0.2 crashes on `@CheckConstraint`.** Predeployment throws a `NullPointerException`
   from `DatabaseTable.getCheckConstraints()` when a table or column declares one, so the database's
   `CHECK` constraints are not repeated in the annotations.

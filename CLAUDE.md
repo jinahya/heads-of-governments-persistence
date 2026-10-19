@@ -166,7 +166,6 @@ Consequences:
 | --- | --- | --- |
 | Jakarta Persistence (`jakarta.persistence-api`) | Hibernate ORM (`org.hibernate.orm:hibernate-core`), plus `hibernate-community-dialects` for `SQLiteDialect` | `version.org.hibernate.orm` |
 | Jakarta Persistence (`jakarta.persistence-api`) | EclipseLink (`org.eclipse.persistence:org.eclipse.persistence.jpa`) | `version.org.eclipse.persistence` |
-| Jakarta Annotations (`jakarta.annotation-api`) | none needed | -- |
 
 - `hibernate-community-dialects` moves with `hibernate-core`; EclipseLink ships no SQLite platform and
   runs on the generic `DatabasePlatform`.
