@@ -34,7 +34,11 @@ class OfficePersistenceTest {
             @Test
             void __1() {
                 final var found = PersistenceTestUtils.applyEntityManager(em -> {
-                    return em.find(Office.class, "FR");
+                    try {
+                        return em.find(Office.class, "FR");
+                    } finally {
+                        HibernateOrmUtils.logEntities(em);
+                    }
                 });
                 assertThat(found)
                         .isNotNull()
@@ -45,16 +49,20 @@ class OfficePersistenceTest {
             @Test
             void __QueryLanguage() {
                 final var found = PersistenceTestUtils.applyEntityManager(em -> {
-                    return em.createQuery(
-                                    """
-                                            SELECT e
-                                            FROM Office AS e
-                                            JOIN FETCH e.heads
-                                            WHERE e.country = :country""",
-                                    Office.class
-                            )
-                            .setParameter("country", "FR")
-                            .getSingleResult();
+                    try {
+                        return em.createQuery(
+                                        """
+                                                SELECT e
+                                                FROM Office AS e
+                                                JOIN FETCH e.heads
+                                                WHERE e.country = :country""",
+                                        Office.class
+                                )
+                                .setParameter("country", "FR")
+                                .getSingleResult();
+                    } finally {
+                        HibernateOrmUtils.logEntities(em);
+                    }
                 });
                 assertThat(found)
                         .isNotNull()
@@ -72,7 +80,11 @@ class OfficePersistenceTest {
                     root.fetch(Office_.heads);
                     query.select(root)
                             .where(builder.equal(root.get(Office_.country), "FR"));
-                    return em.createQuery(query).getSingleResult();
+                    try {
+                        return em.createQuery(query).getSingleResult();
+                    } finally {
+                        HibernateOrmUtils.logEntities(em);
+                    }
                 });
                 assertThat(found)
                         .isNotNull()
