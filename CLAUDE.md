@@ -182,3 +182,10 @@ Consequences:
   `<exclusions>` only when a dependency genuinely must not be on the classpath.
 - If a conflict cannot be resolved without a behavioural change, stop and report it rather than
   choosing a version unilaterally.
+
+## Branches
+
+`BRANCHES.md` lists the branches that each carry one small change on top of `develop`, for readers to
+switch to and compare. It holds the list, the naming rule and the rules; follow it. In short: one minimal
+change per branch, merge `develop` into every listed branch after each change to `develop` (never rebase),
+never merge a branch back, and run the tests on the branch after each merge.
