@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -115,6 +116,7 @@ public class Office {
 
     // -----------------------------------------------------------------------------------------------------------------
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "office")
+    @Setter(AccessLevel.PACKAGE)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private List<Head> heads;

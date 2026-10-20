@@ -3,6 +3,7 @@ package com.github.jinahya.headsofgovernments.persistence;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,60 @@ class OfficePersistenceTest {
     @DisplayName("EntityManager#find(entityClass, primaryKey)")
     @Nested
     class FindTest {
+
+        @Nested
+        class FetchTypeTest {
+
+            @Test
+            void __1() {
+                final var found = PersistenceTestUtils.applyEntityManager(em -> {
+                    return em.find(Office.class, "FR");
+                });
+                assertThat(found)
+                        .isNotNull()
+                        .extracting(Office::getCountry)
+                        .isEqualTo("FR");
+            }
+
+            @Test
+            void __QueryLanguage() {
+                final var found = PersistenceTestUtils.applyEntityManager(em -> {
+                    return em.createQuery(
+                                    """
+                                            SELECT e
+                                            FROM Office AS e
+                                            JOIN FETCH e.heads
+                                            WHERE e.country = :country""",
+                                    Office.class
+                            )
+                            .setParameter("country", "FR")
+                            .getSingleResult();
+                });
+                assertThat(found)
+                        .isNotNull()
+                        .extracting(Office::getHeads)
+                        .asInstanceOf(InstanceOfAssertFactories.LIST)
+                        .hasSize(HeadPersistenceTest.HEAD_COUNTS.get("FR").intValue());
+            }
+
+            @Test
+            void __CriteriaApi() {
+                final var found = PersistenceTestUtils.applyEntityManager(em -> {
+                    final var builder = em.getCriteriaBuilder();
+                    final var query = builder.createQuery(Office.class);
+                    final var root = query.from(Office.class);
+                    root.fetch(Office_.heads);
+                    query.select(root)
+                            .where(builder.equal(root.get(Office_.country), "FR"));
+                    return em.createQuery(query).getSingleResult();
+                });
+                assertThat(found)
+                        .isNotNull()
+                        .extracting(Office::getHeads)
+                        .asInstanceOf(InstanceOfAssertFactories.LIST)
+                        .hasSize(HeadPersistenceTest.HEAD_COUNTS.get("FR").intValue());
+            }
+        }
 
         @ValueSource(strings = {"FR", "GB", "JP", "KR", "US"})
         @ParameterizedTest
