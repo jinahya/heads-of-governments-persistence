@@ -7,7 +7,7 @@ branch's diff against `develop` is only its change.
 | branch | differs from `develop` by | what to run and look at |
 |---|---|---|
 | `mapping/head-office-lazy` | `Head.office` uses `@ManyToOne(fetch = FetchType.LAZY)` | `HeadPersistenceTest$FindTest$FetchTypeTest`: `__1` sends no `join office`; `__QueryLanguage` and `__CriteriaApi` join it again through `JOIN FETCH` |
-| `mapping/head-java-time` | `Head.termStart`/`termEnd` are `LocalDate` through `@Convert(converter = LocalDateConverter.class)`; `Head.born`/`died` are `Year`, mapped without a converter | `HeadPersistenceTest` and `OfficePersistenceTest`: the same tests pass with `LocalDate` and `Year`; `MIN`/`MAX` of `termStart` come back as `LocalDate` |
+| `mapping/head-java-time` | `Head.termStart`/`termEnd` are `LocalDate` through `@Convert(converter = LocalDateConverter.class)`; `Head.born`/`died` are `Year`, mapped without a converter | `HeadPersistenceTest` and `OfficePersistenceTest`: `develop`'s tests pass unchanged; `MIN`/`MAX` of `termStart` come back as `LocalDate` |
 
 ## Naming
 
@@ -17,8 +17,8 @@ the name alone has to say what the branch is for.
 
 ## Rules
 
-- A branch carries **one** minimal change on top of `develop`. When that change alters a type, the tests may follow it
-  (an expected value, a cast, an assertion that only fits the old type) and do nothing else.
+- A branch carries **one** minimal change on top of `develop`. The tests stay `develop`'s; where a branch changes a
+  type, `develop`'s tests are written so they hold for both.
 - After every change to `develop`, **merge** `develop` into every branch listed here. Never rebase: readers
   clone these branches, and a rebase would rewrite what they already have.
 - Never merge a branch back into `develop`.
