@@ -15,7 +15,6 @@ final class HibernateOrmUtils {
         final var entities = context.getEntitiesByKey().values();
         for (final var entity : entities) {
             log.debug("entity: {}", entity);
-//            System.out.println("Managed Entity: " + entity.getClass().getName() + " -> " + entity);
         }
     }
 
