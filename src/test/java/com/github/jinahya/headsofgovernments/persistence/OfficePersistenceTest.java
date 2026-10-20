@@ -270,7 +270,7 @@ class OfficePersistenceTest {
             private static void verify(final List<Object[]> list) {
                 final var ranges = list.stream().collect(Collectors.toMap(
                         r -> ((Office) r[0]).getCountry(),
-                        r -> List.of((LocalDate) r[1], (LocalDate) r[2])
+                        r -> List.of(String.valueOf(r[1]), String.valueOf(r[2]))
                 ));
                 assertThat(ranges).isEqualTo(HeadPersistenceTest.HEAD_TERM_START_RANGES);
             }
