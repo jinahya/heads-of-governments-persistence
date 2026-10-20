@@ -1,5 +1,6 @@
 package com.github.jinahya.headsofgovernments.persistence;
 
+import jakarta.persistence.EntityManager;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -146,8 +147,18 @@ class OfficePersistenceTest {
         private static void verify(final List<Office> list, final String headKind) {
             assertThat(list)
                     .isNotEmpty()
-                    .allSatisfy(e -> assertThat(e.getHeadKind()).isEqualTo(headKind))
+                    .allSatisfy(e -> assertThat(String.valueOf(e.getHeadKind())).isEqualTo(headKind))
                     .isSortedAccordingTo(Comparator.comparing(Office::getCountry));
+        }
+
+        /**
+         * Returns the value to bind for {@code headKind}: the name itself while the attribute is a {@code String}, the
+         * constant of that name once it is mapped as an enum.
+         */
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        private static Object headKind(final EntityManager em, final String name) {
+            final var type = em.getMetamodel().entity(Office.class).getAttribute(Office_.HEAD_KIND).getJavaType();
+            return type.isEnum() ? Enum.valueOf((Class) type, name) : name;
         }
 
         @ValueSource(strings = {
@@ -161,7 +172,7 @@ class OfficePersistenceTest {
                                 "Office.selectAll_WhereHeadKindEqual_OrderByCountryAsc",
                                 Office.class
                         )
-                        .setParameter("headKind", headKind)
+                        .setParameter("headKind", headKind(em, headKind))
                         .getResultList();
             });
             verify(list, headKind);
@@ -182,7 +193,7 @@ class OfficePersistenceTest {
                                         ORDER BY e.country ASC""",
                                 Office.class
                         )
-                        .setParameter("headKind", headKind)
+                        .setParameter("headKind", headKind(em, headKind))
                         .getResultList();
             });
             verify(list, headKind);
@@ -199,7 +210,7 @@ class OfficePersistenceTest {
                 final var query = builder.createQuery(Office.class);
                 final var root = query.from(Office.class);
                 query.select(root)
-                        .where(builder.equal(root.get(Office_.headKind), headKind))
+                        .where(builder.equal(root.get(Office_.headKind), headKind(em, headKind)))
                         .orderBy(builder.asc(root.get(Office_.country)));
                 return em.createQuery(query).getResultList();
             });
