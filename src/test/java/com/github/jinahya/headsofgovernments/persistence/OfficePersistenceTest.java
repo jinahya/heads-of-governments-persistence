@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -142,6 +143,48 @@ class OfficePersistenceTest {
                 return em.createQuery(query).getResultList();
             });
             verify(list, headKind);
+        }
+    }
+
+    @DisplayName("SELECT e, COUNT(h) FROM Office AS e JOIN e.heads AS h GROUP BY e")
+    @Nested
+    class CountHeadsTest {
+
+        private static void verify(final List<Object[]> list) {
+            final var counts = list.stream().collect(Collectors.toMap(
+                    r -> ((Office) r[0]).getCountry(),
+                    r -> (Long) r[1]
+            ));
+            assertThat(counts).isEqualTo(HeadPersistenceTest.HEAD_COUNTS);
+        }
+
+        @Test
+        void __QueryLanguage() {
+            final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                return em.createQuery(
+                                """
+                                        SELECT e, COUNT(h)
+                                        FROM Office AS e JOIN e.heads AS h
+                                        GROUP BY e""",
+                                Object[].class
+                        )
+                        .getResultList();
+            });
+            verify(list);
+        }
+
+        @Test
+        void __CriteriaApi() {
+            final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                final var builder = em.getCriteriaBuilder();
+                final var query = builder.createQuery(Object[].class);
+                final var root = query.from(Office.class);
+                final var heads = root.join(Office_.heads);
+                query.multiselect(root, builder.count(heads))
+                        .groupBy(root);
+                return em.createQuery(query).getResultList();
+            });
+            verify(list);
         }
     }
 }

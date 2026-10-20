@@ -12,6 +12,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
@@ -24,6 +26,17 @@ class HeadPersistenceTest {
      * The number of rows in the {@code head} table.
      */
     private static final int HEAD_COUNT = 285;
+
+    /**
+     * The number of rows in the {@code head} table, by {@code country}.
+     */
+    static final Map<String, Long> HEAD_COUNTS = Map.of(
+            "FR", 31L,
+            "GB", 81L,
+            "JP", 105L,
+            "KR", 21L,
+            "US", 47L
+    );
 
     @DisplayName("EntityManager#find(entityClass, primaryKey)")
     @Nested
@@ -208,6 +221,48 @@ class HeadPersistenceTest {
         void __() {
             final var count = PersistenceTestUtils.selectCount(Head.class);
             assertThat(count).isEqualTo(HEAD_COUNT);
+        }
+    }
+
+    @DisplayName("SELECT e.office, COUNT(e) FROM Head AS e GROUP BY e.office")
+    @Nested
+    class CountGroupByOfficeTest {
+
+        private static void verify(final List<Object[]> list) {
+            final var counts = list.stream().collect(Collectors.toMap(
+                    r -> ((Office) r[0]).getCountry(),
+                    r -> (Long) r[1]
+            ));
+            assertThat(counts).isEqualTo(HEAD_COUNTS);
+        }
+
+        @Test
+        void __QueryLanguage() {
+            final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                return em.createQuery(
+                                """
+                                        SELECT e.office, COUNT(e)
+                                        FROM Head AS e
+                                        GROUP BY e.office""",
+                                Object[].class
+                        )
+                        .getResultList();
+            });
+            verify(list);
+        }
+
+        @Test
+        void __CriteriaApi() {
+            final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                final var builder = em.getCriteriaBuilder();
+                final var query = builder.createQuery(Object[].class);
+                final var root = query.from(Head.class);
+                final var office = root.get(Head_.office);
+                query.multiselect(office, builder.count(root))
+                        .groupBy(office);
+                return em.createQuery(query).getResultList();
+            });
+            verify(list);
         }
     }
 }
