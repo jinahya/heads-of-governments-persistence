@@ -1,5 +1,6 @@
 package com.github.jinahya.headsofgovernments.persistence;
 
+import com.github.jinahya.headsofgovernments.persistence.converter.LocalDateConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +15,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.Objects;
 
 /**
@@ -104,11 +107,13 @@ public class Head {
 
     @Basic(fetch = FetchType.EAGER, optional = false)
     @Column(name = "term_start", nullable = false, insertable = false, updatable = false)
-    private String termStart;
+    @jakarta.persistence.Convert(converter = LocalDateConverter.class)
+    private LocalDate termStart;
 
     @Basic(fetch = FetchType.EAGER, optional = true)
     @Column(name = "term_end", nullable = true, insertable = false, updatable = false)
-    private String termEnd;
+    @jakarta.persistence.Convert(converter = LocalDateConverter.class)
+    private LocalDate termEnd;
 
     @Basic(fetch = FetchType.EAGER, optional = false)
     @Column(name = "name", nullable = false, insertable = false, updatable = false)
@@ -120,9 +125,9 @@ public class Head {
 
     @Basic(fetch = FetchType.EAGER, optional = false)
     @Column(name = "born", nullable = false, insertable = false, updatable = false)
-    private Integer born;
+    private Year born;
 
     @Basic(fetch = FetchType.EAGER, optional = true)
     @Column(name = "died", nullable = true, insertable = false, updatable = false)
-    private Integer died;
+    private Year died;
 }

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -41,12 +42,12 @@ class HeadPersistenceTest {
     /**
      * The earliest and the latest {@code term_start} in the {@code head} table, by {@code country}.
      */
-    static final Map<String, List<String>> HEAD_TERM_START_RANGES = Map.of(
-            "FR", List.of("1848-12-20", "2022-05-14"),
-            "GB", List.of("1721-04-03", "2026-07-20"),
-            "JP", List.of("1885-12-22", "2026-02-18"),
-            "KR", List.of("1948-07-24", "2025-06-04"),
-            "US", List.of("1789-04-30", "2025-01-20")
+    static final Map<String, List<LocalDate>> HEAD_TERM_START_RANGES = Map.of(
+            "FR", List.of(LocalDate.parse("1848-12-20"), LocalDate.parse("2022-05-14")),
+            "GB", List.of(LocalDate.parse("1721-04-03"), LocalDate.parse("2026-07-20")),
+            "JP", List.of(LocalDate.parse("1885-12-22"), LocalDate.parse("2026-02-18")),
+            "KR", List.of(LocalDate.parse("1948-07-24"), LocalDate.parse("2025-06-04")),
+            "US", List.of(LocalDate.parse("1789-04-30"), LocalDate.parse("2025-01-20"))
     );
 
     @DisplayName("EntityManager#find(entityClass, primaryKey)")
@@ -151,13 +152,13 @@ class HeadPersistenceTest {
                         assertThat(h.getBorn()).isEqualTo(random.getBorn());
                         assertThat(h.getDied()).isEqualTo(random.getDied());
                         assertThat(h.getNumber()).isPositive();
-                        assertThat(h.getTermStart()).isNotBlank();
+                        assertThat(h.getTermStart()).isNotNull();
                         if (h.getTermEnd() != null) {
-                            assertThat(h.getTermEnd()).isGreaterThanOrEqualTo(h.getTermStart());
+                            assertThat(h.getTermEnd()).isAfterOrEqualTo(h.getTermStart());
                         }
                         assertThat(h.getName()).isNotBlank();
                         assertThat(h.getParty()).isNotBlank();
-                        assertThat(h.getBorn()).isPositive();
+                        assertThat(h.getBorn().getValue()).isPositive();
                         if (h.getDied() != null) {
                             assertThat(h.getDied()).isGreaterThanOrEqualTo(h.getBorn());
                         }
@@ -396,7 +397,7 @@ class HeadPersistenceTest {
             private static void verify(final List<Object[]> list) {
                 final var ranges = list.stream().collect(Collectors.toMap(
                         r -> ((Office) r[0]).getCountry(),
-                        r -> List.of((String) r[1], (String) r[2])
+                        r -> List.of((LocalDate) r[1], (LocalDate) r[2])
                 ));
                 assertThat(ranges).isEqualTo(HEAD_TERM_START_RANGES);
             }

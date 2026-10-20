@@ -11,6 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -269,7 +270,7 @@ class OfficePersistenceTest {
             private static void verify(final List<Object[]> list) {
                 final var ranges = list.stream().collect(Collectors.toMap(
                         r -> ((Office) r[0]).getCountry(),
-                        r -> List.of((String) r[1], (String) r[2])
+                        r -> List.of((LocalDate) r[1], (LocalDate) r[2])
                 ));
                 assertThat(ranges).isEqualTo(HeadPersistenceTest.HEAD_TERM_START_RANGES);
             }
