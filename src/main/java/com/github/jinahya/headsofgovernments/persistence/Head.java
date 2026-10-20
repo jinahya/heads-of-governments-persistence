@@ -97,7 +97,7 @@ public class Head {
     @Getter(AccessLevel.PACKAGE)
     private String country;
 
-    @jakarta.persistence.ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @jakarta.persistence.ManyToOne(fetch = FetchType.LAZY, optional = false)
     @jakarta.persistence.JoinColumn(name = "country", nullable = false, insertable = false, updatable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
