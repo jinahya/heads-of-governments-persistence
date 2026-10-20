@@ -50,42 +50,30 @@ jobs:
     - name: Update dependency graph
       uses: advanced-security/maven-dependency-submission-action@v4
 
-  # Both persistence providers. Jakarta EE 11 is the only supported platform generation and every
-  # implementation is pinned to its single aligned release, so the only thing worth varying is which
-  # provider implements Jakarta Persistence. The job above runs exactly one of the two -- whatever is
-  # activeByDefault -- so EclipseLink was never exercised anywhere but on a developer's machine, via
-  # _mvn_jakarta_ee_11.sh. This is that script, as a matrix.
+  # One cell per Jakarta EE generation. Hibernate ORM is the only persistence provider, so the
+  # generation is the only thing worth varying; jakarta-ee-11 is the only one so far, and a new
+  # generation is a new profile and a new cell here.
   #
-  # Naming any profile on the command line deactivates every activeByDefault profile. That is
-  # harmless now that the provider is the only axis: the cell names the provider it wants, and
-  # nothing else was riding on the defaults.
+  # Naming any profile on the command line deactivates every activeByDefault profile, which is fine:
+  # the cell names the generation it wants.
   #
-  # No `clean` here, unlike _mvn_jakarta_ee_11.sh: that clean exists because the local script runs
-  # the providers one after another in the same working copy, and the metamodel the annotation
-  # processor writes differs per provider. Each cell below is a fresh checkout, so there is nothing
-  # to clean.
+  # `test`, not `verify`: compiling, converging and passing the tests are all settled by the end of
+  # the test phase, and the `build` job above runs the full `verify` once.
   #
-  # `test`, not `verify`: what each cell is here to answer is whether the provider compiles, its
-  # dependencies converge and the in-memory tests pass -- and all three are settled by the end of the
-  # test phase. The convergence enforcer is bound to `validate`, so it runs in every cell regardless,
-  # and the packaging, jacoco and licence steps between test and verify do not vary by provider. The
-  # `build` job above runs the full `verify` once.
-  #
-  # Either way no *_IT class is reachable here: maven-failsafe-plugin is declared only inside the
-  # `failsafe` profile, which neither of these cells names.
-  providers:
+  # No *_IT class is reachable here: maven-failsafe-plugin is declared only inside the `failsafe`
+  # profile, which no cell names.
+  jakarta-ee:
 
     runs-on: ubuntu-latest
 
     strategy:
-      # one broken provider should not hide the state of the other
+      # one broken generation should not hide the state of another
       fail-fast: false
       matrix:
-        provider:
-          - jakarta-ee-11-hibernate-orm
-          - jakarta-ee-11-eclipselink
+        profile:
+          - jakarta-ee-11
 
-    name: ${{ matrix.provider }}
+    name: ${{ matrix.profile }}
 
     steps:
     - uses: actions/checkout@v4
@@ -98,4 +86,4 @@ jobs:
     - name: Test
       run: >
         mvn -B test
-        -P${{ matrix.provider }}
+        -P${{ matrix.profile }}

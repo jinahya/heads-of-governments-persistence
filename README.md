@@ -9,7 +9,7 @@ one row per term of office.
 | database | `db/heads_of_governments.sqlite3`, opened read-only |
 | entities | `Office` (one per country) and `Head` (one per term), in `com.github.jinahya.headsofgovernments.persistence` |
 | sources | `docs/*.txt`, one tab-separated list per country, each headed by the pages it came from |
-| platform | Jakarta EE 11 / Jakarta Persistence 3.2, with Hibernate ORM or EclipseLink as the provider |
+| platform | Jakarta EE 11 / Jakarta Persistence 3.2, with Hibernate ORM as the provider |
 
 ## The schema
 
@@ -41,30 +41,27 @@ $ sqlite3 -header db/heads_of_governments.sqlite3 "select * from office"
 Main sources target Java 17 and test sources Java 25, so the build needs a **JDK 25 or newer**.
 
 ```shell
-$ ./_mvn_jakarta_ee_11_test_hibernate-orm.sh      # unit tests, Hibernate ORM
-$ ./_mvn_jakarta_ee_11_test_eclipselink.sh        # unit tests, EclipseLink
-$ ./_mvn_jakarta_ee_11_verify_hibernate-orm.sh    # and the ITs (the `failsafe` profile)
-$ ./_mvn_jakarta_ee_11_verify_eclipselink.sh
+$ ./_mvn_jakarta_ee_11_test.sh              # unit tests
+$ ./_mvn_jakarta_ee_11_verify.sh            # and the ITs (the `failsafe` profile)
+$ ./_mvn_jakarta_ee_11_verify_notests.sh    # the whole lifecycle, tests compiled but not run
 ```
 
-Every script starts with `clean`, and that matters: each provider profile generates the static
-metamodel (`Office_`, `Head_`) with its own annotation processor, and a build without a clean
-in between would compile against the other provider's output. There is no server to bring up; every
-test reads the SQLite file.
+There is no server to bring up; every test reads the SQLite file.
 
 ## Jakarta EE alignment
 
 Every `jakarta.*` API comes from the `jakarta.jakartaee-bom` 11.0.0 import and is never pinned
-directly. Implementations are pinned to their EE 11 aligned releases in `pom.xml` `<properties>`:
+directly. Implementations are pinned to their EE 11 aligned releases in the `jakarta-ee-11` profile's
+`<properties>`:
 
 | Spec | Implementation |
 | --- | --- |
-| Jakarta Persistence 3.2 | Hibernate ORM 7 (`jakarta-ee-11-hibernate-orm`, default) or EclipseLink 5 (`jakarta-ee-11-eclipselink`) |
+| Jakarta Persistence 3.2 | Hibernate ORM 7 |
 
 Jakarta Persistence is the only spec implemented; there is no Validation or CDI on the classpath, so
-the unit leaves `<validation-mode>` at its `AUTO` default. The provider profile is the only build axis. It chooses the provider on the test classpath, the
-`<provider>` the persistence unit names, and the metamodel processor. Dependency convergence is
-enforced on every build; see `CLAUDE.md` for the rules.
+the unit leaves `<validation-mode>` at its `AUTO` default. Hibernate ORM is the only provider, so the
+Jakarta EE generation is the only build axis: one profile per generation, `jakarta-ee-11` (the
+default) so far. Dependency convergence is enforced on every build; see `CLAUDE.md` for the rules.
 
 ## The persistence unit
 
@@ -76,9 +73,7 @@ jdbc:sqlite:db/heads_of_governments.sqlite3?open_mode=1
 
 `open_mode=1` is `SQLITE_OPEN_READONLY`; a write fails at the driver. The path is relative to the
 working directory, the project root under Maven and in the IDE. The descriptor sits in main
-resources rather than test resources because EclipseLink's metamodel processor has to find it on the
-annotation-processor path; the jar carries it as a result, which is fine for a module nothing
-depends on.
+resources, so the jar carries it, which is fine for a module nothing depends on.
 
 ## Exercises
 
@@ -92,21 +87,6 @@ _To be written._
 - **`SQLiteDialect` is not in `hibernate-core`.** It ships in `org.hibernate.orm:hibernate-community-dialects`,
   which moves in step with `hibernate-core`; Hibernate picks it up from the JDBC metadata, so the unit
   names no `hibernate.dialect`.
-- **EclipseLink has no SQLite platform.** With no `eclipselink.target-database` set, it falls
-  back to the generic `org.eclipse.persistence.platform.database.DatabasePlatform`, which is enough for reads.
-- **`Query#setFirstResult` fails under EclipseLink on SQLite.** The generic platform has no `LIMIT`/`OFFSET`
-  syntax, so it asks the driver for a scrollable result set and skips with `ResultSet#absolute`; the
-  driver refuses at `prepareStatement` with "SQLite only supports TYPE_FORWARD_ONLY cursors", which
-  surfaces as a `PersistenceException` wrapping `EclipseLink-4002`. `setMaxResults` alone is fine, since
-  it goes through `Statement#setMaxRows`. Hibernate's `SQLiteDialect` renders `limit ? offset ?` and is
-  unaffected. The test helper `PersistenceTestUtils.selectRandom` tries the standard call first and, on
-  that exception, fetches `offset + 1` rows and takes the last.
-- **EclipseLink 5.0.2 crashes on `@CheckConstraint`.** Predeployment throws a `NullPointerException`
-  from `DatabaseTable.getCheckConstraints()` when a table or column declares one, so the database's
-  `CHECK` constraints are not repeated in the annotations.
-- **EclipseLink's metamodel processor needs `persistence.xml` on the processor path.** With the
-  descriptor under `src/test/resources` it generated nothing, silently. That is the reason the
-  descriptor lives under `src/main/resources`.
 - **`-DskipTests` no longer reaches failsafe** as of maven-failsafe-plugin 3.6.0. Use `-DskipITs` to
   drop the ITs from a `verify`.
 

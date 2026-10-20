@@ -27,7 +27,7 @@
              version="${persistence.version}">
   <persistence-unit name="heads-of-governments" transaction-type="RESOURCE_LOCAL">
     <description>Persistence Unit for db/heads_of_governments.sqlite3</description>
-    <provider>${persistence-unit.provider}</provider>
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
     <class>com.github.jinahya.headsofgovernments.persistence.Office</class>
     <class>com.github.jinahya.headsofgovernments.persistence.Head</class>
     <class>com.github.jinahya.headsofgovernments.persistence.converter.LocalDateConverter</class>
@@ -36,10 +36,6 @@
       <property name="jakarta.persistence.jdbc.driver" value="org.sqlite.JDBC"/>
       <property name="jakarta.persistence.jdbc.url"
                 value="jdbc:sqlite:db/heads_of_governments.sqlite3?open_mode=1"/>
-      <!-- ///////////////////////////////////////////////////////////////////////////////////////////// eclipselink -->
-      <property name="eclipselink.logging.level.sql" value="FINE"/>
-      <property name="eclipselink.logging.parameters" value="true"/>
-      <!-- /////////////////////////////////////////////////////////////////////////////////////////////// hibernate -->
       <property name="hibernate.format_sql" value="true"/>
       <property name="hibernate.highlight_sql" value="true"/>
     </properties>

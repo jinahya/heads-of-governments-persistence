@@ -10,7 +10,7 @@ one package, `com.github.jinahya.headsofgovernments.persistence`, two entities. 
 consumes the jar; the project exists to be read, built and run against the file.
 
 The file is the database. It already holds the schema and the data, and the persistence unit opens it
-read-only (`open_mode=1`), so the providers only read from it and never generate DDL.
+read-only (`open_mode=1`), so Hibernate only reads from it and never generate DDL.
 The raw lists the rows came from are the tab-separated files under `docs/`, one per country, each
 headed by the web pages it was transcribed from and a description of its columns.
 
@@ -51,7 +51,7 @@ that (`String termStart`, `Integer born`) rather than converting. `head_kind` is
 `String`, with the nested `Office.HeadKind` enum kept beside it as the list of values.
 
 When the file changes, dump its schema (`sqlite3 db/heads_of_governments.sqlite3 .schema`) and bring the
-entities back into line with it, then run the tests under both profiles. The unit sets no
+entities back into line with it, then run the tests. The unit sets no
 `hibernate.hbm2ddl.auto`, so nothing checks the mappings at startup; a wrong column shows up as an
 SQLite error from the first query that reads it.
 
@@ -72,10 +72,7 @@ Conventions the two classes follow, and new members must keep:
 - **Nothing is updatable, and only the `@Id` column is insertable.** Every `@Column` and the
   `@JoinColumn` carry `insertable = false, updatable = false`, except the `@Id` column, which carries
   only `updatable = false` and so stays insertable by default. The file is opened read-only, so nothing is lost; the
-  mappings say so explicitly rather than relying on the driver to refuse. The `@Id` exception is
-  EclipseLink's: with both flags false it fails predeployment with `EclipseLink-46` ("There should be
-  one non-read-only mapping defined for the primary key field"), since it counts a mapping as
-  read-only only when both are false.
+  mappings say so explicitly rather than relying on the driver to refuse.
 - **An element is left out only when its default is the right value.** So there is no
   `unique = false`, `length = 255`, `cascade = {}`, `catalog`/`schema`, `targetEntity` (the field
   type gives it), `referencedColumnName` (the referenced primary key), `@Entity` name (the class
@@ -87,9 +84,7 @@ Conventions the two classes follow, and new members must keep:
   `@ManyToOne` and `@OneToMany` names its `fetch` explicitly, default or not: `EAGER` on the basics
   and on `office`, `LAZY` on `heads`. Do not add
   `columnDefinition`, `options`, `check`, `comment`, `table`, `precision`, `scale`, `secondPrecision`, `indexes` or `uniqueConstraints`. The database's own `CHECK` constraints
-  and indexes are not repeated in the annotations -- and EclipseLink 5.0.2 throws a
-  `NullPointerException` from `DatabaseTable.getCheckConstraints()` at predeployment if a
-  `@CheckConstraint` is present, so that one is not merely noise.
+  and indexes are not repeated in the annotations.
 - **Attributes are declared in table column order**, accessors and fields alike, with an association
   placed directly after the column it maps (`office` right after `id`, as the next thing in `head`
   is `country`). `Head` does not map `country` as a basic attribute; the association owns the column.
@@ -107,42 +102,33 @@ the classes directory holds only the two entities, so scanning finds the same li
 a read-only file with no validator on the classpath. Its JDBC URL is
 relative to the working directory, which is the project root under Maven and in the IDE.
 
-The descriptor lives under **main**, not test, resources, on purpose. EclipseLink's metamodel
-processor reads `META-INF/persistence.xml` at annotation-processing time, and the processor path sees
-main resources only, so this placement is what lets the `jakarta-ee-11-eclipselink` profile generate
-the static metamodel with EclipseLink's own `org.eclipse.persistence.jpa.modelgen.processor` while the
-Hibernate profile uses `hibernate-jpamodelgen`. The cost is that the descriptor is packaged into the
-jar. That would be wrong for a library -- Spring's `DefaultPersistenceUnitManager` reads
+The descriptor lives under **main**, not test, resources, so it is packaged into the jar. That would be wrong for a library -- Spring's `DefaultPersistenceUnitManager` reads
 `classpath*:META-INF/persistence.xml` from every jar -- but this module has no consumer, so it is
-accepted. Resource filtering is on for main resources, which is what resolves `${persistence-unit.provider}`
-and `${persistence.version}` in it.
+accepted. Resource filtering is on for main resources, which is what resolves `${persistence.version}` and
+`${persistence.schemaLocation}` in it; the `<provider>` is written out, since Hibernate ORM is the only one.
 
-The generated `Office_` and `Head_` are what persistence-context code uses for criteria paths;
+The generated `Office_` and `Head_`, from `hibernate-jpamodelgen`, are what persistence-context code uses for criteria paths;
 `mappedBy` and other annotation values stay string literals, since an annotation value must be a
 compile-time constant.
 
 ## Building and testing
 
 `maven.compiler.release` is 17 for main sources and 25 for test sources, so **building needs a JDK 25
-or newer**. One script per provider per depth, every one of them prepending `clean`:
+or newer**. One script per depth, each naming the `jakarta-ee-11` profile and prepending `clean`:
 
-| runs | Hibernate ORM | EclipseLink |
-| --- | --- | --- |
-| unit tests | `_mvn_jakarta_ee_11_test_hibernate-orm.sh` | `_mvn_jakarta_ee_11_test_eclipselink.sh` |
-| unit tests and ITs | `_mvn_jakarta_ee_11_verify_hibernate-orm.sh` | `_mvn_jakarta_ee_11_verify_eclipselink.sh` |
-| no tests, but compiles them | `_mvn_jakarta_ee_11_verify_notests_hibernate-orm.sh` | `_mvn_jakarta_ee_11_verify_notests_eclipselink.sh` |
+| runs | script |
+| --- | --- |
+| unit tests | `_mvn_jakarta_ee_11_test.sh` |
+| unit tests and ITs | `_mvn_jakarta_ee_11_verify.sh` |
+| no tests, but compiles them | `_mvn_jakarta_ee_11_verify_notests.sh` |
 
-The `clean` is not optional: the two profiles generate different `Head_` sources, and without a clean
-in between the second provider compiles against the first's leftovers.
-
-The `_verify_` scripts name the `failsafe` profile, which binds `maven-failsafe-plugin` to `**/*IT.java`;
+The `_verify` scripts name the `failsafe` profile, which binds `maven-failsafe-plugin` to `**/*IT.java`;
 the plain `verify` in CI does not, so no `*IT` class runs there. Nothing needs a server: the unit tests
 and any IT read the SQLite file in `db/`. As of maven-failsafe-plugin 3.6.0 `-DskipTests` reaches
-surefire alone, so dropping the ITs from a `_verify_` run takes `-DskipITs`.
+surefire alone, so dropping the ITs from a `_verify` run takes `-DskipITs`.
 
 A check against the file that proves a mapping change is sound: open the unit, `find` a `Head` by id,
-walk to its `Office` and back to `getHeads()`, and count both tables -- 285 heads, 5 offices --
-under each profile in turn.
+walk to its `Office` and back to `getHeads()`, and count both tables -- 285 heads, 5 offices.
 
 ## Dependency convergence
 
@@ -152,38 +138,40 @@ build and is not skipped; treat a divergence as a build defect, not a warning.
 ### Origin: the Jakarta EE umbrella platform
 
 - `jakarta.platform:jakarta.jakartaee-bom` is imported in `<dependencyManagement>`, pinned by
-  `version.jakarta.jakartaee-bom` (`11.0.0`). **Jakarta EE 11 is the only supported generation**; the
-  platform values (`version.jakarta.jakartaee-bom`, `persistence.version` 3.2,
-  `persistence.schemaLocation`) live in the root `<properties>`, never in a profile.
-- **The persistence provider is the only implementation axis**, with exactly two profiles:
-  `jakarta-ee-11-hibernate-orm` (`activeByDefault`) and `jakarta-ee-11-eclipselink`. Jakarta
-  Persistence is the only spec implemented here -- there is no Jakarta Validation and no CDI on any
-  classpath, so the unit's default `<validation-mode>` of `AUTO` finds nothing to use -- so nothing else gets a profile. A provider profile picks no version either: it decides which provider is on the
-  test classpath, which `persistence-unit.provider` the descriptor names, and which
-  `metamodel.generator.*` the annotation processor path uses.
+  `version.jakarta.jakartaee-bom` (`11.0.0`). **Jakarta EE 11 is the only supported generation so
+  far.** The per-generation values (`version.jakarta.jakartaee-bom`, `version.org.hibernate.orm`,
+  `persistence.version` 3.2, `persistence.schemaLocation`) live **only** in that generation's
+  `jakarta-ee-NN` profile, and the root `<properties>` gives them no default: a build with no
+  generation active fails at the BOM import rather than quietly building one.
+- **Hibernate ORM is the only persistence provider**, and the project stays Hibernate-only. Profiles
+  exist only per Jakarta EE generation: `jakarta-ee-11` (`activeByDefault`) is the one so far, and a
+  new generation gets a `jakarta-ee-NN` profile, never a provider. Jakarta Persistence is the only
+  spec implemented here -- there is no Jakarta Validation and no CDI on any classpath, so the unit's
+  default `<validation-mode>` of `AUTO` finds nothing to use. The dependencies themselves
+  (`hibernate-core`, `hibernate-community-dialects`, test scope) are declared once in the root
+  `<dependencies>`; a profile carries only `<properties>`.
 - Do not add a profile to test a second version of anything. Any profile that is added must carry the
-  `jakarta-ee-11-` prefix and actually be certified for that generation.
-- Naming any profile on the command line deactivates every `activeByDefault` profile. Harmless while
-  the provider is the only axis, but it is why a second axis must not be added casually.
+  `jakarta-ee-NN` form and actually be certified for that generation.
+- Naming any profile on the command line deactivates every `activeByDefault` profile. With no
+  default values in the root, naming only another profile (`-Pfailsafe` alone) leaves no generation
+  active and fails the build, which is intended: the scripts and CI always name the generation too.
+  It is also why a second axis must not be added casually.
 
 Consequences:
 
 - Never pin a `jakarta.*` API artifact to an explicit version. The umbrella BOM decides.
 - When a provider drags in a `jakarta.*` API newer or older than the BOM, align the provider with the
   platform generation; do not override the API version.
-- Check convergence against both providers:
-  `./mvnw -q -Pjakarta-ee-11-hibernate-orm enforcer:enforce -Drules=dependencyConvergence`, then the
-  same with `-Pjakarta-ee-11-eclipselink`.
+- Check convergence:
+  `./mvnw -q -Pjakarta-ee-11 enforcer:enforce -Drules=dependencyConvergence`.
 
 ### Keeping specs and implementations aligned
 
 | Spec (API, from the umbrella BOM) | Implementation | Version property |
 | --- | --- | --- |
 | Jakarta Persistence (`jakarta.persistence-api`) | Hibernate ORM (`org.hibernate.orm:hibernate-core`), plus `hibernate-community-dialects` for `SQLiteDialect` | `version.org.hibernate.orm` |
-| Jakarta Persistence (`jakarta.persistence-api`) | EclipseLink (`org.eclipse.persistence:org.eclipse.persistence.jpa`) | `version.org.eclipse.persistence` |
 
-- `hibernate-community-dialects` moves with `hibernate-core`; EclipseLink ships no SQLite platform and
-  runs on the generic `DatabasePlatform`.
+- `hibernate-community-dialects` and `hibernate-jpamodelgen` move with `hibernate-core`.
 - The SQLite driver is `org.xerial:sqlite-jdbc` (`version.org.xerial.sqlite-jdbc`), test scope.
 
 ### Detecting and fixing convergence problems
