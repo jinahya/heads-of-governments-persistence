@@ -8,6 +8,7 @@ branch's diff against `develop` is only its change.
 |---|---|---|
 | `mapping/head-office-lazy` | `Head.office` uses `@ManyToOne(fetch = FetchType.LAZY)` | `HeadPersistenceTest$FindTest$FetchTypeTest`: `__1` sends no `join office`; `__QueryLanguage` and `__CriteriaApi` join it again through `JOIN FETCH` |
 | `mapping/head-java-time` | `Head.termStart`/`termEnd` are `LocalDate` through `@Convert(converter = LocalDateConverter.class)`; `Head.born`/`died` are `Year`, mapped without a converter | `HeadPersistenceTest` and `OfficePersistenceTest`: `develop`'s tests pass unchanged; `MIN`/`MAX` of `termStart` come back as `LocalDate` |
+| `mapping/office-head-kind-enum` | `Office.headKind` is the `Office.HeadKind` enum, with `@Enumerated(EnumType.STRING)` | `OfficePersistenceTest`: `develop`'s tests pass unchanged; `WHERE e.headKind = :headKind` is bound with a `HeadKind` |
 
 ## Naming
 
