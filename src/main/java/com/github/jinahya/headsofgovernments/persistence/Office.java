@@ -30,6 +30,22 @@ import java.util.Objects;
                     FROM Office AS e
                     WHERE e.headKind = :headKind
                     ORDER BY e.country ASC""")
+@NamedQuery(name = "Office.selectAllAndCountOfHeads_GroupByAll",
+            query = """
+                    SELECT e, COUNT(h)
+                    FROM Office AS e JOIN e.heads AS h
+                    GROUP BY e""")
+@NamedQuery(name = "Office.selectAllAndMinMaxTermStartOfHeads_GroupByAll",
+            query = """
+                    SELECT e, MIN(h.termStart), MAX(h.termStart)
+                    FROM Office AS e JOIN e.heads AS h
+                    GROUP BY e""")
+@NamedQuery(name = "Office.selectAllAndAvgLifespanOfHeads_WhereDiedIsNotNull_GroupByAll",
+            query = """
+                    SELECT e, AVG(h.died) - AVG(h.born)
+                    FROM Office AS e JOIN e.heads AS h
+                    WHERE h.died IS NOT NULL
+                    GROUP BY e""")
 @Entity
 @Table(name = "office")
 @Getter
@@ -58,10 +74,10 @@ public class Office {
     @Override
     public String toString() {
         return super.toString() + '{' +
-               "country='" + country +
-               ",headKind='" + headKind +
-               ",headTitle='" + headTitle +
-               ",numbering='" + numbering +
+               "country=" + country +
+               ",headKind=" + headKind +
+               ",headTitle=" + headTitle +
+               ",numbering=" + numbering +
                '}';
     }
 

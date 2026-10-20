@@ -42,7 +42,8 @@ class HeadTest {
         @Test
         void __() throws ReflectiveOperationException {
             EqualsVerifier.forClass(Head.class)
-                    .suppress(Warning.SURROGATE_KEY)
+                    .suppress(Warning.SURROGATE_KEY) // comment out when equals/hashCode use country and termStart
+//                    .withOnlyTheseFields("country", "termStart") // uncomment when equals/hashCode use those
                     .withPrefabValues(Office.class, of("FR"), of("GB"))
                     .verify();
         }

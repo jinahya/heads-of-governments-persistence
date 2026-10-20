@@ -27,13 +27,7 @@ class OfficePersistenceTest {
     @Nested
     class FindTest {
 
-        @ValueSource(strings = {
-                "FR",
-                "GB",
-                "JP",
-                "KR",
-                "US"
-        })
+        @ValueSource(strings = {"FR", "GB", "JP", "KR", "US"})
         @ParameterizedTest
         void __1(final String country) {
             final var found = PersistenceTestUtils.applyEntityManager(em -> {
@@ -146,45 +140,163 @@ class OfficePersistenceTest {
         }
     }
 
-    @DisplayName("SELECT e, COUNT(h) FROM Office AS e JOIN e.heads AS h GROUP BY e")
+    @DisplayName("Aggregate Functions in the SELECT Clause")
     @Nested
-    class CountHeadsTest {
+    class SelectAggregateTest {
 
-        private static void verify(final List<Object[]> list) {
-            final var counts = list.stream().collect(Collectors.toMap(
-                    r -> ((Office) r[0]).getCountry(),
-                    r -> (Long) r[1]
-            ));
-            assertThat(counts).isEqualTo(HeadPersistenceTest.HEAD_COUNTS);
+        @DisplayName("SELECT e, COUNT(h) FROM Office AS e JOIN e.heads AS h GROUP BY e")
+        @Nested
+        class CountHeadsTest {
+
+            private static void verify(final List<Object[]> list) {
+                final var counts = list.stream().collect(Collectors.toMap(
+                        r -> ((Office) r[0]).getCountry(),
+                        r -> (Long) r[1]
+                ));
+                assertThat(counts).isEqualTo(HeadPersistenceTest.HEAD_COUNTS);
+            }
+
+            @Test
+            void __NamedQuery() {
+                final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                    return em.createNamedQuery("Office.selectAllAndCountOfHeads_GroupByAll", Object[].class)
+                            .getResultList();
+                });
+                verify(list);
+            }
+
+            @Test
+            void __QueryLanguage() {
+                final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                    return em.createQuery(
+                                    """
+                                            SELECT e, COUNT(h)
+                                            FROM Office AS e JOIN e.heads AS h
+                                            GROUP BY e""",
+                                    Object[].class
+                            )
+                            .getResultList();
+                });
+                verify(list);
+            }
+
+            @Test
+            void __CriteriaApi() {
+                final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                    final var builder = em.getCriteriaBuilder();
+                    final var query = builder.createQuery(Object[].class);
+                    final var root = query.from(Office.class);
+                    final var heads = root.join(Office_.heads);
+                    query.select(builder.array(root, builder.count(heads)))
+                            .groupBy(root);
+                    return em.createQuery(query).getResultList();
+                });
+                verify(list);
+            }
         }
 
-        @Test
-        void __QueryLanguage() {
-            final var list = PersistenceTestUtils.applyEntityManager(em -> {
-                return em.createQuery(
-                                """
-                                        SELECT e, COUNT(h)
-                                        FROM Office AS e JOIN e.heads AS h
-                                        GROUP BY e""",
-                                Object[].class
-                        )
-                        .getResultList();
-            });
-            verify(list);
+        @DisplayName("SELECT e, MIN(h.termStart), MAX(h.termStart) FROM Office AS e JOIN e.heads AS h GROUP BY e")
+        @Nested
+        class MinMaxTermStartOfHeadsTest {
+
+            private static void verify(final List<Object[]> list) {
+                final var ranges = list.stream().collect(Collectors.toMap(
+                        r -> ((Office) r[0]).getCountry(),
+                        r -> List.of((String) r[1], (String) r[2])
+                ));
+                assertThat(ranges).isEqualTo(HeadPersistenceTest.HEAD_TERM_START_RANGES);
+            }
+
+            @Test
+            void __NamedQuery() {
+                final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                    return em.createNamedQuery("Office.selectAllAndMinMaxTermStartOfHeads_GroupByAll", Object[].class)
+                            .getResultList();
+                });
+                verify(list);
+            }
+
+            @Test
+            void __QueryLanguage() {
+                final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                    return em.createQuery(
+                                    """
+                                            SELECT e, MIN(h.termStart), MAX(h.termStart)
+                                            FROM Office AS e JOIN e.heads AS h
+                                            GROUP BY e""",
+                                    Object[].class
+                            )
+                            .getResultList();
+                });
+                verify(list);
+            }
+
+            @Test
+            void __CriteriaApi() {
+                final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                    final var builder = em.getCriteriaBuilder();
+                    final var query = builder.createQuery(Object[].class);
+                    final var root = query.from(Office.class);
+                    final var heads = root.join(Office_.heads);
+                    final var termStart = heads.get(Head_.termStart);
+                    query.select(builder.array(root, builder.least(termStart), builder.greatest(termStart)))
+                            .groupBy(root);
+                    return em.createQuery(query).getResultList();
+                });
+                verify(list);
+            }
         }
 
-        @Test
-        void __CriteriaApi() {
-            final var list = PersistenceTestUtils.applyEntityManager(em -> {
-                final var builder = em.getCriteriaBuilder();
-                final var query = builder.createQuery(Object[].class);
-                final var root = query.from(Office.class);
-                final var heads = root.join(Office_.heads);
-                query.multiselect(root, builder.count(heads))
-                        .groupBy(root);
-                return em.createQuery(query).getResultList();
-            });
-            verify(list);
+        @DisplayName(
+                "SELECT e, AVG(h.died) - AVG(h.born) FROM Office AS e JOIN e.heads AS h WHERE h.died IS NOT NULL " +
+                "GROUP BY e")
+        @Nested
+        class AvgLifespanOfHeadsTest {
+
+            @Test
+            void __NamedQuery() {
+                final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                    return em.createNamedQuery(
+                                    "Office.selectAllAndAvgLifespanOfHeads_WhereDiedIsNotNull_GroupByAll",
+                                    Object[].class
+                            )
+                            .getResultList();
+                });
+                HeadPersistenceTest.verifyAvgLifespans(list);
+            }
+
+            @Test
+            void __QueryLanguage() {
+                final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                    return em.createQuery(
+                                    """
+                                            SELECT e, AVG(h.died) - AVG(h.born)
+                                            FROM Office AS e JOIN e.heads AS h
+                                            WHERE h.died IS NOT NULL
+                                            GROUP BY e""",
+                                    Object[].class
+                            )
+                            .getResultList();
+                });
+                HeadPersistenceTest.verifyAvgLifespans(list);
+            }
+
+            @Test
+            void __CriteriaApi() {
+                final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                    final var builder = em.getCriteriaBuilder();
+                    final var query = builder.createQuery(Object[].class);
+                    final var root = query.from(Office.class);
+                    final var heads = root.join(Office_.heads);
+                    final var died = heads.get(Head_.died);
+                    final var born = heads.get(Head_.born);
+                    query.select(builder.array(root, builder.diff(builder.avg(died), builder.avg(born))))
+                            .where(builder.isNotNull(died))
+                            .groupBy(root);
+                    return em.createQuery(query).getResultList();
+                });
+                HeadPersistenceTest.verifyAvgLifespans(list);
+            }
         }
     }
 }

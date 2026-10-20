@@ -29,6 +29,26 @@ import java.util.Objects;
                     FROM Head AS e
                     WHERE e.office = :office
                     ORDER BY e.termStart ASC""")
+@NamedQuery(name = "Head.selectCount",
+            query = """
+                    SELECT COUNT(e)
+                    FROM Head AS e""")
+@NamedQuery(name = "Head.selectOfficeAndCount_GroupByOffice",
+            query = """
+                    SELECT e.office, COUNT(e)
+                    FROM Head AS e
+                    GROUP BY e.office""")
+@NamedQuery(name = "Head.selectOfficeAndMinMaxTermStart_GroupByOffice",
+            query = """
+                    SELECT e.office, MIN(e.termStart), MAX(e.termStart)
+                    FROM Head AS e
+                    GROUP BY e.office""")
+@NamedQuery(name = "Head.selectOfficeAndAvgLifespan_WhereDiedIsNotNull_GroupByOffice",
+            query = """
+                    SELECT e.office, AVG(e.died) - AVG(e.born)
+                    FROM Head AS e
+                    WHERE e.died IS NOT NULL
+                    GROUP BY e.office""")
 @Entity
 @Table(name = "head")
 @Getter
@@ -41,12 +61,12 @@ public class Head {
     public String toString() {
         return super.toString() + '{' +
                "id=" + id +
-               ",country='" + country +
+               ",country=" + country +
                ",number=" + number +
-               ",termStart='" + termStart +
-               ",termEnd='" + termEnd +
-               ",name='" + name +
-               ",party='" + party +
+               ",termStart=" + termStart +
+               ",termEnd=" + termEnd +
+               ",name=" + name +
+               ",party=" + party +
                ",born=" + born +
                ",died=" + died +
                '}';
@@ -74,7 +94,7 @@ public class Head {
     // -----------------------------------------------------------------------------------------------------------------
     @Basic(fetch = FetchType.EAGER, optional = false)
     @Column(name = "country", nullable = false, insertable = false, updatable = false)
-    @Getter(AccessLevel.NONE)
+    @Getter(AccessLevel.PACKAGE)
     private String country;
 
     @jakarta.persistence.ManyToOne(fetch = FetchType.EAGER, optional = false)
