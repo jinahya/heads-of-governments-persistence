@@ -151,13 +151,13 @@ class HeadPersistenceTest {
                         assertThat(h.getBorn()).isEqualTo(random.getBorn());
                         assertThat(h.getDied()).isEqualTo(random.getDied());
                         assertThat(h.getNumber()).isPositive();
-                        assertThat(h.getTermStart()).isNotBlank();
+                        assertThat(h.getTermStart()).isNotNull();
                         if (h.getTermEnd() != null) {
-                            assertThat(h.getTermEnd()).isGreaterThanOrEqualTo(h.getTermStart());
+                            assertThat(String.valueOf(h.getTermEnd())).isGreaterThanOrEqualTo(String.valueOf(h.getTermStart()));
                         }
                         assertThat(h.getName()).isNotBlank();
                         assertThat(h.getParty()).isNotBlank();
-                        assertThat(h.getBorn()).isPositive();
+                        assertThat(h.getBorn()).isNotNull();
                         if (h.getDied() != null) {
                             assertThat(h.getDied()).isGreaterThanOrEqualTo(h.getBorn());
                         }
@@ -396,7 +396,7 @@ class HeadPersistenceTest {
             private static void verify(final List<Object[]> list) {
                 final var ranges = list.stream().collect(Collectors.toMap(
                         r -> ((Office) r[0]).getCountry(),
-                        r -> List.of((String) r[1], (String) r[2])
+                        r -> List.of(String.valueOf(r[1]), String.valueOf(r[2]))
                 ));
                 assertThat(ranges).isEqualTo(HEAD_TERM_START_RANGES);
             }
