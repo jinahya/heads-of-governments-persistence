@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
+
 /**
  * An entity for the {@code head} table: one row per term of office of a head of government. The {@code number} column
  * is the country's own ordinal and is not unique, which is why the table carries a surrogate {@code id}.
@@ -34,6 +36,35 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Head {
 
+    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    @Override
+    public String toString() {
+        return super.toString() + '{' +
+               "id=" + id +
+               ",country='" + country +
+               ",number=" + number +
+               ",termStart='" + termStart +
+               ",termEnd='" + termEnd +
+               ",name='" + name +
+               ",party='" + party +
+               ",born=" + born +
+               ",died=" + died +
+               '}';
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        if (!(obj instanceof Head that)) {
+            return false;
+        }
+        return Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return Objects.hashCode(getId());
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     @Id
     @Basic(fetch = FetchType.EAGER, optional = false)
@@ -43,6 +74,7 @@ public class Head {
     // -----------------------------------------------------------------------------------------------------------------
     @Basic(fetch = FetchType.EAGER, optional = false)
     @Column(name = "country", nullable = false, insertable = false, updatable = false)
+    @Getter(AccessLevel.NONE)
     private String country;
 
     @jakarta.persistence.ManyToOne(fetch = FetchType.EAGER, optional = false)

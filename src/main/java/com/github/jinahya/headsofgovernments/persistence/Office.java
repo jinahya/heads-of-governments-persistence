@@ -4,16 +4,18 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * An entity for the {@code office} table: one row per country, saying what that country's head of government is called
@@ -31,6 +33,7 @@ import java.util.List;
 @Entity
 @Table(name = "office")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public class Office {
 
@@ -51,13 +54,28 @@ public class Office {
         PRIME_MINISTER
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    @Override
+    public String toString() {
+        return super.toString() + '{' +
+               "country='" + country +
+               ",headKind='" + headKind +
+               ",headTitle='" + headTitle +
+               ",numbering='" + numbering +
+               '}';
+    }
 
-    /**
-     * Creates a new instance.
-     */
-    protected Office() {
-        super();
+    @Override
+    public final boolean equals(final Object obj) {
+        if (!(obj instanceof Office that)) {
+            return false;
+        }
+        return Objects.equals(getCountry(), that.getCountry());
+    }
+
+    @Override
+    public final int hashCode() {
+        return Objects.hashCode(getCountry());
     }
 
     // -----------------------------------------------------------------------------------------------------------------
