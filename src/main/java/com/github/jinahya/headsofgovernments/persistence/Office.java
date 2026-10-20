@@ -41,12 +41,6 @@ import java.util.Objects;
                     SELECT e, MIN(h.termStart), MAX(h.termStart)
                     FROM Office AS e JOIN e.heads AS h
                     GROUP BY e""")
-@NamedQuery(name = "Office.selectAllAndAvgLifespanOfHeads_WhereDiedIsNotNull_GroupByAll",
-            query = """
-                    SELECT e, AVG(h.died) - AVG(h.born)
-                    FROM Office AS e JOIN e.heads AS h
-                    WHERE h.died IS NOT NULL
-                    GROUP BY e""")
 @Entity
 @Table(name = "office")
 @Getter

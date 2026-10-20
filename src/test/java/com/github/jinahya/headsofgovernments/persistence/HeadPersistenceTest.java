@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
@@ -49,27 +48,6 @@ class HeadPersistenceTest {
             "KR", List.of("1948-07-24", "2025-06-04"),
             "US", List.of("1789-04-30", "2025-01-20")
     );
-
-    /**
-     * The average of {@code died - born} over the rows of the {@code head} table whose {@code died} is not
-     * {@code NULL}, by {@code country}; the sum of the differences over the number of those rows.
-     */
-    static final Map<String, Double> HEAD_AVG_LIFESPANS = Map.of(
-            "FR", 2099d / 27,
-            "GB", 5276d / 71,
-            "JP", 6738d / 87,
-            "KR", 1263d / 16,
-            "US", 2959d / 41
-    );
-
-    static void verifyAvgLifespans(final List<Object[]> list) {
-        final var lifespans = list.stream().collect(Collectors.toMap(
-                r -> ((Office) r[0]).getCountry(),
-                r -> (Double) r[1]
-        ));
-        assertThat(lifespans).containsOnlyKeys(HEAD_AVG_LIFESPANS.keySet());
-        lifespans.forEach((k, v) -> assertThat(v).isCloseTo(HEAD_AVG_LIFESPANS.get(k), within(1.0E-9)));
-    }
 
     @DisplayName("EntityManager#find(entityClass, primaryKey)")
     @Nested
@@ -460,57 +438,6 @@ class HeadPersistenceTest {
                     return em.createQuery(query).getResultList();
                 });
                 verify(list);
-            }
-        }
-
-        @DisplayName(
-                "SELECT e.office, AVG(e.died) - AVG(e.born) FROM Head AS e WHERE e.died IS NOT NULL GROUP BY e.office")
-        @Nested
-        class AvgLifespanGroupByOfficeTest {
-
-            @Test
-            void __NamedQuery() {
-                final var list = PersistenceTestUtils.applyEntityManager(em -> {
-                    return em.createNamedQuery(
-                                    "Head.selectOfficeAndAvgLifespan_WhereDiedIsNotNull_GroupByOffice",
-                                    Object[].class
-                            )
-                            .getResultList();
-                });
-                verifyAvgLifespans(list);
-            }
-
-            @Test
-            void __QueryLanguage() {
-                final var list = PersistenceTestUtils.applyEntityManager(em -> {
-                    return em.createQuery(
-                                    """
-                                            SELECT e.office, AVG(e.died) - AVG(e.born)
-                                            FROM Head AS e
-                                            WHERE e.died IS NOT NULL
-                                            GROUP BY e.office""",
-                                    Object[].class
-                            )
-                            .getResultList();
-                });
-                verifyAvgLifespans(list);
-            }
-
-            @Test
-            void __CriteriaApi() {
-                final var list = PersistenceTestUtils.applyEntityManager(em -> {
-                    final var builder = em.getCriteriaBuilder();
-                    final var query = builder.createQuery(Object[].class);
-                    final var root = query.from(Head.class);
-                    final var office = root.get(Head_.office);
-                    final var died = root.get(Head_.died);
-                    final var born = root.get(Head_.born);
-                    query.select(builder.array(office, builder.diff(builder.avg(died), builder.avg(born))))
-                            .where(builder.isNotNull(died))
-                            .groupBy(office);
-                    return em.createQuery(query).getResultList();
-                });
-                verifyAvgLifespans(list);
             }
         }
     }

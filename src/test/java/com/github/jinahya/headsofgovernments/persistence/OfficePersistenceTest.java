@@ -313,57 +313,5 @@ class OfficePersistenceTest {
                 verify(list);
             }
         }
-
-        @DisplayName(
-                "SELECT e, AVG(h.died) - AVG(h.born) FROM Office AS e JOIN e.heads AS h WHERE h.died IS NOT NULL " +
-                "GROUP BY e")
-        @Nested
-        class AvgLifespanOfHeadsTest {
-
-            @Test
-            void __NamedQuery() {
-                final var list = PersistenceTestUtils.applyEntityManager(em -> {
-                    return em.createNamedQuery(
-                                    "Office.selectAllAndAvgLifespanOfHeads_WhereDiedIsNotNull_GroupByAll",
-                                    Object[].class
-                            )
-                            .getResultList();
-                });
-                HeadPersistenceTest.verifyAvgLifespans(list);
-            }
-
-            @Test
-            void __QueryLanguage() {
-                final var list = PersistenceTestUtils.applyEntityManager(em -> {
-                    return em.createQuery(
-                                    """
-                                            SELECT e, AVG(h.died) - AVG(h.born)
-                                            FROM Office AS e JOIN e.heads AS h
-                                            WHERE h.died IS NOT NULL
-                                            GROUP BY e""",
-                                    Object[].class
-                            )
-                            .getResultList();
-                });
-                HeadPersistenceTest.verifyAvgLifespans(list);
-            }
-
-            @Test
-            void __CriteriaApi() {
-                final var list = PersistenceTestUtils.applyEntityManager(em -> {
-                    final var builder = em.getCriteriaBuilder();
-                    final var query = builder.createQuery(Object[].class);
-                    final var root = query.from(Office.class);
-                    final var heads = root.join(Office_.heads);
-                    final var died = heads.get(Head_.died);
-                    final var born = heads.get(Head_.born);
-                    query.select(builder.array(root, builder.diff(builder.avg(died), builder.avg(born))))
-                            .where(builder.isNotNull(died))
-                            .groupBy(root);
-                    return em.createQuery(query).getResultList();
-                });
-                HeadPersistenceTest.verifyAvgLifespans(list);
-            }
-        }
     }
 }

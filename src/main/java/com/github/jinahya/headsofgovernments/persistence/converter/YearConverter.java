@@ -7,6 +7,14 @@ import lombok.NoArgsConstructor;
 
 import java.time.Year;
 
+/**
+ * An attribute converter between {@link Year} and its {@code String} form, such as {@code "1808"}.
+ *
+ * @deprecated Not needed for this database: {@code born} and {@code died} are {@code INTEGER} columns, and since
+ * Jakarta Persistence 3.2 a provider maps {@link Year} to {@code INTEGER} without a converter. Kept for a year stored
+ * as {@code TEXT}.
+ */
+@Deprecated
 @Converter(autoApply = false)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class YearConverter
