@@ -82,7 +82,11 @@ class HeadPersistenceTest {
             @Test
             void __1() {
                 final var found = PersistenceTestUtils.applyEntityManager(em -> {
-                    return em.find(Head.class, 1L);
+                    try {
+                        return em.find(Head.class, 1L);
+                    } finally {
+                        HibernateOrmUtils.logEntities(em);
+                    }
                 });
                 assertThat(found)
                         .isNotNull()
@@ -93,16 +97,20 @@ class HeadPersistenceTest {
             @Test
             void __QueryLanguage() {
                 final var found = PersistenceTestUtils.applyEntityManager(em -> {
-                    return em.createQuery(
-                                    """
-                                            SELECT e
-                                            FROM Head AS e
-                                            JOIN FETCH e.office
-                                            WHERE e.id = :id""",
-                                    Head.class
-                            )
-                            .setParameter("id", 1L)
-                            .getSingleResult();
+                    try {
+                        return em.createQuery(
+                                        """
+                                                SELECT e
+                                                FROM Head AS e
+                                                JOIN FETCH e.office
+                                                WHERE e.id = :id""",
+                                        Head.class
+                                )
+                                .setParameter("id", 1L)
+                                .getSingleResult();
+                    } finally {
+                        HibernateOrmUtils.logEntities(em);
+                    }
                 });
                 assertThat(found)
                         .isNotNull()
@@ -118,7 +126,11 @@ class HeadPersistenceTest {
                     root.fetch(Head_.office);
                     query.select(root)
                             .where(builder.equal(root.get(Head_.id), 1L));
-                    return em.createQuery(query).getSingleResult();
+                    try {
+                        return em.createQuery(query).getSingleResult();
+                    } finally {
+                        HibernateOrmUtils.logEntities(em);
+                    }
                 });
                 assertThat(found)
                         .isNotNull()
