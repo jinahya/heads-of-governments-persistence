@@ -98,7 +98,8 @@ public class Office {
     // -----------------------------------------------------------------------------------------------------------------
     @Basic(fetch = FetchType.EAGER, optional = false)
     @Column(name = "head_kind", nullable = false, insertable = false, updatable = false)
-    private String headKind;
+    @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
+    private HeadKind headKind;
 
     @Basic(fetch = FetchType.EAGER, optional = false)
     @Column(name = "head_title", nullable = false, insertable = false, updatable = false)
