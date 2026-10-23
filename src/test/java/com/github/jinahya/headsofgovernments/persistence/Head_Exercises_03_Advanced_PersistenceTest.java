@@ -27,67 +27,67 @@ class Head_Exercises_03_Advanced_PersistenceTest {
     class Exercise1Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
-                row("FR", "Louis-Napoléon Bonaparte", "1852-12-02", "Adolphe Thiers", "1871-08-31", 6845L),
-                row("FR", "Sadi Carnot", "1894-06-25", "Jean Casimir-Perier", "1894-06-27", 1L),
-                row("FR", "Félix Faure", "1899-02-16", "Émile Loubet", "1899-02-18", 1L),
-                row("FR", "Paul Deschanel", "1920-09-21", "Alexandre Millerand", "1920-09-23", 1L),
-                row("FR", "Alexandre Millerand", "1924-06-11", "Gaston Doumergue", "1924-06-13", 1L),
-                row("FR", "Paul Doumer", "1932-05-07", "Albert Lebrun", "1932-05-10", 2L),
-                row("FR", "Albert Lebrun", "1940-07-11", "Vincent Auriol", "1947-01-16", 2379L),
-                row("FR", "Charles de Gaulle", "1969-04-28", "Georges Pompidou", "1969-06-20", 52L),
-                row("FR", "Georges Pompidou", "1974-04-02", "Valéry Giscard d'Estaing", "1974-05-27", 54L),
-                row("GB", "Robert Walpole", "1742-02-11", "Spencer Compton", "1742-02-16", 4L),
-                row("GB", "Spencer Compton", "1743-07-02", "Henry Pelham", "1743-08-27", 55L),
-                row("GB", "Henry Pelham", "1754-03-06", "Thomas Pelham-Holles", "1754-03-16", 9L),
-                row("GB", "Thomas Pelham-Holles", "1756-11-11", "William Cavendish", "1756-11-16", 4L),
-                row("GB", "John Stuart", "1763-04-08", "George Grenville", "1763-04-16", 7L),
-                row("GB", "George Grenville", "1765-07-10", "Charles Watson-Wentworth", "1765-07-13", 2L),
-                row("GB", "Charles Watson-Wentworth", "1782-07-01", "William Petty", "1782-07-04", 2L),
-                row("GB", "William Petty", "1783-03-26", "William Cavendish-Bentinck", "1783-04-02", 6L),
-                row("GB", "William Pitt the Younger", "1801-03-14", "Henry Addington", "1801-03-17", 2L),
-                row("GB", "William Pitt the Younger", "1806-01-23", "William Grenville", "1806-02-11", 18L),
-                row("GB", "William Grenville", "1807-03-25", "William Cavendish-Bentinck", "1807-03-31", 5L),
-                row("GB", "Spencer Perceval", "1812-05-11", "Robert Jenkinson", "1812-06-08", 27L),
-                row("GB", "Robert Jenkinson", "1827-04-09", "George Canning", "1827-04-12", 2L),
-                row("GB", "George Canning", "1827-08-08", "Frederick John Robinson", "1827-08-31", 22L),
-                row("GB", "Frederick John Robinson", "1828-01-08", "Arthur Wellesley", "1828-01-22", 13L),
-                row("GB", "Arthur Wellesley", "1830-11-16", "Charles Grey", "1830-11-22", 5L),
-                row("GB", "Charles Grey", "1834-07-09", "William Lamb", "1834-07-16", 6L),
-                row("GB", "William Lamb", "1834-11-14", "Arthur Wellesley", "1834-11-17", 2L),
-                row("GB", "Robert Peel", "1835-04-08", "William Lamb", "1835-04-18", 9L),
-                row("GB", "John Russell", "1852-02-21", "Edward Smith-Stanley", "1852-02-23", 1L),
-                row("GB", "Edward Smith-Stanley", "1852-12-17", "George Hamilton-Gordon", "1852-12-19", 1L),
-                row("GB", "George Hamilton-Gordon", "1855-01-30", "Henry John Temple", "1855-02-06", 6L),
-                row("GB", "Henry John Temple", "1865-10-18", "John Russell", "1865-10-29", 10L),
-                row("GB", "John Russell", "1866-06-26", "Edward Smith-Stanley", "1866-06-28", 1L),
-                row("GB", "Edward Smith-Stanley", "1868-02-25", "Benjamin Disraeli", "1868-02-27", 1L),
-                row("GB", "Benjamin Disraeli", "1868-12-01", "William Ewart Gladstone", "1868-12-03", 1L),
-                row("GB", "William Ewart Gladstone", "1874-02-17", "Benjamin Disraeli", "1874-02-20", 2L),
-                row("GB", "Benjamin Disraeli", "1880-04-21", "William Ewart Gladstone", "1880-04-23", 1L),
-                row("GB", "William Ewart Gladstone", "1885-06-09", "Robert Gascoyne-Cecil", "1885-06-23", 13L),
-                row("GB", "Robert Gascoyne-Cecil", "1886-01-28", "William Ewart Gladstone", "1886-02-01", 3L),
-                row("GB", "William Ewart Gladstone", "1886-07-20", "Robert Gascoyne-Cecil", "1886-07-25", 4L),
-                row("GB", "Robert Gascoyne-Cecil", "1892-08-11", "William Ewart Gladstone", "1892-08-15", 3L),
-                row("GB", "William Ewart Gladstone", "1894-03-02", "Archibald Primrose", "1894-03-05", 2L),
-                row("GB", "Archibald Primrose", "1895-06-22", "Robert Gascoyne-Cecil", "1895-06-25", 2L),
-                row("GB", "Henry Campbell-Bannerman", "1908-04-03", "H. H. Asquith", "1908-04-08", 4L),
-                row("GB", "David Lloyd George", "1922-10-19", "Bonar Law", "1922-10-23", 3L),
-                row("GB", "Bonar Law", "1923-05-20", "Stanley Baldwin", "1923-05-22", 1L),
-                row("JP", "黒田清隆", "1889-10-25", "山県有朋", "1889-12-24", 59L),
-                row("JP", "伊藤博文", "1896-08-31", "松方正義", "1896-09-18", 17L),
-                row("JP", "伊藤博文", "1901-05-10", "桂太郎", "1901-06-02", 22L),
-                row("JP", "原敬", "1921-11-04", "高橋是清", "1921-11-13", 8L),
-                row("JP", "加藤友三郎", "1923-08-24", "山本権兵衛", "1923-09-02", 8L),
-                row("JP", "加藤高明", "1926-01-28", "若槻禮次郎", "1926-01-30", 1L),
-                row("JP", "犬養毅", "1932-05-16", "斎藤実", "1932-05-26", 9L),
-                row("JP", "大平正芳", "1980-06-12", "鈴木善幸", "1980-07-17", 34L),
-                row("JP", "小渕恵三", "2000-04-03", "森喜朗", "2000-04-05", 1L),
-                row("KR", "이승만", "1960-04-27", "윤보선", "1960-08-12", 106L),
-                row("KR", "윤보선", "1962-03-22", "박정희", "1963-12-17", 634L),
-                row("KR", "박정희", "1979-10-26", "최규하", "1979-12-06", 40L),
-                row("KR", "최규하", "1980-08-16", "전두환", "1980-08-27", 10L),
-                row("KR", "박근혜", "2017-03-10", "문재인", "2017-05-10", 60L),
-                row("KR", "윤석열", "2025-04-04", "이재명", "2025-06-04", 60L)
+                row(2L, "FR", 2L, "1871-08-31", "1873-05-24", "Adolphe Thiers", "Orléaniste/Républicain_opportuniste", 1797L, 1877L, "Louis-Napoléon Bonaparte", "1852-12-02", 6845L),
+                row(7L, "FR", 6L, "1894-06-27", "1895-01-16", "Jean Casimir-Perier", "Républicain_opportuniste", 1847L, 1907L, "Sadi Carnot", "1894-06-25", 1L),
+                row(9L, "FR", 8L, "1899-02-18", "1906-02-18", "Émile Loubet", "Alliance_républicaine_démocratique", 1838L, 1929L, "Félix Faure", "1899-02-16", 1L),
+                row(13L, "FR", 12L, "1920-09-23", "1924-06-11", "Alexandre Millerand", "Indépendant", 1859L, 1943L, "Paul Deschanel", "1920-09-21", 1L),
+                row(14L, "FR", 13L, "1924-06-13", "1931-06-13", "Gaston Doumergue", "Parti_radical", 1863L, 1937L, "Alexandre Millerand", "1924-06-11", 1L),
+                row(16L, "FR", 15L, "1932-05-10", "1939-05-10", "Albert Lebrun", "Alliance_démocratique", 1871L, 1950L, "Paul Doumer", "1932-05-07", 2L),
+                row(18L, "FR", 16L, "1947-01-16", "1954-01-16", "Vincent Auriol", "SFIO", 1884L, 1966L, "Albert Lebrun", "1940-07-11", 2379L),
+                row(22L, "FR", 19L, "1969-06-20", "1974-04-02", "Georges Pompidou", "UDR", 1911L, 1974L, "Charles de Gaulle", "1969-04-28", 52L),
+                row(23L, "FR", 20L, "1974-05-27", "1981-05-21", "Valéry Giscard d'Estaing", "RI/UDF", 1926L, 2020L, "Georges Pompidou", "1974-04-02", 54L),
+                row(33L, "GB", 2L, "1742-02-16", "1743-07-02", "Spencer Compton", "Whig", 1673L, 1743L, "Robert Walpole", "1742-02-11", 4L),
+                row(34L, "GB", 3L, "1743-08-27", "1754-03-06", "Henry Pelham", "Whig", 1694L, 1754L, "Spencer Compton", "1743-07-02", 55L),
+                row(35L, "GB", 4L, "1754-03-16", "1756-11-11", "Thomas Pelham-Holles", "Whig", 1693L, 1768L, "Henry Pelham", "1754-03-06", 9L),
+                row(36L, "GB", 5L, "1756-11-16", "1757-06-29", "William Cavendish", "Whig", 1720L, 1764L, "Thomas Pelham-Holles", "1756-11-11", 4L),
+                row(39L, "GB", 7L, "1763-04-16", "1765-07-10", "George Grenville", "Whig", 1712L, 1770L, "John Stuart", "1763-04-08", 7L),
+                row(40L, "GB", 8L, "1765-07-13", "1766-07-30", "Charles Watson-Wentworth", "Whig", 1730L, 1782L, "George Grenville", "1765-07-10", 2L),
+                row(45L, "GB", 12L, "1782-07-04", "1783-03-26", "William Petty", "Whig", 1737L, 1805L, "Charles Watson-Wentworth", "1782-07-01", 2L),
+                row(46L, "GB", 13L, "1783-04-02", "1783-12-18", "William Cavendish-Bentinck", "Whig", 1738L, 1809L, "William Petty", "1783-03-26", 6L),
+                row(48L, "GB", 15L, "1801-03-17", "1804-05-10", "Henry Addington", "Tory", 1757L, 1844L, "William Pitt the Younger", "1801-03-14", 2L),
+                row(50L, "GB", 16L, "1806-02-11", "1807-03-25", "William Grenville", "Whig", 1759L, 1834L, "William Pitt the Younger", "1806-01-23", 18L),
+                row(51L, "GB", 13L, "1807-03-31", "1809-10-04", "William Cavendish-Bentinck", "Tory", 1738L, 1809L, "William Grenville", "1807-03-25", 5L),
+                row(53L, "GB", 18L, "1812-06-08", "1827-04-09", "Robert Jenkinson", "Tory", 1770L, 1828L, "Spencer Perceval", "1812-05-11", 27L),
+                row(54L, "GB", 19L, "1827-04-12", "1827-08-08", "George Canning", "Tory", 1770L, 1827L, "Robert Jenkinson", "1827-04-09", 2L),
+                row(55L, "GB", 20L, "1827-08-31", "1828-01-08", "Frederick John Robinson", "Tory", 1782L, 1859L, "George Canning", "1827-08-08", 22L),
+                row(56L, "GB", 21L, "1828-01-22", "1830-11-16", "Arthur Wellesley", "Tory", 1769L, 1852L, "Frederick John Robinson", "1828-01-08", 13L),
+                row(57L, "GB", 22L, "1830-11-22", "1834-07-09", "Charles Grey", "Whig", 1764L, 1845L, "Arthur Wellesley", "1830-11-16", 5L),
+                row(58L, "GB", 23L, "1834-07-16", "1834-11-14", "William Lamb", "Whig", 1779L, 1848L, "Charles Grey", "1834-07-09", 6L),
+                row(59L, "GB", 21L, "1834-11-17", "1834-12-09", "Arthur Wellesley", "Tory", 1769L, 1852L, "William Lamb", "1834-11-14", 2L),
+                row(61L, "GB", 23L, "1835-04-18", "1841-08-30", "William Lamb", "Whig", 1779L, 1848L, "Robert Peel", "1835-04-08", 9L),
+                row(64L, "GB", 26L, "1852-02-23", "1852-12-17", "Edward Smith-Stanley", "Conservative", 1799L, 1869L, "John Russell", "1852-02-21", 1L),
+                row(65L, "GB", 27L, "1852-12-19", "1855-01-30", "George Hamilton-Gordon", "Peelite", 1784L, 1860L, "Edward Smith-Stanley", "1852-12-17", 1L),
+                row(66L, "GB", 28L, "1855-02-06", "1858-02-19", "Henry John Temple", "Whig", 1784L, 1865L, "George Hamilton-Gordon", "1855-01-30", 6L),
+                row(69L, "GB", 25L, "1865-10-29", "1866-06-26", "John Russell", "Liberal", 1792L, 1878L, "Henry John Temple", "1865-10-18", 10L),
+                row(70L, "GB", 26L, "1866-06-28", "1868-02-25", "Edward Smith-Stanley", "Conservative", 1799L, 1869L, "John Russell", "1866-06-26", 1L),
+                row(71L, "GB", 29L, "1868-02-27", "1868-12-01", "Benjamin Disraeli", "Conservative", 1804L, 1881L, "Edward Smith-Stanley", "1868-02-25", 1L),
+                row(72L, "GB", 30L, "1868-12-03", "1874-02-17", "William Ewart Gladstone", "Liberal", 1809L, 1898L, "Benjamin Disraeli", "1868-12-01", 1L),
+                row(73L, "GB", 29L, "1874-02-20", "1880-04-21", "Benjamin Disraeli", "Conservative", 1804L, 1881L, "William Ewart Gladstone", "1874-02-17", 2L),
+                row(74L, "GB", 30L, "1880-04-23", "1885-06-09", "William Ewart Gladstone", "Liberal", 1809L, 1898L, "Benjamin Disraeli", "1880-04-21", 1L),
+                row(75L, "GB", 31L, "1885-06-23", "1886-01-28", "Robert Gascoyne-Cecil", "Conservative", 1830L, 1903L, "William Ewart Gladstone", "1885-06-09", 13L),
+                row(76L, "GB", 30L, "1886-02-01", "1886-07-20", "William Ewart Gladstone", "Liberal", 1809L, 1898L, "Robert Gascoyne-Cecil", "1886-01-28", 3L),
+                row(77L, "GB", 31L, "1886-07-25", "1892-08-11", "Robert Gascoyne-Cecil", "Conservative", 1830L, 1903L, "William Ewart Gladstone", "1886-07-20", 4L),
+                row(78L, "GB", 30L, "1892-08-15", "1894-03-02", "William Ewart Gladstone", "Liberal", 1809L, 1898L, "Robert Gascoyne-Cecil", "1892-08-11", 3L),
+                row(79L, "GB", 32L, "1894-03-05", "1895-06-22", "Archibald Primrose", "Liberal", 1847L, 1929L, "William Ewart Gladstone", "1894-03-02", 2L),
+                row(80L, "GB", 31L, "1895-06-25", "1902-07-11", "Robert Gascoyne-Cecil", "Conservative", 1830L, 1903L, "Archibald Primrose", "1895-06-22", 2L),
+                row(83L, "GB", 35L, "1908-04-08", "1916-12-05", "H. H. Asquith", "Liberal", 1852L, 1928L, "Henry Campbell-Bannerman", "1908-04-03", 4L),
+                row(85L, "GB", 37L, "1922-10-23", "1923-05-20", "Bonar Law", "Conservative", 1858L, 1923L, "David Lloyd George", "1922-10-19", 3L),
+                row(86L, "GB", 38L, "1923-05-22", "1924-01-22", "Stanley Baldwin", "Conservative", 1867L, 1947L, "Bonar Law", "1923-05-20", 1L),
+                row(115L, "JP", 3L, "1889-12-24", "1891-05-06", "山県有朋", "無所属", 1838L, 1922L, "黒田清隆", "1889-10-25", 59L),
+                row(118L, "JP", 6L, "1896-09-18", "1898-01-12", "松方正義", "無所属", 1835L, 1924L, "伊藤博文", "1896-08-31", 17L),
+                row(123L, "JP", 11L, "1901-06-02", "1906-01-07", "桂太郎", "無所属", 1848L, 1913L, "伊藤博文", "1901-05-10", 22L),
+                row(132L, "JP", 20L, "1921-11-13", "1922-06-12", "高橋是清", "立憲政友会", 1854L, 1936L, "原敬", "1921-11-04", 8L),
+                row(134L, "JP", 22L, "1923-09-02", "1924-01-07", "山本権兵衛", "無所属", 1852L, 1933L, "加藤友三郎", "1923-08-24", 8L),
+                row(137L, "JP", 25L, "1926-01-30", "1927-04-20", "若槻禮次郎", "憲政会", 1866L, 1949L, "加藤高明", "1926-01-28", 1L),
+                row(142L, "JP", 30L, "1932-05-26", "1934-07-08", "斎藤実", "無所属", 1858L, 1936L, "犬養毅", "1932-05-16", 9L),
+                row(182L, "JP", 70L, "1980-07-17", "1982-11-27", "鈴木善幸", "自由民主党", 1911L, 2004L, "大平正芳", "1980-06-12", 34L),
+                row(197L, "JP", 85L, "2000-04-05", "2000-07-04", "森喜朗", "自由民主党", 1937L, null, "小渕恵三", "2000-04-03", 1L),
+                row(221L, "KR", 4L, "1960-08-12", "1962-03-22", "윤보선", "무소속", 1897L, 1990L, "이승만", "1960-04-27", 106L),
+                row(222L, "KR", 5L, "1963-12-17", "1967-06-30", "박정희", "민주공화당", 1917L, 1979L, "윤보선", "1962-03-22", 634L),
+                row(227L, "KR", 10L, "1979-12-06", "1980-08-16", "최규하", "무소속", 1919L, 2006L, "박정희", "1979-10-26", 40L),
+                row(228L, "KR", 11L, "1980-08-27", "1981-02-24", "전두환", "무소속/민주정의당", 1931L, 2021L, "최규하", "1980-08-16", 10L),
+                row(236L, "KR", 19L, "2017-05-10", "2022-05-09", "문재인", "더불어민주당", 1953L, null, "박근혜", "2017-03-10", 60L),
+                row(238L, "KR", 21L, "2025-06-04", null, "이재명", "더불어민주당", 1963L, null, "윤석열", "2025-04-04", 60L)
         );
 
         // JPQL has no difference of two dates, nor window functions; julianday() is SQLite's own and LAG() is
@@ -96,17 +96,11 @@ class Head_Exercises_03_Advanced_PersistenceTest {
         void nativeQuery() {
             final var list = __Exercises_TestUtils.apply(em -> (List<?>) em.createNativeQuery(
                             """
-                                    SELECT country,
-                                           previous_name,
-                                           previous_term_end,
-                                           name,
-                                           term_start,
+                                    SELECT *,
                                            CAST(julianday(term_start) - julianday(previous_term_end) AS INTEGER) - 1 AS days_vacant
-                                    FROM (SELECT country,
-                                                 name,
-                                                 term_start,
+                                    FROM (SELECT h.*,
                                                  LAG(name) OVER (PARTITION BY country ORDER BY term_start)     AS previous_name, LAG(term_end) OVER (PARTITION BY country ORDER BY term_start) AS previous_term_end
-                                          FROM head)
+                                          FROM head AS h)
                                     WHERE julianday(term_start) - julianday(previous_term_end) > 1
                                     ORDER BY country ASC, term_start ASC"""
                     )
@@ -292,7 +286,7 @@ class Head_Exercises_03_Advanced_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT h.country, h.number, h.termStart, h.termEnd, p.name, s.name
+                                    SELECT h, p, s
                                     FROM Head AS h
                                          LEFT JOIN Head AS p ON p.country = h.country AND p.termStart < h.termStart
                                          LEFT JOIN Head AS s ON s.country = h.country AND s.termStart > h.termStart
@@ -312,7 +306,16 @@ class Head_Exercises_03_Advanced_PersistenceTest {
                     )
                     .setParameter("name", "Donald Trump")
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var h = (Head) r[0];
+                                        final var p = (Head) r[1];
+                                        final var s = (Head) r[2];
+                                        return new Object[]{h.getCountry(), h.getNumber(), h.getTermStart(), h.getTermEnd(),
+                                                            p == null ? null : p.getName(), s == null ? null : s.getName()};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
@@ -337,8 +340,7 @@ class Head_Exercises_03_Advanced_PersistenceTest {
                 next.select(cb.least(s2.get(Head_.termStart)))
                         .where(cb.equal(s2.get(Head_.country), h.get(Head_.country)),
                                cb.greaterThan(s2.get(Head_.termStart), h.get(Head_.termStart)));
-                cq.select(cb.array(h.get(Head_.country), h.get(Head_.number), h.get(Head_.termStart), h.get(Head_.termEnd),
-                                   p.get(Head_.name), s.get(Head_.name)))
+                cq.select(cb.array(h, p, s))
                         .where(cb.equal(h.get(Head_.name), cb.parameter(String.class, "name")),
                                cb.or(cb.isNull(p.get(Head_.id)), cb.equal(p.get(Head_.termStart), previous)),
                                cb.or(cb.isNull(s.get(Head_.id)), cb.equal(s.get(Head_.termStart), next)))
@@ -347,7 +349,16 @@ class Head_Exercises_03_Advanced_PersistenceTest {
                         .setParameter("name", "Donald Trump")
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var h = (Head) r[0];
+                                        final var p = (Head) r[1];
+                                        final var s = (Head) r[2];
+                                        return new Object[]{h.getCountry(), h.getNumber(), h.getTermStart(), h.getTermEnd(),
+                                                            p == null ? null : p.getName(), s == null ? null : s.getName()};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -367,23 +378,27 @@ class Head_Exercises_03_Advanced_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT h.country,
+                                    SELECT o,
                                            COUNT(h),
                                            SUM(CASE WHEN h.party <> p.party THEN 1 ELSE 0 END),
                                            ROUND(100.0 * SUM(CASE WHEN h.party <> p.party THEN 1 ELSE 0 END) / COUNT(h), 1)
                                     FROM Head AS h
+                                         JOIN h.office AS o
                                          JOIN Head AS p ON p.country = h.country
                                     WHERE p.termStart = (SELECT MAX(p2.termStart)
                                                          FROM Head AS p2
                                                          WHERE p2.country = h.country
                                                            AND p2.termStart < h.termStart)
                                       AND h.name <> p.name
-                                    GROUP BY h.country
-                                    ORDER BY h.country ASC""",
+                                    GROUP BY o
+                                    ORDER BY o.country ASC""",
                             Object[].class
                     )
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), r[1], r[2], r[3]})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
@@ -392,6 +407,7 @@ class Head_Exercises_03_Advanced_PersistenceTest {
                 final var cb = em.getCriteriaBuilder();
                 final var cq = cb.createQuery(Object[].class);
                 final var h = cq.from(Head.class);
+                final var o = h.join(Head_.office);
                 final var p = h.join(Head.class);
                 p.on(cb.equal(p.get(Head_.country), h.get(Head_.country)));
                 final var previous = cq.subquery(String.class);
@@ -402,16 +418,19 @@ class Head_Exercises_03_Advanced_PersistenceTest {
                 final var changes = cb.sum(cb.<Integer>selectCase()
                                                    .when(cb.notEqual(h.get(Head_.party), p.get(Head_.party)), 1)
                                                    .otherwise(0));
-                cq.select(cb.array(h.get(Head_.country), cb.count(h), changes,
+                cq.select(cb.array(o, cb.count(h), changes,
                                    cb.round(cb.quot(cb.prod(cb.literal(100.0d), changes), cb.count(h)), 1)))
                         .where(cb.equal(p.get(Head_.termStart), previous),
                                cb.notEqual(h.get(Head_.name), p.get(Head_.name)))
-                        .groupBy(h.get(Head_.country))
-                        .orderBy(cb.asc(h.get(Head_.country)));
+                        .groupBy(o)
+                        .orderBy(cb.asc(o.get(Office_.country)));
                 return em.createQuery(cq)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), r[1], r[2], r[3]})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 

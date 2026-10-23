@@ -37,7 +37,7 @@ class Office_Exercises_03_Advanced_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT o.country,
+                                    SELECT o,
                                            CASE
                                                WHEN LOCATE(',', o.numbering) > 0
                                                     AND (LOCATE(';', o.numbering) = 0 OR LOCATE(',', o.numbering) < LOCATE(';', o.numbering))
@@ -51,7 +51,10 @@ class Office_Exercises_03_Advanced_PersistenceTest {
                             Object[].class
                     )
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), r[1]})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
@@ -64,7 +67,7 @@ class Office_Exercises_03_Advanced_PersistenceTest {
                 final var comma = cb.locate(numbering, ",");
                 final var semicolon = cb.locate(numbering, ";");
                 cq.select(cb.array(
-                                o.get(Office_.country),
+                                o,
                                 cb.<String>selectCase()
                                         .when(cb.and(cb.gt(comma, 0), cb.or(cb.equal(semicolon, 0), cb.lessThan(comma, semicolon))),
                                               cb.substring(numbering, cb.literal(1), cb.diff(comma, 1)))
@@ -75,7 +78,10 @@ class Office_Exercises_03_Advanced_PersistenceTest {
                 return em.createQuery(cq)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), r[1]})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 }

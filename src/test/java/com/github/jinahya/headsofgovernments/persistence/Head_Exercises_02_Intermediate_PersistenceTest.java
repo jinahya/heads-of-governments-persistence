@@ -34,26 +34,26 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
          * The completed terms; the incumbent's, measured to date('now'), is checked against today.
          */
         private static final List<List<Object>> EXPECTED = List.of(
-                row(12L, "전두환", "1981-02-25", "1988-02-24", 2555L),
-                row(8L, "박정희", "1972-12-27", "1978-12-26", 2190L),
-                row(13L, "노태우", "1988-02-25", "1993-02-24", 1826L),
-                row(17L, "이명박", "2008-02-25", "2013-02-24", 1826L),
-                row(14L, "김영삼", "1993-02-25", "1998-02-24", 1825L),
-                row(15L, "김대중", "1998-02-25", "2003-02-24", 1825L),
-                row(16L, "노무현", "2003-02-25", "2008-02-24", 1825L),
-                row(19L, "문재인", "2017-05-10", "2022-05-09", 1825L),
-                row(1L, "이승만", "1948-07-24", "1952-08-14", 1482L),
-                row(18L, "박근혜", "2013-02-25", "2017-03-10", 1474L),
-                row(2L, "이승만", "1952-08-15", "1956-08-14", 1460L),
-                row(6L, "박정희", "1967-07-01", "1971-06-30", 1460L),
-                row(3L, "이승만", "1956-08-15", "1960-04-27", 1351L),
-                row(5L, "박정희", "1963-12-17", "1967-06-30", 1291L),
-                row(20L, "윤석열", "2022-05-10", "2025-04-04", 1060L),
-                row(4L, "윤보선", "1960-08-12", "1962-03-22", 587L),
-                row(7L, "박정희", "1971-07-01", "1972-12-26", 544L),
-                row(9L, "박정희", "1978-12-27", "1979-10-26", 303L),
-                row(10L, "최규하", "1979-12-06", "1980-08-16", 254L),
-                row(11L, "전두환", "1980-08-27", "1981-02-24", 181L)
+                row(229L, "KR", 12L, "1981-02-25", "1988-02-24", "전두환", "민주정의당", 1931L, 2021L, 2555L),
+                row(225L, "KR", 8L, "1972-12-27", "1978-12-26", "박정희", "민주공화당", 1917L, 1979L, 2190L),
+                row(230L, "KR", 13L, "1988-02-25", "1993-02-24", "노태우", "민주정의당/민주자유당/무소속", 1932L, 2021L, 1826L),
+                row(234L, "KR", 17L, "2008-02-25", "2013-02-24", "이명박", "한나라당/새누리당", 1941L, null, 1826L),
+                row(231L, "KR", 14L, "1993-02-25", "1998-02-24", "김영삼", "민주자유당/신한국당/무소속", 1929L, 2015L, 1825L),
+                row(232L, "KR", 15L, "1998-02-25", "2003-02-24", "김대중", "새정치국민회의/새천년민주당/무소속", 1924L, 2009L, 1825L),
+                row(233L, "KR", 16L, "2003-02-25", "2008-02-24", "노무현", "새천년민주당/무소속/열린우리당/무소속", 1946L, 2009L, 1825L),
+                row(236L, "KR", 19L, "2017-05-10", "2022-05-09", "문재인", "더불어민주당", 1953L, null, 1825L),
+                row(218L, "KR", 1L, "1948-07-24", "1952-08-14", "이승만", "대한독립촉성국민회/자유당", 1875L, 1965L, 1482L),
+                row(235L, "KR", 18L, "2013-02-25", "2017-03-10", "박근혜", "새누리당/자유한국당", 1952L, null, 1474L),
+                row(219L, "KR", 2L, "1952-08-15", "1956-08-14", "이승만", "자유당", 1875L, 1965L, 1460L),
+                row(223L, "KR", 6L, "1967-07-01", "1971-06-30", "박정희", "민주공화당", 1917L, 1979L, 1460L),
+                row(220L, "KR", 3L, "1956-08-15", "1960-04-27", "이승만", "자유당", 1875L, 1965L, 1351L),
+                row(222L, "KR", 5L, "1963-12-17", "1967-06-30", "박정희", "민주공화당", 1917L, 1979L, 1291L),
+                row(237L, "KR", 20L, "2022-05-10", "2025-04-04", "윤석열", "국민의힘", 1960L, null, 1060L),
+                row(221L, "KR", 4L, "1960-08-12", "1962-03-22", "윤보선", "무소속", 1897L, 1990L, 587L),
+                row(224L, "KR", 7L, "1971-07-01", "1972-12-26", "박정희", "민주공화당", 1917L, 1979L, 544L),
+                row(226L, "KR", 9L, "1978-12-27", "1979-10-26", "박정희", "민주공화당", 1917L, 1979L, 303L),
+                row(227L, "KR", 10L, "1979-12-06", "1980-08-16", "최규하", "무소속", 1919L, 2006L, 254L),
+                row(228L, "KR", 11L, "1980-08-27", "1981-02-24", "전두환", "무소속/민주정의당", 1931L, 2021L, 181L)
         );
 
         // JPQL has no difference of two dates, nor today's date as text; julianday() and date('now') are
@@ -62,10 +62,7 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
         void nativeQuery() {
             final var list = __Exercises_TestUtils.apply(em -> (List<?>) em.createNativeQuery(
                             """
-                                    SELECT number,
-                                           name,
-                                           term_start,
-                                           term_end,
+                                    SELECT *,
                                            CAST(julianday(COALESCE(term_end, date ('now'))) - julianday(term_start) AS INTEGER) AS days
                                     FROM head
                                     WHERE country = :country
@@ -75,10 +72,10 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                     .getResultList());
             // the incumbent's term runs to today, so its length is checked apart
             final var rows = rows(list);
-            assertThat(rows).filteredOn(r -> r.get(3) != null).containsExactlyElementsOf(EXPECTED);
-            assertThat(rows).filteredOn(r -> r.get(3) == null).singleElement().satisfies(r -> {
+            assertThat(rows).filteredOn(r -> r.get(4) != null).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows).filteredOn(r -> r.get(4) == null).singleElement().satisfies(r -> {
                 final var today = LocalDate.now(ZoneOffset.UTC);
-                assertThat(r.get(4)).isEqualTo(ChronoUnit.DAYS.between(LocalDate.parse((String) r.get(2)), today));
+                assertThat(r.get(9)).isEqualTo(ChronoUnit.DAYS.between(LocalDate.parse((String) r.get(3)), today));
             });
         }
     }
@@ -175,17 +172,21 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT h.country,
+                                    SELECT o,
                                            MIN(CAST(SUBSTRING(h.termStart, 1, 4) AS INTEGER) - h.born),
                                            MAX(CAST(SUBSTRING(h.termStart, 1, 4) AS INTEGER) - h.born),
                                            ROUND(AVG(CAST(SUBSTRING(h.termStart, 1, 4) AS INTEGER) - h.born), 1)
                                     FROM Head AS h
-                                    GROUP BY h.country
-                                    ORDER BY h.country ASC""",
+                                         JOIN h.office AS o
+                                    GROUP BY o
+                                    ORDER BY o.country ASC""",
                             Object[].class
                     )
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), r[1], r[2], r[3]})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
@@ -194,14 +195,18 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 final var cb = em.getCriteriaBuilder();
                 final var cq = cb.createQuery(Object[].class);
                 final var h = cq.from(Head.class);
+                final var o = h.join(Head_.office);
                 final var age = cb.diff(cb.substring(h.get(Head_.termStart), 1, 4).cast(Integer.class), h.get(Head_.born));
-                cq.select(cb.array(h.get(Head_.country), cb.min(age), cb.max(age), cb.round(cb.avg(age), 1)))
-                        .groupBy(h.get(Head_.country))
-                        .orderBy(cb.asc(h.get(Head_.country)));
+                cq.select(cb.array(o, cb.min(age), cb.max(age), cb.round(cb.avg(age), 1)))
+                        .groupBy(o)
+                        .orderBy(cb.asc(o.get(Office_.country)));
                 return em.createQuery(cq)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), r[1], r[2], r[3]})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -226,6 +231,7 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 row("한나라당/새누리당", 1L, 1L)
         );
 
+        // selects no entity: a row is a party, which no entity maps
         @Test
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
@@ -298,6 +304,7 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 row("US", "Bill Clinton", 1946L, "2001-01-20")
         );
 
+        // selects no entity: a row is a person, a group of the terms of one, not a head
         @Test
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
@@ -409,40 +416,45 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT h.country, h.number, h.name, h.termStart, h.termEnd
+                                    SELECT h
                                     FROM Head AS h
                                     WHERE (SELECT COUNT(l)
                                            FROM Head AS l
                                            WHERE l.country = h.country
                                              AND l.termStart > h.termStart) < :n
                                     ORDER BY h.country ASC, h.termStart ASC""",
-                            Object[].class
+                            Head.class
                     )
                     .setParameter("n", 2L)
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getTermStart(), h.getTermEnd()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
         void __CriteriaApi() {
             final var list = __Exercises_TestUtils.apply(em -> {
                 final var cb = em.getCriteriaBuilder();
-                final var cq = cb.createQuery(Object[].class);
+                final var cq = cb.createQuery(Head.class);
                 final var h = cq.from(Head.class);
                 final var later = cq.subquery(Long.class);
                 final var l = later.from(Head.class);
                 later.select(cb.count(l))
                         .where(cb.equal(l.get(Head_.country), h.get(Head_.country)),
                                cb.greaterThan(l.get(Head_.termStart), h.get(Head_.termStart)));
-                cq.select(cb.array(h.get(Head_.country), h.get(Head_.number), h.get(Head_.name), h.get(Head_.termStart),
-                                   h.get(Head_.termEnd)))
+                cq.select(h)
                         .where(cb.lessThan(later, cb.parameter(Long.class, "n")))
                         .orderBy(cb.asc(h.get(Head_.country)), cb.asc(h.get(Head_.termStart)));
                 return em.createQuery(cq)
                         .setParameter("n", 2L)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getTermStart(), h.getTermEnd()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -477,15 +489,10 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT h.country,
-                                           CASE WHEN COUNT(e) < :n THEN 'first' ELSE 'latest' END,
-                                           h.number,
-                                           h.name,
-                                           h.termStart,
-                                           h.termEnd
+                                    SELECT h, CASE WHEN COUNT(e) < :n THEN 'first' ELSE 'latest' END
                                     FROM Head AS h
                                          LEFT JOIN Head AS e ON e.country = h.country AND e.termStart < h.termStart
-                                    GROUP BY h.id, h.country, h.number, h.name, h.termStart, h.termEnd
+                                    GROUP BY h
                                     HAVING COUNT(e) < :n
                                         OR (SELECT COUNT(l)
                                             FROM Head AS l
@@ -496,7 +503,14 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                     )
                     .setParameter("n", 2L)
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var h = (Head) r[0];
+                                        return new Object[]{h.getCountry(), r[1], h.getNumber(), h.getName(), h.getTermStart(),
+                                                            h.getTermEnd()};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
@@ -515,18 +529,22 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 later.select(cb.count(l))
                         .where(cb.equal(l.get(Head_.country), h.get(Head_.country)),
                                cb.greaterThan(l.get(Head_.termStart), h.get(Head_.termStart)));
-                cq.select(cb.array(h.get(Head_.country),
-                                   cb.<String>selectCase().when(cb.lessThan(earlier, n), "first").otherwise("latest"),
-                                   h.get(Head_.number), h.get(Head_.name), h.get(Head_.termStart), h.get(Head_.termEnd)))
-                        .groupBy(h.get(Head_.id), h.get(Head_.country), h.get(Head_.number), h.get(Head_.name),
-                                 h.get(Head_.termStart), h.get(Head_.termEnd))
+                cq.select(cb.array(h, cb.<String>selectCase().when(cb.lessThan(earlier, n), "first").otherwise("latest")))
+                        .groupBy(h)
                         .having(cb.or(cb.lessThan(earlier, n), cb.lessThan(later, n)))
                         .orderBy(cb.asc(h.get(Head_.country)), cb.asc(h.get(Head_.termStart)));
                 return em.createQuery(cq)
                         .setParameter("n", 2L)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var h = (Head) r[0];
+                                        return new Object[]{h.getCountry(), r[1], h.getNumber(), h.getName(), h.getTermStart(),
+                                                            h.getTermEnd()};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -551,37 +569,43 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT h.country, h.name, h.termStart, h.termEnd
+                                    SELECT h
                                     FROM Head AS h
                                     WHERE (SELECT COUNT(e)
                                            FROM Head AS e
                                            WHERE e.country = h.country
                                              AND e.termStart < h.termStart) < 2
                                     ORDER BY h.country ASC, h.termStart ASC""",
-                            Object[].class
+                            Head.class
                     )
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getCountry(), h.getName(), h.getTermStart(), h.getTermEnd()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
         void __CriteriaApi() {
             final var list = __Exercises_TestUtils.apply(em -> {
                 final var cb = em.getCriteriaBuilder();
-                final var cq = cb.createQuery(Object[].class);
+                final var cq = cb.createQuery(Head.class);
                 final var h = cq.from(Head.class);
                 final var earlier = cq.subquery(Long.class);
                 final var e = earlier.from(Head.class);
                 earlier.select(cb.count(e))
                         .where(cb.equal(e.get(Head_.country), h.get(Head_.country)),
                                cb.lessThan(e.get(Head_.termStart), h.get(Head_.termStart)));
-                cq.select(cb.array(h.get(Head_.country), h.get(Head_.name), h.get(Head_.termStart), h.get(Head_.termEnd)))
+                cq.select(h)
                         .where(cb.lt(earlier, 2))
                         .orderBy(cb.asc(h.get(Head_.country)), cb.asc(h.get(Head_.termStart)));
                 return em.createQuery(cq)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getCountry(), h.getName(), h.getTermStart(), h.getTermEnd()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -606,6 +630,7 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 row("US", "Donald Trump", 2L)
         );
 
+        // selects no entity: a row is a person, a group of the terms of one, not a head
         @Test
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
@@ -738,15 +763,19 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT h.country, COUNT(h)
+                                    SELECT o, COUNT(h)
                                     FROM Head AS h
+                                         JOIN h.office AS o
                                     WHERE h.died = CAST(SUBSTRING(h.termEnd, 1, 4) AS INTEGER)
-                                    GROUP BY h.country
-                                    ORDER BY h.country ASC""",
+                                    GROUP BY o
+                                    ORDER BY o.country ASC""",
                             Object[].class
                     )
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), r[1]})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
@@ -755,14 +784,18 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 final var cb = em.getCriteriaBuilder();
                 final var cq = cb.createQuery(Object[].class);
                 final var h = cq.from(Head.class);
-                cq.select(cb.array(h.get(Head_.country), cb.count(h)))
+                final var o = h.join(Head_.office);
+                cq.select(cb.array(o, cb.count(h)))
                         .where(cb.equal(h.get(Head_.died), cb.substring(h.get(Head_.termEnd), 1, 4).cast(Integer.class)))
-                        .groupBy(h.get(Head_.country))
-                        .orderBy(cb.asc(h.get(Head_.country)));
+                        .groupBy(o)
+                        .orderBy(cb.asc(o.get(Office_.country)));
                 return em.createQuery(cq)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), r[1]})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -822,6 +855,7 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 row("GB", "Edward Heath", "1974-03-04", 2005L, 31L)
         );
 
+        // selects no entity: a row is a person, a group of the terms of one, not a head
         @Test
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(

@@ -42,29 +42,27 @@ ORDER BY g.head_kind ASC
 -- ------------------------------------------------------------------------------- HOG-SCHEMA-I-02 Numbering in practice
 -- Per office: how many terms, how many distinct numbers, the highest number, and the rule; where terms exceed
 -- numbers, number is the person's and repeats.
-SELECT g.country,
+SELECT g.*,
        COUNT(*)                 AS terms,
        COUNT(DISTINCT h.number) AS numbers,
-       MAX(h.number)            AS highest,
-       g.numbering
+       MAX(h.number)            AS highest
 FROM office g
          JOIN head h ON h.country = g.country
-GROUP BY g.country, g.numbering
+GROUP BY g.country
 ORDER BY g.country ASC
 ;
 
 
 -- ------------------------------------------------------------------------------- HOG-SCHEMA-I-03 The span of each list
 -- Per office, the first term's start, the latest term's start and the years between them, with the head's title.
-SELECT g.country,
-       g.head_title,
+SELECT g.*,
        MIN(h.term_start)                                         AS first_term_start,
        MAX(h.term_start)                                         AS latest_term_start,
        CAST(SUBSTR(MAX(h.term_start), 1, 4) AS INTEGER)
            - CAST(SUBSTR(MIN(h.term_start), 1, 4) AS INTEGER)    AS years
 FROM office g
          JOIN head h ON h.country = g.country
-GROUP BY g.country, g.head_title
+GROUP BY g.country
 ORDER BY g.country ASC
 ;
 
@@ -72,11 +70,11 @@ ORDER BY g.country ASC
 -- ----------------------------------------------------------------------------- HOG-SCHEMA-I-04 Living heads per office
 -- Per office, with its title, how many of its heads are still living, the incumbent included, by country code. A name
 -- is taken as one person within a country.
-SELECT g.country, g.head_title, COUNT(DISTINCT h.name) AS living
+SELECT g.*, COUNT(DISTINCT h.name) AS living
 FROM office g
          JOIN head h ON h.country = g.country
 WHERE h.died IS NULL
-GROUP BY g.country, g.head_title
+GROUP BY g.country
 ORDER BY g.country ASC
 ;
 
@@ -84,15 +82,14 @@ ORDER BY g.country ASC
 -- --------------------------------------------------------------------- HOG-SCHEMA-I-05 Terms per century, side by side
 -- Per office, with its title, the terms begun in each century from the 18th to the 21st, one column per century, by
 -- country code. A SUM of CASE per column turns the rows of a GROUP BY into columns.
-SELECT g.country,
-       g.head_title,
+SELECT g.*,
        SUM(CASE WHEN h.term_start < '1800' THEN 1 ELSE 0 END)                            AS c18,
        SUM(CASE WHEN h.term_start >= '1800' AND h.term_start < '1900' THEN 1 ELSE 0 END) AS c19,
        SUM(CASE WHEN h.term_start >= '1900' AND h.term_start < '2000' THEN 1 ELSE 0 END) AS c20,
        SUM(CASE WHEN h.term_start >= '2000' THEN 1 ELSE 0 END)                           AS c21
 FROM office g
          JOIN head h ON h.country = g.country
-GROUP BY g.country, g.head_title
+GROUP BY g.country
 ORDER BY g.country ASC
 ;
 
@@ -118,11 +115,8 @@ ORDER BY g.head_kind ASC
 -- ---------------------------------------------------------- HOG-SCHEMA-I-07 The shortest completed term of each office
 -- Per office, with its title, the completed term with the fewest days and who held it, by country code; at a tie, every
 -- such term, the earlier first. An open term has no term_end, so julianday gives NULL and the term drops out.
-SELECT g.country,
-       g.head_title,
-       h.name,
-       h.term_start,
-       h.term_end,
+SELECT g.*,
+       h.*,
        CAST(julianday(h.term_end) - julianday(h.term_start) AS INTEGER) AS days
 FROM office g
          JOIN head h ON h.country = g.country

@@ -29,7 +29,7 @@
 
 -- ------------------------------------------------------------------------------ HOG-HEAD-B-01 Who held office on a day
 -- A reader gives a date and wants each country's head on that day. A country whose office was vacant is absent.
-SELECT country, number, name, party, term_start, term_end
+SELECT *
 FROM head
 WHERE term_start <= :date
   AND (term_end IS NULL OR term_end >= :date)
@@ -48,7 +48,7 @@ ORDER BY term_start ASC
 
 -- ---------------------------------------------------------------------------------------- HOG-HEAD-B-03 The incumbents
 -- The dashboard shows who is in office now, per country, and since when.
-SELECT country, number, name, party, term_start
+SELECT *
 FROM head
 WHERE term_end IS NULL
 ORDER BY country ASC
@@ -58,7 +58,7 @@ ORDER BY country ASC
 -- ----------------------------------------------------------------------------------------- HOG-HEAD-B-04 Terms by name
 -- A reader types part of a name and wants every term of anyone matching it. LIKE folds case for ASCII letters only,
 -- so 'churchill' finds Churchill and '吉田' finds 吉田茂; the index on name does not help a leading wildcard.
-SELECT country, number, name, term_start, term_end
+SELECT *
 FROM head
 WHERE name LIKE '%' || :name || '%'
 ORDER BY country ASC, term_start ASC
@@ -67,7 +67,7 @@ ORDER BY country ASC, term_start ASC
 
 -- ---------------------------------------------------------------------------- HOG-HEAD-B-05 Terms that began in a year
 -- A timeline wants every term that began in a given year, in any country, in date order.
-SELECT term_start, country, number, name
+SELECT *
 FROM head
 WHERE term_start BETWEEN :year || '-01-01' AND :year || '-12-31'
 ORDER BY term_start ASC, country ASC
@@ -88,7 +88,7 @@ LIMIT 10
 -- --------------------------------------------------------------- HOG-HEAD-B-07 Terms begun during the Second World War
 -- Every term that began between 1 September 1939 and 2 September 1945, both days included, in date order and, on the
 -- same day, by country.
-SELECT term_start, country, number, name, party
+SELECT *
 FROM head
 WHERE term_start BETWEEN '1939-09-01' AND '1945-09-02'
 ORDER BY term_start ASC, country ASC

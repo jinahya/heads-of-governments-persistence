@@ -47,7 +47,7 @@ ORDER BY country ASC
 -- ---------------------------------------------------------------- HOG-SCHEMA-A-02 Every office on a day, vacant or not
 -- A reader gives a date and wants every office with its head on that day, or 'vacant' where the office was empty
 -- or the list had not yet begun.
-SELECT g.country, g.head_title, COALESCE(h.name, '(vacant)') AS name, h.term_start, h.term_end
+SELECT g.*, COALESCE(h.name, '(vacant)') AS name, h.*
 FROM office g
          LEFT JOIN head h ON h.country = g.country
     AND h.term_start <= :date
@@ -58,12 +58,7 @@ ORDER BY g.country ASC
 
 -- ---------------------------------------------------------------------- HOG-SCHEMA-A-03 The incumbents' contemporaries
 -- On the day each incumbent took office, who headed the other offices? One row per pair, the incumbent first.
-SELECT i.country     AS country,
-       i.name        AS incumbent,
-       i.term_start  AS since,
-       o.country     AS other,
-       g.head_title,
-       o.name        AS head
+SELECT i.*, o.*, g.*
 FROM head i
          JOIN head o ON o.country <> i.country
     AND o.term_start <= i.term_start
@@ -97,13 +92,13 @@ ORDER BY country ASC, name ASC
 -- For each president's term, how many different prime ministers, of any office, were in office at some point during it;
 -- the ten terms with the most first and, at a tie, the earlier term first, then by country. Two terms overlap when each
 -- starts on or before the other's end, the handover day counting for both; an open term ends at '9999-12-31'.
-SELECT p.country, p.name, p.term_start, p.term_end, COUNT(DISTINCT m.country || ' ' || m.name) AS prime_ministers
+SELECT p.*, COUNT(DISTINCT m.country || ' ' || m.name) AS prime_ministers
 FROM head p
          JOIN office pg ON pg.country = p.country AND pg.head_kind = 'PRESIDENT'
          JOIN head m ON m.term_start <= COALESCE(p.term_end, '9999-12-31')
     AND COALESCE(m.term_end, '9999-12-31') >= p.term_start
          JOIN office mg ON mg.country = m.country AND mg.head_kind = 'PRIME_MINISTER'
-GROUP BY p.id, p.country, p.name, p.term_start, p.term_end
+GROUP BY p.id
 ORDER BY prime_ministers DESC, p.term_start ASC, p.country ASC
 LIMIT 10
 ;

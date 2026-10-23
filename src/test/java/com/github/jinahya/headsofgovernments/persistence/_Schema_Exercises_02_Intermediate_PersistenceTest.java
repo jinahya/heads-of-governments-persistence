@@ -85,15 +85,21 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT g.country, COUNT(h), COUNT(DISTINCT h.number), MAX(h.number), g.numbering
+                                    SELECT g, COUNT(h), COUNT(DISTINCT h.number), MAX(h.number)
                                     FROM Office AS g
                                          JOIN g.heads AS h
-                                    GROUP BY g.country, g.numbering
+                                    GROUP BY g
                                     ORDER BY g.country ASC""",
                             Object[].class
                     )
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var g = (Office) r[0];
+                                        return new Object[]{g.getCountry(), r[1], r[2], r[3], g.getNumbering()};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
@@ -103,14 +109,19 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
                 final var cq = cb.createQuery(Object[].class);
                 final var g = cq.from(Office.class);
                 final var h = g.join(Office_.heads);
-                cq.select(cb.array(g.get(Office_.country), cb.count(h), cb.countDistinct(h.get(Head_.number)),
-                                   cb.max(h.get(Head_.number)), g.get(Office_.numbering)))
-                        .groupBy(g.get(Office_.country), g.get(Office_.numbering))
+                cq.select(cb.array(g, cb.count(h), cb.countDistinct(h.get(Head_.number)), cb.max(h.get(Head_.number))))
+                        .groupBy(g)
                         .orderBy(cb.asc(g.get(Office_.country)));
                 return em.createQuery(cq)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var g = (Office) r[0];
+                                        return new Object[]{g.getCountry(), r[1], r[2], r[3], g.getNumbering()};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -130,19 +141,24 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT g.country,
-                                           g.headTitle,
+                                    SELECT g,
                                            MIN(h.termStart),
                                            MAX(h.termStart),
                                            CAST(SUBSTRING(MAX(h.termStart), 1, 4) AS INTEGER) - CAST(SUBSTRING(MIN(h.termStart), 1, 4) AS INTEGER)
                                     FROM Office AS g
                                          JOIN g.heads AS h
-                                    GROUP BY g.country, g.headTitle
+                                    GROUP BY g
                                     ORDER BY g.country ASC""",
                             Object[].class
                     )
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var g = (Office) r[0];
+                                        return new Object[]{g.getCountry(), g.getHeadTitle(), r[1], r[2], r[3]};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
@@ -154,15 +170,20 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
                 final var h = g.join(Office_.heads);
                 final var first = cb.least(h.get(Head_.termStart));
                 final var latest = cb.greatest(h.get(Head_.termStart));
-                cq.select(cb.array(g.get(Office_.country), g.get(Office_.headTitle), first, latest,
-                                   cb.diff(cb.substring(latest, 1, 4).cast(Integer.class),
-                                           cb.substring(first, 1, 4).cast(Integer.class))))
-                        .groupBy(g.get(Office_.country), g.get(Office_.headTitle))
+                cq.select(cb.array(g, first, latest,
+                                   cb.diff(cb.substring(latest, 1, 4).cast(Integer.class), cb.substring(first, 1, 4).cast(Integer.class))))
+                        .groupBy(g)
                         .orderBy(cb.asc(g.get(Office_.country)));
                 return em.createQuery(cq)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var g = (Office) r[0];
+                                        return new Object[]{g.getCountry(), g.getHeadTitle(), r[1], r[2], r[3]};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -182,16 +203,19 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT g.country, g.headTitle, COUNT(DISTINCT h.name)
+                                    SELECT g, COUNT(DISTINCT h.name)
                                     FROM Office AS g
                                          JOIN g.heads AS h
                                     WHERE h.died IS NULL
-                                    GROUP BY g.country, g.headTitle
+                                    GROUP BY g
                                     ORDER BY g.country ASC""",
                             Object[].class
                     )
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), ((Office) r[0]).getHeadTitle(), r[1]})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
@@ -201,14 +225,17 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
                 final var cq = cb.createQuery(Object[].class);
                 final var g = cq.from(Office.class);
                 final var h = g.join(Office_.heads);
-                cq.select(cb.array(g.get(Office_.country), g.get(Office_.headTitle), cb.countDistinct(h.get(Head_.name))))
+                cq.select(cb.array(g, cb.countDistinct(h.get(Head_.name))))
                         .where(cb.isNull(h.get(Head_.died)))
-                        .groupBy(g.get(Office_.country), g.get(Office_.headTitle))
+                        .groupBy(g)
                         .orderBy(cb.asc(g.get(Office_.country)));
                 return em.createQuery(cq)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), ((Office) r[0]).getHeadTitle(), r[1]})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -228,20 +255,25 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT g.country,
-                                           g.headTitle,
+                                    SELECT g,
                                            SUM(CASE WHEN h.termStart < '1800' THEN 1 ELSE 0 END),
                                            SUM(CASE WHEN h.termStart >= '1800' AND h.termStart < '1900' THEN 1 ELSE 0 END),
                                            SUM(CASE WHEN h.termStart >= '1900' AND h.termStart < '2000' THEN 1 ELSE 0 END),
                                            SUM(CASE WHEN h.termStart >= '2000' THEN 1 ELSE 0 END)
                                     FROM Office AS g
                                          JOIN g.heads AS h
-                                    GROUP BY g.country, g.headTitle
+                                    GROUP BY g
                                     ORDER BY g.country ASC""",
                             Object[].class
                     )
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var g = (Office) r[0];
+                                        return new Object[]{g.getCountry(), g.getHeadTitle(), r[1], r[2], r[3], r[4]};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
@@ -254,17 +286,23 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
                 final var termStart = h.get(Head_.termStart);
                 final Function<Predicate, Expression<Integer>> count
                         = p -> cb.sum(cb.<Integer>selectCase().when(p, 1).otherwise(0));
-                cq.select(cb.array(g.get(Office_.country), g.get(Office_.headTitle),
+                cq.select(cb.array(g,
                                    count.apply(cb.lessThan(termStart, "1800")),
                                    count.apply(cb.and(cb.greaterThanOrEqualTo(termStart, "1800"), cb.lessThan(termStart, "1900"))),
                                    count.apply(cb.and(cb.greaterThanOrEqualTo(termStart, "1900"), cb.lessThan(termStart, "2000"))),
                                    count.apply(cb.greaterThanOrEqualTo(termStart, "2000"))))
-                        .groupBy(g.get(Office_.country), g.get(Office_.headTitle))
+                        .groupBy(g)
                         .orderBy(cb.asc(g.get(Office_.country)));
                 return em.createQuery(cq)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var g = (Office) r[0];
+                                        return new Object[]{g.getCountry(), g.getHeadTitle(), r[1], r[2], r[3], r[4]};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -277,6 +315,7 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
                 row("PRIME_MINISTER", 125L, 24L, 77L, 58.2d)
         );
 
+        // selects no entity: a row is a kind of head, a group of offices, not an office
         @Test
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
@@ -332,11 +371,11 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
     class Exercise7Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
-                row("FR", "Président de la République", "Jean Casimir-Perier", "1894-06-27", "1895-01-16", 203L),
-                row("GB", "Prime Minister", "Arthur Wellesley", "1834-11-17", "1834-12-09", 22L),
-                row("JP", "内閣総理大臣", "岸田文雄", "2021-10-04", "2021-11-10", 37L),
-                row("KR", "대통령", "전두환", "1980-08-27", "1981-02-24", 181L),
-                row("US", "President", "William Henry Harrison", "1841-03-04", "1841-04-04", 31L)
+                row("FR", "PRESIDENT", "Président de la République", "ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each", 7L, "FR", 6L, "1894-06-27", "1895-01-16", "Jean Casimir-Perier", "Républicain_opportuniste", 1847L, 1907L, 203L),
+                row("GB", "PRIME_MINISTER", "Prime Minister", "ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each", 59L, "GB", 21L, "1834-11-17", "1834-12-09", "Arthur Wellesley", "Tory", 1769L, 1852L, 22L),
+                row("JP", "PRIME_MINISTER", "内閣総理大臣", "代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each", 212L, "JP", 100L, "2021-10-04", "2021-11-10", "岸田文雄", "自由民主党", 1957L, null, 37L),
+                row("KR", "PRESIDENT", "대통령", "대, one per election; a person re-elected keeps one line per term with consecutive numbers", 228L, "KR", 11L, "1980-08-27", "1981-02-24", "전두환", "무소속/민주정의당", 1931L, 2021L, 181L),
+                row("US", "PRESIDENT", "President", "presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number", 247L, "US", 9L, "1841-03-04", "1841-04-04", "William Henry Harrison", "Whig", 1773L, 1841L, 31L)
         );
 
         // JPQL has no difference of two dates; julianday() is SQLite's own, and the Criteria API has none
@@ -344,11 +383,8 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
         void nativeQuery() {
             final var list = __Exercises_TestUtils.apply(em -> (List<?>) em.createNativeQuery(
                             """
-                                    SELECT g.country,
-                                           g.head_title,
-                                           h.name,
-                                           h.term_start,
-                                           h.term_end,
+                                    SELECT g.*,
+                                           h.*,
                                            CAST(julianday(h.term_end) - julianday(h.term_start) AS INTEGER) AS days
                                     FROM office g
                                              JOIN head h ON h.country = g.country

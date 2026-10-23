@@ -72,7 +72,7 @@ class HeadsOfGovernments_Exercises_Test {
     @Test
     void offices() throws Exception {
         final var sql = """
-                SELECT country, head_kind, head_title
+                SELECT *
                 FROM office
                 ORDER BY country ASC""";
         try (var connection = DriverManager.getConnection(URL);
@@ -82,7 +82,8 @@ class HeadsOfGovernments_Exercises_Test {
                 final var country = results.getString("country");
                 final var headKind = results.getString("head_kind");
                 final var headTitle = results.getString("head_title");
-                log.debug("{}\t{}\t{}", country, headKind, headTitle);
+                final var numbering = results.getString("numbering");
+                log.debug("{}\t{}\t{}\t{}", country, headKind, headTitle, numbering);
             }
         }
     }

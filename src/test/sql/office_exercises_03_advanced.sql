@@ -28,13 +28,13 @@
 -- --------------------------------------------------------------------- HOG-OFFICE-A-01 What number counts, in a phrase
 -- numbering is a sentence, but each opens by naming what is counted -- 'ordinal of the person by first election',
 -- '代', '대', 'presidency number' -- before its first comma or semicolon. Show each office with that phrase alone.
-SELECT country,
+SELECT *,
        CASE
            WHEN comma > 0 AND (semicolon = 0 OR comma < semicolon) THEN SUBSTR(numbering, 1, comma - 1)
            WHEN semicolon > 0 THEN SUBSTR(numbering, 1, semicolon - 1)
            ELSE numbering
            END AS counts
-FROM (SELECT country, numbering, INSTR(numbering, ',') AS comma, INSTR(numbering, ';') AS semicolon
+FROM (SELECT *, INSTR(numbering, ',') AS comma, INSTR(numbering, ';') AS semicolon
       FROM office)
 ORDER BY country ASC
 ;

@@ -29,10 +29,7 @@
 
 -- ------------------------------------------------------------------------ HOG-HEAD-I-01 The longest terms of a country
 -- For one country, each term with its length in days, longest first; the incumbent's term runs to today.
-SELECT number,
-       name,
-       term_start,
-       term_end,
+SELECT *,
        CAST(julianday(COALESCE(term_end, date ('now'))) - julianday(term_start) AS INTEGER) AS days
 FROM head
 WHERE country = :country
@@ -53,13 +50,14 @@ ORDER BY country ASC, MIN(term_start) ASC
 -- ---------------------------------------------------------------------------------- HOG-HEAD-I-03 Age on taking office
 -- Per country, the youngest, the oldest and the average age at which a term began, in whole years of the calendar
 -- (the year of term_start less the year of birth; born is a year, so that is as fine as the data allows).
-SELECT country,
-       MIN(CAST(SUBSTR(term_start, 1, 4) AS INTEGER) - born)           AS youngest,
-       MAX(CAST(SUBSTR(term_start, 1, 4) AS INTEGER) - born)           AS oldest,
-       ROUND(AVG(CAST(SUBSTR(term_start, 1, 4) AS INTEGER) - born), 1) AS average
-FROM head
-GROUP BY country
-ORDER BY country ASC
+SELECT g.*,
+       MIN(CAST(SUBSTR(h.term_start, 1, 4) AS INTEGER) - h.born)           AS youngest,
+       MAX(CAST(SUBSTR(h.term_start, 1, 4) AS INTEGER) - h.born)           AS oldest,
+       ROUND(AVG(CAST(SUBSTR(h.term_start, 1, 4) AS INTEGER) - h.born), 1) AS average
+FROM head h
+         JOIN office g ON g.country = h.country
+GROUP BY g.country
+ORDER BY g.country ASC
 ;
 
 
@@ -99,7 +97,7 @@ ORDER BY decade ASC
 -- ---------------------------------------------------------------------- HOG-HEAD-I-07 The latest terms of each country
 -- Per country, the :n most recent terms, oldest of them first. Terms, not persons: a head re-elected appears once per
 -- term. term_start is NOT NULL and distinct within a country, so the numbering has no ties.
-SELECT country, number, name, term_start, term_end
+SELECT *
 FROM (SELECT h.*, ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start DESC) AS latest_rn
       FROM head AS h)
 WHERE latest_rn <= :n
@@ -110,12 +108,8 @@ ORDER BY country ASC, term_start ASC
 -- -------------------------------------------------------- HOG-HEAD-I-08 The first and the latest terms of each country
 -- Per country, its first :n terms and its most recent :n, each row saying which it is. A row is 'first' when it is
 -- among the first :n, so with a country of 2 * :n terms or fewer the two sets overlap and 'first' wins.
-SELECT country,
-       CASE WHEN first_rn <= :n THEN 'first' ELSE 'latest' END AS which,
-       number,
-       name,
-       term_start,
-       term_end
+SELECT *,
+       CASE WHEN first_rn <= :n THEN 'first' ELSE 'latest' END AS which
 FROM (SELECT h.*,
              ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start ASC)  AS first_rn, ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start DESC) AS latest_rn
       FROM head AS h)
@@ -128,7 +122,7 @@ ORDER BY country ASC, term_start ASC
 -- ------------------------------------------------------------------- HOG-HEAD-I-09 The first two terms of each country
 -- Per country, its first two terms, the earlier first. Terms, not persons: a head whose first two terms were
 -- consecutive appears twice. term_start is NOT NULL and distinct within a country, so the numbering has no ties.
-SELECT country, name, term_start, term_end
+SELECT *
 FROM (SELECT h.*, ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start ASC) AS first_rn
       FROM head AS h)
 WHERE first_rn <= 2
@@ -174,11 +168,12 @@ ORDER BY country ASC, tenure_share DESC
 -- Per country, how many terms ended in the same year their head died, by country code. It catches the heads who died in
 -- office, but also those who left office and died later that year; died is a year, so the data cannot tell the two
 -- apart.
-SELECT country, COUNT(*) AS terms
-FROM head
-WHERE died = CAST(SUBSTR(term_end, 1, 4) AS INTEGER)
-GROUP BY country
-ORDER BY country ASC
+SELECT g.*, COUNT(*) AS terms
+FROM head h
+         JOIN office g ON g.country = h.country
+WHERE h.died = CAST(SUBSTR(h.term_end, 1, 4) AS INTEGER)
+GROUP BY g.country
+ORDER BY g.country ASC
 ;
 
 

@@ -33,7 +33,7 @@ A country whose office was vacant is absent.
 ====
 [source,sql]
 ----
-SELECT country, number, name, party, term_start, term_end
+SELECT *
 FROM head
 WHERE term_start <= :date
   AND (term_end IS NULL OR term_end >= :date)
@@ -70,22 +70,22 @@ The dashboard shows who is in office now, per country, and since when.
 ====
 [source,sql]
 ----
-SELECT country, number, name, party, term_start
+SELECT *
 FROM head
 WHERE term_end IS NULL
 ORDER BY country ASC
 ----
 
 ....
-+---------+--------+-----------------+------------------+------------+
-| country | number |      name       |      party       | term_start |
-+---------+--------+-----------------+------------------+------------+
-| FR      |     25 | Emmanuel Macron | LREM/Renaissance | 2022-05-14 |
-| GB      |     59 | Andy Burnham    | Labour           | 2026-07-20 |
-| JP      |    105 | 高市早苗        | 自由民主党       | 2026-02-18 |
-| KR      |     21 | 이재명          | 더불어민주당     | 2025-06-04 |
-| US      |     47 | Donald Trump    | Republican       | 2025-01-20 |
-+---------+--------+-----------------+------------------+------------+
++-----+---------+--------+------------+----------+-----------------+------------------+------+------+
+| id  | country | number | term_start | term_end |      name       |      party       | born | died |
++-----+---------+--------+------------+----------+-----------------+------------------+------+------+
+|  31 | FR      |     25 | 2022-05-14 |          | Emmanuel Macron | LREM/Renaissance | 1977 |      |
+| 112 | GB      |     59 | 2026-07-20 |          | Andy Burnham    | Labour           | 1970 |      |
+| 217 | JP      |    105 | 2026-02-18 |          | 高市早苗        | 自由民主党       | 1961 |      |
+| 238 | KR      |     21 | 2025-06-04 |          | 이재명          | 더불어민주당     | 1963 |      |
+| 285 | US      |     47 | 2025-01-20 |          | Donald Trump    | Republican       | 1946 |      |
++-----+---------+--------+------------+----------+-----------------+------------------+------+------+
 ....
 
 ====
@@ -101,7 +101,7 @@ LIKE folds case for ASCII letters only, so 'churchill' finds Churchill and '吉�
 ====
 [source,sql]
 ----
-SELECT country, number, name, term_start, term_end
+SELECT *
 FROM head
 WHERE name LIKE '%' || :name || '%'
 ORDER BY country ASC, term_start ASC
@@ -119,7 +119,7 @@ A timeline wants every term that began in a given year, in any country, in date 
 ====
 [source,sql]
 ----
-SELECT term_start, country, number, name
+SELECT *
 FROM head
 WHERE term_start BETWEEN :year || '-01-01' AND :year || '-12-31'
 ORDER BY term_start ASC, country ASC
@@ -174,27 +174,27 @@ Every term that began between 1 September 1939 and 2 September 1945, both days i
 ====
 [source,sql]
 ----
-SELECT term_start, country, number, name, party
+SELECT *
 FROM head
 WHERE term_start BETWEEN '1939-09-01' AND '1945-09-02'
 ORDER BY term_start ASC, country ASC
 ----
 
 ....
-+------------+---------+--------+-------------------+--------------+
-| term_start | country | number |       name        |    party     |
-+------------+---------+--------+-------------------+--------------+
-| 1940-01-16 | JP      |     37 | 米内光政          | 無所属       |
-| 1940-05-10 | GB      |     41 | Winston Churchill | Conservative |
-| 1940-07-22 | JP      |     38 | 近衛文麿          | 大政翼賛会   |
-| 1941-07-18 | JP      |     39 | 近衛文麿          | 大政翼賛会   |
-| 1941-10-18 | JP      |     40 | 東條英機          | 大政翼賛会   |
-| 1944-07-22 | JP      |     41 | 小磯國昭          | 大政翼賛会   |
-| 1945-04-07 | JP      |     42 | 鈴木貫太郎        | 大政翼賛会   |
-| 1945-04-12 | US      |     33 | Harry S. Truman   | Democratic   |
-| 1945-07-26 | GB      |     42 | Clement Attlee    | Labour       |
-| 1945-08-17 | JP      |     43 | 東久邇宮稔彦王    | 無所属       |
-+------------+---------+--------+-------------------+--------------+
++-----+---------+--------+------------+------------+-------------------+--------------+------+------+
+| id  | country | number | term_start |  term_end  |       name        |    party     | born | died |
++-----+---------+--------+------------+------------+-------------------+--------------+------+------+
+| 149 | JP      |     37 | 1940-01-16 | 1940-07-22 | 米内光政          | 無所属       | 1880 | 1948 |
+|  92 | GB      |     41 | 1940-05-10 | 1945-07-26 | Winston Churchill | Conservative | 1874 | 1965 |
+| 150 | JP      |     38 | 1940-07-22 | 1941-07-18 | 近衛文麿          | 大政翼賛会   | 1891 | 1945 |
+| 151 | JP      |     39 | 1941-07-18 | 1941-10-18 | 近衛文麿          | 大政翼賛会   | 1891 | 1945 |
+| 152 | JP      |     40 | 1941-10-18 | 1944-07-22 | 東條英機          | 大政翼賛会   | 1884 | 1948 |
+| 153 | JP      |     41 | 1944-07-22 | 1945-04-07 | 小磯國昭          | 大政翼賛会   | 1880 | 1950 |
+| 154 | JP      |     42 | 1945-04-07 | 1945-08-17 | 鈴木貫太郎        | 大政翼賛会   | 1868 | 1948 |
+| 271 | US      |     33 | 1945-04-12 | 1953-01-20 | Harry S. Truman   | Democratic   | 1884 | 1972 |
+|  93 | GB      |     42 | 1945-07-26 | 1951-10-26 | Clement Attlee    | Labour       | 1883 | 1967 |
+| 155 | JP      |     43 | 1945-08-17 | 1945-10-09 | 東久邇宮稔彦王    | 無所属       | 1887 | 1990 |
++-----+---------+--------+------------+------------+-------------------+--------------+------+------+
 ....
 
 ====
@@ -247,10 +247,7 @@ For one country, each term with its length in days, longest first; the incumbent
 ====
 [source,sql]
 ----
-SELECT number,
-       name,
-       term_start,
-       term_end,
+SELECT *,
        CAST(julianday(COALESCE(term_end, date ('now'))) - julianday(term_start) AS INTEGER) AS days
 FROM head
 WHERE country = :country
@@ -307,25 +304,26 @@ Per country, the youngest, the oldest and the average age at which a term began,
 ====
 [source,sql]
 ----
-SELECT country,
-       MIN(CAST(SUBSTR(term_start, 1, 4) AS INTEGER) - born)           AS youngest,
-       MAX(CAST(SUBSTR(term_start, 1, 4) AS INTEGER) - born)           AS oldest,
-       ROUND(AVG(CAST(SUBSTR(term_start, 1, 4) AS INTEGER) - born), 1) AS average
-FROM head
-GROUP BY country
-ORDER BY country ASC
+SELECT g.*,
+       MIN(CAST(SUBSTR(h.term_start, 1, 4) AS INTEGER) - h.born)           AS youngest,
+       MAX(CAST(SUBSTR(h.term_start, 1, 4) AS INTEGER) - h.born)           AS oldest,
+       ROUND(AVG(CAST(SUBSTR(h.term_start, 1, 4) AS INTEGER) - h.born), 1) AS average
+FROM head h
+         JOIN office g ON g.country = h.country
+GROUP BY g.country
+ORDER BY g.country ASC
 ----
 
 ....
-+---------+----------+--------+---------+
-| country | youngest | oldest | average |
-+---------+----------+--------+---------+
-| FR      |       40 |     79 |    61.3 |
-| GB      |       24 |     83 |    56.3 |
-| JP      |       44 |     77 |    63.1 |
-| KR      |       46 |     81 |    61.2 |
-| US      |       43 |     79 |    56.7 |
-+---------+----------+--------+---------+
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+----------+--------+---------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | youngest | oldest | average |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+----------+--------+---------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |       40 |     79 |    61.3 |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |       24 |     83 |    56.3 |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |       44 |     77 |    63.1 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |       46 |     81 |    61.2 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |       43 |     79 |    56.7 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+----------+--------+---------+
 ....
 
 ====
@@ -439,7 +437,7 @@ Terms, not persons: a head re-elected appears once per term. term_start is NOT N
 ====
 [source,sql]
 ----
-SELECT country, number, name, term_start, term_end
+SELECT *
 FROM (SELECT h.*, ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start DESC) AS latest_rn
       FROM head AS h)
 WHERE latest_rn <= :n
@@ -459,12 +457,8 @@ A row is 'first' when it is among the first :n, so with a country of 2 * :n term
 ====
 [source,sql]
 ----
-SELECT country,
-       CASE WHEN first_rn <= :n THEN 'first' ELSE 'latest' END AS which,
-       number,
-       name,
-       term_start,
-       term_end
+SELECT *,
+       CASE WHEN first_rn <= :n THEN 'first' ELSE 'latest' END AS which
 FROM (SELECT h.*,
              ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start ASC)  AS first_rn, ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start DESC) AS latest_rn
       FROM head AS h)
@@ -486,7 +480,7 @@ Terms, not persons: a head whose first two terms were consecutive appears twice.
 ====
 [source,sql]
 ----
-SELECT country, name, term_start, term_end
+SELECT *
 FROM (SELECT h.*, ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start ASC) AS first_rn
       FROM head AS h)
 WHERE first_rn <= 2
@@ -494,20 +488,20 @@ ORDER BY country ASC, term_start ASC
 ----
 
 ....
-+---------+--------------------------+------------+------------+
-| country |           name           | term_start |  term_end  |
-+---------+--------------------------+------------+------------+
-| FR      | Louis-Napoléon Bonaparte | 1848-12-20 | 1852-12-02 |
-| FR      | Adolphe Thiers           | 1871-08-31 | 1873-05-24 |
-| GB      | Robert Walpole           | 1721-04-03 | 1742-02-11 |
-| GB      | Spencer Compton          | 1742-02-16 | 1743-07-02 |
-| JP      | 伊藤博文                 | 1885-12-22 | 1888-04-30 |
-| JP      | 黒田清隆                 | 1888-04-30 | 1889-10-25 |
-| KR      | 이승만                   | 1948-07-24 | 1952-08-14 |
-| KR      | 이승만                   | 1952-08-15 | 1956-08-14 |
-| US      | George Washington        | 1789-04-30 | 1797-03-04 |
-| US      | John Adams               | 1797-03-04 | 1801-03-04 |
-+---------+--------------------------+------------+------------+
++-----+---------+--------+------------+------------+--------------------------+-------------------------------------+------+------+----------+
+| id  | country | number | term_start |  term_end  |           name           |                party                | born | died | first_rn |
++-----+---------+--------+------------+------------+--------------------------+-------------------------------------+------+------+----------+
+|   1 | FR      |      1 | 1848-12-20 | 1852-12-02 | Louis-Napoléon Bonaparte | Bonapartiste                        | 1808 | 1873 |        1 |
+|   2 | FR      |      2 | 1871-08-31 | 1873-05-24 | Adolphe Thiers           | Orléaniste/Républicain_opportuniste | 1797 | 1877 |        2 |
+|  32 | GB      |      1 | 1721-04-03 | 1742-02-11 | Robert Walpole           | Whig                                | 1676 | 1745 |        1 |
+|  33 | GB      |      2 | 1742-02-16 | 1743-07-02 | Spencer Compton          | Whig                                | 1673 | 1743 |        2 |
+| 113 | JP      |      1 | 1885-12-22 | 1888-04-30 | 伊藤博文                 | 無所属                              | 1841 | 1909 |        1 |
+| 114 | JP      |      2 | 1888-04-30 | 1889-10-25 | 黒田清隆                 | 無所属                              | 1840 | 1900 |        2 |
+| 218 | KR      |      1 | 1948-07-24 | 1952-08-14 | 이승만                   | 대한독립촉성국민회/자유당           | 1875 | 1965 |        1 |
+| 219 | KR      |      2 | 1952-08-15 | 1956-08-14 | 이승만                   | 자유당                              | 1875 | 1965 |        2 |
+| 239 | US      |      1 | 1789-04-30 | 1797-03-04 | George Washington        | Unaffiliated                        | 1732 | 1799 |        1 |
+| 240 | US      |      2 | 1797-03-04 | 1801-03-04 | John Adams               | Federalist                          | 1735 | 1826 |        2 |
++-----+---------+--------+------------+------------+--------------------------+-------------------------------------+------+------+----------+
 ....
 
 ====
@@ -617,23 +611,24 @@ It catches the heads who died in office, but also those who left office and died
 ====
 [source,sql]
 ----
-SELECT country, COUNT(*) AS terms
-FROM head
-WHERE died = CAST(SUBSTR(term_end, 1, 4) AS INTEGER)
-GROUP BY country
-ORDER BY country ASC
+SELECT g.*, COUNT(*) AS terms
+FROM head h
+         JOIN office g ON g.country = h.country
+WHERE h.died = CAST(SUBSTR(h.term_end, 1, 4) AS INTEGER)
+GROUP BY g.country
+ORDER BY g.country ASC
 ----
 
 ....
-+---------+-------+
-| country | terms |
-+---------+-------+
-| FR      |     4 |
-| GB      |    11 |
-| JP      |     9 |
-| KR      |     1 |
-| US      |     9 |
-+---------+-------+
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | terms |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |     4 |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |    11 |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |     9 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |     1 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |     9 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+
 ....
 
 ====
@@ -733,36 +728,30 @@ Per country, each gap of more than a day between a term's end and the next term'
 ====
 [source,sql]
 ----
-SELECT country,
-       previous_name,
-       previous_term_end,
-       name,
-       term_start,
+SELECT *,
        CAST(julianday(term_start) - julianday(previous_term_end) AS INTEGER) - 1 AS days_vacant
-FROM (SELECT country,
-             name,
-             term_start,
+FROM (SELECT h.*,
              LAG(name) OVER (PARTITION BY country ORDER BY term_start)     AS previous_name, LAG(term_end) OVER (PARTITION BY country ORDER BY term_start) AS previous_term_end
-      FROM head)
+      FROM head AS h)
 WHERE julianday(term_start) - julianday(previous_term_end) > 1
 ORDER BY country ASC, term_start ASC
 ----
 
 ....
-+---------+--------------------------+-------------------+----------------------------+------------+-------------+
-| country |      previous_name       | previous_term_end |            name            | term_start | days_vacant |
-+---------+--------------------------+-------------------+----------------------------+------------+-------------+
-| FR      | Louis-Napoléon Bonaparte | 1852-12-02        | Adolphe Thiers             | 1871-08-31 |        6845 |
-| FR      | Sadi Carnot              | 1894-06-25        | Jean Casimir-Perier        | 1894-06-27 |           1 |
-| FR      | Félix Faure              | 1899-02-16        | Émile Loubet               | 1899-02-18 |           1 |
-| FR      | Paul Deschanel           | 1920-09-21        | Alexandre Millerand        | 1920-09-23 |           1 |
-| FR      | Alexandre Millerand      | 1924-06-11        | Gaston Doumergue           | 1924-06-13 |           1 |
-| FR      | Paul Doumer              | 1932-05-07        | Albert Lebrun              | 1932-05-10 |           2 |
-| FR      | Albert Lebrun            | 1940-07-11        | Vincent Auriol             | 1947-01-16 |        2379 |
-| FR      | Charles de Gaulle        | 1969-04-28        | Georges Pompidou           | 1969-06-20 |          52 |
-| FR      | Georges Pompidou         | 1974-04-02        | Valéry Giscard d'Estaing   | 1974-05-27 |          54 |
-| GB      | Robert Walpole           | 1742-02-11        | Spencer Compton            | 1742-02-16 |           4 |
-+---------+--------------------------+-------------------+----------------------------+------------+-------------+
++-----+---------+--------+------------+------------+----------------------------+-------------------------------------+------+------+--------------------------+-------------------+-------------+
+| id  | country | number | term_start |  term_end  |            name            |                party                | born | died |      previous_name       | previous_term_end | days_vacant |
++-----+---------+--------+------------+------------+----------------------------+-------------------------------------+------+------+--------------------------+-------------------+-------------+
+|   2 | FR      |      2 | 1871-08-31 | 1873-05-24 | Adolphe Thiers             | Orléaniste/Républicain_opportuniste | 1797 | 1877 | Louis-Napoléon Bonaparte | 1852-12-02        |        6845 |
+|   7 | FR      |      6 | 1894-06-27 | 1895-01-16 | Jean Casimir-Perier        | Républicain_opportuniste            | 1847 | 1907 | Sadi Carnot              | 1894-06-25        |           1 |
+|   9 | FR      |      8 | 1899-02-18 | 1906-02-18 | Émile Loubet               | Alliance_républicaine_démocratique  | 1838 | 1929 | Félix Faure              | 1899-02-16        |           1 |
+|  13 | FR      |     12 | 1920-09-23 | 1924-06-11 | Alexandre Millerand        | Indépendant                         | 1859 | 1943 | Paul Deschanel           | 1920-09-21        |           1 |
+|  14 | FR      |     13 | 1924-06-13 | 1931-06-13 | Gaston Doumergue           | Parti_radical                       | 1863 | 1937 | Alexandre Millerand      | 1924-06-11        |           1 |
+|  16 | FR      |     15 | 1932-05-10 | 1939-05-10 | Albert Lebrun              | Alliance_démocratique               | 1871 | 1950 | Paul Doumer              | 1932-05-07        |           2 |
+|  18 | FR      |     16 | 1947-01-16 | 1954-01-16 | Vincent Auriol             | SFIO                                | 1884 | 1966 | Albert Lebrun            | 1940-07-11        |        2379 |
+|  22 | FR      |     19 | 1969-06-20 | 1974-04-02 | Georges Pompidou           | UDR                                 | 1911 | 1974 | Charles de Gaulle        | 1969-04-28        |          52 |
+|  23 | FR      |     20 | 1974-05-27 | 1981-05-21 | Valéry Giscard d'Estaing   | RI/UDF                              | 1926 | 2020 | Georges Pompidou         | 1974-04-02        |          54 |
+|  33 | GB      |      2 | 1742-02-16 | 1743-07-02 | Spencer Compton            | Whig                                | 1673 | 1743 | Robert Walpole           | 1742-02-11        |           4 |
++-----+---------+--------+------------+------------+----------------------------+-------------------------------------+------+------+--------------------------+-------------------+-------------+
 ....
 
 61 rows; the first 10.
@@ -901,14 +890,10 @@ For a person named exactly, each of their terms with who held the office immedia
 ====
 [source,sql]
 ----
-SELECT country, number, term_start, term_end, predecessor, successor
-FROM (SELECT country,
-             number,
-             name,
-             term_start,
-             term_end,
+SELECT *
+FROM (SELECT h.*,
              LAG(name) OVER (PARTITION BY country ORDER BY term_start)  AS predecessor, LEAD(name) OVER (PARTITION BY country ORDER BY term_start) AS successor
-      FROM head)
+      FROM head AS h)
 WHERE name = :name
 ORDER BY country ASC, term_start ASC
 ----
@@ -926,32 +911,33 @@ LAG gives the previous term's name and party; a succession ('A/B') counts as a p
 ====
 [source,sql]
 ----
-SELECT country,
-       COUNT(*)                                                  AS successions,
-       SUM(party <> previous_party)                              AS party_changes,
-       ROUND(100.0 * SUM(party <> previous_party) / COUNT(*), 1) AS change_share
+SELECT g.*,
+       COUNT(*)                                                      AS successions,
+       SUM(h.party <> h.previous_party)                              AS party_changes,
+       ROUND(100.0 * SUM(h.party <> h.previous_party) / COUNT(*), 1) AS change_share
 FROM (SELECT country,
              name,
              party,
              LAG(name) OVER (PARTITION BY country ORDER BY term_start)  AS previous_name,
              LAG(party) OVER (PARTITION BY country ORDER BY term_start) AS previous_party
-      FROM head)
-WHERE previous_name IS NOT NULL
-  AND name <> previous_name
-GROUP BY country
-ORDER BY country ASC
+      FROM head) h
+         JOIN office g ON g.country = h.country
+WHERE h.previous_name IS NOT NULL
+  AND h.name <> h.previous_name
+GROUP BY g.country
+ORDER BY g.country ASC
 ----
 
 ....
-+---------+-------------+---------------+--------------+
-| country | successions | party_changes | change_share |
-+---------+-------------+---------------+--------------+
-| FR      |          24 |            19 |         79.2 |
-| GB      |          80 |            42 |         52.5 |
-| JP      |          79 |            32 |         40.5 |
-| KR      |          13 |            13 |        100.0 |
-| US      |          46 |            29 |         63.0 |
-+---------+-------------+---------------+--------------+
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------------+---------------+--------------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | successions | party_changes | change_share |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------------+---------------+--------------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |          24 |            19 |         79.2 |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |          80 |            42 |         52.5 |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |          79 |            32 |         40.5 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |          13 |            13 |        100.0 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |          46 |            29 |         63.0 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------------+---------------+--------------+
 ....
 
 ====
@@ -1016,7 +1002,7 @@ A reader has a country code, typed in whatever case, and wants that office.
 ====
 [source,sql]
 ----
-SELECT country, head_kind, head_title, numbering
+SELECT *
 FROM office
 WHERE country = UPPER(:country)
 ----
@@ -1033,21 +1019,21 @@ The front page lists every office with the title of its head, by country code.
 ====
 [source,sql]
 ----
-SELECT country, head_kind, head_title
+SELECT *
 FROM office
 ORDER BY country ASC
 ----
 
 ....
-+---------+----------------+----------------------------+
-| country |   head_kind    |         head_title         |
-+---------+----------------+----------------------------+
-| FR      | PRESIDENT      | Président de la République |
-| GB      | PRIME_MINISTER | Prime Minister             |
-| JP      | PRIME_MINISTER | 内閣総理大臣               |
-| KR      | PRESIDENT      | 대통령                     |
-| US      | PRESIDENT      | President                  |
-+---------+----------------+----------------------------+
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 ....
 
 ====
@@ -1063,19 +1049,19 @@ There, number does not identify a term, which is why head carries an id.
 ====
 [source,sql]
 ----
-SELECT country, head_title, numbering
+SELECT *
 FROM office
 WHERE numbering LIKE '%keeps the same number%'
 ORDER BY country ASC
 ----
 
 ....
-+---------+----------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------+
-| country |         head_title         |                                                                   numbering                                                                   |
-+---------+----------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------+
-| FR      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                          |
-| GB      | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each |
-+---------+----------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------+
++---------+----------------+----------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------+
+| country |   head_kind    |         head_title         |                                                                   numbering                                                                   |
++---------+----------------+----------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                          |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each |
++---------+----------------+----------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------+
 ....
 
 ====
@@ -1120,23 +1106,22 @@ Which titles use a character outside ASCII, and which do not?
 ====
 [source,sql]
 ----
-SELECT country,
-       head_title,
+SELECT *,
        CASE WHEN head_title GLOB '*[^ -~]*' THEN 'non-ASCII' ELSE 'ASCII' END AS script
 FROM office
 ORDER BY script ASC, country ASC
 ----
 
 ....
-+---------+----------------------------+-----------+
-| country |         head_title         |  script   |
-+---------+----------------------------+-----------+
-| GB      | Prime Minister             | ASCII     |
-| US      | President                  | ASCII     |
-| FR      | Président de la République | non-ASCII |
-| JP      | 内閣総理大臣               | non-ASCII |
-| KR      | 대통령                     | non-ASCII |
-+---------+----------------------------+-----------+
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      |  script   |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----------+
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      | ASCII     |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       | ASCII     |
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               | non-ASCII |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each | non-ASCII |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         | non-ASCII |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----------+
 ....
 
 ====
@@ -1152,7 +1137,7 @@ List the offices that have none, by country code; the check passes when nothing 
 ====
 [source,sql]
 ----
-SELECT g.country, g.head_title
+SELECT g.*
 FROM office g
 WHERE NOT EXISTS (SELECT 1
                   FROM head h
@@ -1180,27 +1165,27 @@ Show each office with that phrase alone.
 ====
 [source,sql]
 ----
-SELECT country,
+SELECT *,
        CASE
            WHEN comma > 0 AND (semicolon = 0 OR comma < semicolon) THEN SUBSTR(numbering, 1, comma - 1)
            WHEN semicolon > 0 THEN SUBSTR(numbering, 1, semicolon - 1)
            ELSE numbering
            END AS counts
-FROM (SELECT country, numbering, INSTR(numbering, ',') AS comma, INSTR(numbering, ';') AS semicolon
+FROM (SELECT *, INSTR(numbering, ',') AS comma, INSTR(numbering, ';') AS semicolon
       FROM office)
 ORDER BY country ASC
 ----
 
 ....
-+---------+--------------------------------------------+
-| country |                   counts                   |
-+---------+--------------------------------------------+
-| FR      | ordinal of the person by first election    |
-| GB      | ordinal of the person by first appointment |
-| JP      | 代                                         |
-| KR      | 대                                         |
-| US      | presidency number                          |
-+---------+--------------------------------------------+
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+-----------+--------------------------------------------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | comma | semicolon |                   counts                   |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+-----------+--------------------------------------------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |     0 |        40 | ordinal of the person by first election    |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |     0 |        43 | ordinal of the person by first appointment |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |     2 |        23 | 代                                         |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |     2 |        20 | 대                                         |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |    18 |        54 | presidency number                          |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+-----------+--------------------------------------------+
 ....
 
 ====
@@ -1221,22 +1206,22 @@ The front page names each country's head of government today, with the title the
 ====
 [source,sql]
 ----
-SELECT g.country, g.head_title, h.name, h.term_start
+SELECT g.*, h.*
 FROM office g
          JOIN head h ON h.country = g.country AND h.term_end IS NULL
 ORDER BY g.country ASC
 ----
 
 ....
-+---------+----------------------------+-----------------+------------+
-| country |         head_title         |      name       | term_start |
-+---------+----------------------------+-----------------+------------+
-| FR      | Président de la République | Emmanuel Macron | 2022-05-14 |
-| GB      | Prime Minister             | Andy Burnham    | 2026-07-20 |
-| JP      | 内閣総理大臣               | 高市早苗        | 2026-02-18 |
-| KR      | 대통령                     | 이재명          | 2025-06-04 |
-| US      | President                  | Donald Trump    | 2025-01-20 |
-+---------+----------------------------+-----------------+------------+
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+---------+--------+------------+----------+-----------------+------------------+------+------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | id  | country | number | term_start | term_end |      name       |      party       | born | died |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+---------+--------+------------+----------+-----------------+------------------+------+------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |  31 | FR      |     25 | 2022-05-14 |          | Emmanuel Macron | LREM/Renaissance | 1977 |      |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      | 112 | GB      |     59 | 2026-07-20 |          | Andy Burnham    | Labour           | 1970 |      |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each | 217 | JP      |    105 | 2026-02-18 |          | 高市早苗        | 自由民主党       | 1961 |      |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         | 238 | KR      |     21 | 2025-06-04 |          | 이재명          | 더불어민주당     | 1963 |      |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       | 285 | US      |     47 | 2025-01-20 |          | Donald Trump    | Republican       | 1946 |      |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+---------+--------+------------+----------+-----------------+------------------+------+------+
 ....
 
 ====
@@ -1251,7 +1236,7 @@ A reader asks for one country's list and should see, with it, what number counts
 ====
 [source,sql]
 ----
-SELECT g.head_title, g.numbering, h.number, h.term_start, h.term_end, h.name, h.party
+SELECT g.*, h.*
 FROM office g
          JOIN head h ON h.country = g.country
 WHERE g.country = :country
@@ -1270,23 +1255,23 @@ Each office with the kind of head it has and how many terms the list holds.
 ====
 [source,sql]
 ----
-SELECT g.country, g.head_kind, COUNT(h.id) AS terms
+SELECT g.*, COUNT(h.id) AS terms
 FROM office g
          LEFT JOIN head h ON h.country = g.country
-GROUP BY g.country, g.head_kind
+GROUP BY g.country
 ORDER BY g.country ASC
 ----
 
 ....
-+---------+----------------+-------+
-| country |   head_kind    | terms |
-+---------+----------------+-------+
-| FR      | PRESIDENT      |    31 |
-| GB      | PRIME_MINISTER |    81 |
-| JP      | PRIME_MINISTER |   105 |
-| KR      | PRESIDENT      |    21 |
-| US      | PRESIDENT      |    47 |
-+---------+----------------+-------+
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | terms |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |    31 |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |    81 |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |   105 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |    21 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |    47 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+
 ....
 
 ====
@@ -1301,7 +1286,7 @@ Each office's head numbered 1, with the title of the office, the oldest list fir
 ====
 [source,sql]
 ----
-SELECT g.country, g.head_title, h.number, h.name, h.term_start
+SELECT g.*, h.*
 FROM office g
          JOIN head h ON h.country = g.country
 WHERE h.number = 1
@@ -1309,15 +1294,15 @@ ORDER BY h.term_start ASC
 ----
 
 ....
-+---------+----------------------------+--------+--------------------------+------------+
-| country |         head_title         | number |           name           | term_start |
-+---------+----------------------------+--------+--------------------------+------------+
-| GB      | Prime Minister             |      1 | Robert Walpole           | 1721-04-03 |
-| US      | President                  |      1 | George Washington        | 1789-04-30 |
-| FR      | Président de la République |      1 | Louis-Napoléon Bonaparte | 1848-12-20 |
-| JP      | 内閣総理大臣               |      1 | 伊藤博文                 | 1885-12-22 |
-| KR      | 대통령                     |      1 | 이승만                   | 1948-07-24 |
-+---------+----------------------------+--------+--------------------------+------------+
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+---------+--------+------------+------------+--------------------------+---------------------------+------+------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | id  | country | number | term_start |  term_end  |           name           |           party           | born | died |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+---------+--------+------------+------------+--------------------------+---------------------------+------+------+
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |  32 | GB      |      1 | 1721-04-03 | 1742-02-11 | Robert Walpole           | Whig                      | 1676 | 1745 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       | 239 | US      |      1 | 1789-04-30 | 1797-03-04 | George Washington        | Unaffiliated              | 1732 | 1799 |
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |   1 | FR      |      1 | 1848-12-20 | 1852-12-02 | Louis-Napoléon Bonaparte | Bonapartiste              | 1808 | 1873 |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each | 113 | JP      |      1 | 1885-12-22 | 1888-04-30 | 伊藤博文                 | 無所属                    | 1841 | 1909 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         | 218 | KR      |      1 | 1948-07-24 | 1952-08-14 | 이승만                   | 대한독립촉성국민회/자유당 | 1875 | 1965 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+---------+--------+------------+------------+--------------------------+---------------------------+------+------+
 ....
 
 ====
@@ -1332,7 +1317,7 @@ Every term of a president (head_kind 'PRESIDENT') that began in 2000 or later, w
 ====
 [source,sql]
 ----
-SELECT h.term_start, g.country, g.head_title, h.name, h.party
+SELECT g.*, h.*
 FROM office g
          JOIN head h ON h.country = g.country
 WHERE g.head_kind = 'PRESIDENT'
@@ -1341,26 +1326,26 @@ ORDER BY h.term_start ASC, g.country ASC
 ----
 
 ....
-+------------+---------+----------------------------+-------------------+---------------------------------------+
-| term_start | country |         head_title         |       name        |                 party                 |
-+------------+---------+----------------------------+-------------------+---------------------------------------+
-| 2001-01-20 | US      | President                  | George W. Bush    | Republican                            |
-| 2002-05-17 | FR      | Président de la République | Jacques Chirac    | RPR/UMP                               |
-| 2003-02-25 | KR      | 대통령                     | 노무현            | 새천년민주당/무소속/열린우리당/무소속 |
-| 2007-05-16 | FR      | Président de la République | Nicolas Sarkozy   | UMP                                   |
-| 2008-02-25 | KR      | 대통령                     | 이명박            | 한나라당/새누리당                     |
-| 2009-01-20 | US      | President                  | Barack Obama      | Democratic                            |
-| 2012-05-15 | FR      | Président de la République | François Hollande | PS                                    |
-| 2013-02-25 | KR      | 대통령                     | 박근혜            | 새누리당/자유한국당                   |
-| 2017-01-20 | US      | President                  | Donald Trump      | Republican                            |
-| 2017-05-10 | KR      | 대통령                     | 문재인            | 더불어민주당                          |
-| 2017-05-14 | FR      | Président de la République | Emmanuel Macron   | LREM                                  |
-| 2021-01-20 | US      | President                  | Joe Biden         | Democratic                            |
-| 2022-05-10 | KR      | 대통령                     | 윤석열            | 국민의힘                              |
-| 2022-05-14 | FR      | Président de la République | Emmanuel Macron   | LREM/Renaissance                      |
-| 2025-01-20 | US      | President                  | Donald Trump      | Republican                            |
-| 2025-06-04 | KR      | 대통령                     | 이재명            | 더불어민주당                          |
-+------------+---------+----------------------------+-------------------+---------------------------------------+
++---------+-----------+----------------------------+----------------------------------------------------------------------------------------------------------------------+-----+---------+--------+------------+------------+-------------------+---------------------------------------+------+------+
+| country | head_kind |         head_title         |                                                      numbering                                                       | id  | country | number | term_start |  term_end  |       name        |                 party                 | born | died |
++---------+-----------+----------------------------+----------------------------------------------------------------------------------------------------------------------+-----+---------+--------+------------+------------+-------------------+---------------------------------------+------+------+
+| US      | PRESIDENT | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number         | 281 | US      |     43 | 2001-01-20 | 2009-01-20 | George W. Bush    | Republican                            | 1946 |      |
+| FR      | PRESIDENT | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each |  27 | FR      |     22 | 2002-05-17 | 2007-05-16 | Jacques Chirac    | RPR/UMP                               | 1932 | 2019 |
+| KR      | PRESIDENT | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                           | 233 | KR      |     16 | 2003-02-25 | 2008-02-24 | 노무현            | 새천년민주당/무소속/열린우리당/무소속 | 1946 | 2009 |
+| FR      | PRESIDENT | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each |  28 | FR      |     23 | 2007-05-16 | 2012-05-15 | Nicolas Sarkozy   | UMP                                   | 1955 |      |
+| KR      | PRESIDENT | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                           | 234 | KR      |     17 | 2008-02-25 | 2013-02-24 | 이명박            | 한나라당/새누리당                     | 1941 |      |
+| US      | PRESIDENT | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number         | 282 | US      |     44 | 2009-01-20 | 2017-01-20 | Barack Obama      | Democratic                            | 1961 |      |
+| FR      | PRESIDENT | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each |  29 | FR      |     24 | 2012-05-15 | 2017-05-14 | François Hollande | PS                                    | 1954 |      |
+| KR      | PRESIDENT | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                           | 235 | KR      |     18 | 2013-02-25 | 2017-03-10 | 박근혜            | 새누리당/자유한국당                   | 1952 |      |
+| US      | PRESIDENT | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number         | 283 | US      |     45 | 2017-01-20 | 2021-01-20 | Donald Trump      | Republican                            | 1946 |      |
+| KR      | PRESIDENT | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                           | 236 | KR      |     19 | 2017-05-10 | 2022-05-09 | 문재인            | 더불어민주당                          | 1953 |      |
+| FR      | PRESIDENT | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each |  30 | FR      |     25 | 2017-05-14 | 2022-05-14 | Emmanuel Macron   | LREM                                  | 1977 |      |
+| US      | PRESIDENT | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number         | 284 | US      |     46 | 2021-01-20 | 2025-01-20 | Joe Biden         | Democratic                            | 1942 |      |
+| KR      | PRESIDENT | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                           | 237 | KR      |     20 | 2022-05-10 | 2025-04-04 | 윤석열            | 국민의힘                              | 1960 |      |
+| FR      | PRESIDENT | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each |  31 | FR      |     25 | 2022-05-14 |            | Emmanuel Macron   | LREM/Renaissance                      | 1977 |      |
+| US      | PRESIDENT | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number         | 285 | US      |     47 | 2025-01-20 |            | Donald Trump      | Republican                            | 1946 |      |
+| KR      | PRESIDENT | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                           | 238 | KR      |     21 | 2025-06-04 |            | 이재명            | 더불어민주당                          | 1963 |      |
++---------+-----------+----------------------------+----------------------------------------------------------------------------------------------------------------------+-----+---------+--------+------------+------------+-------------------+---------------------------------------+------+------+
 ....
 
 ====
@@ -1376,7 +1361,7 @@ A succession that includes one of them ('무소속/민주정의당') is a differ
 ====
 [source,sql]
 ----
-SELECT g.country, g.head_title, h.number, h.name, h.party, h.term_start
+SELECT g.*, h.*
 FROM office g
          JOIN head h ON h.country = g.country
 WHERE g.head_kind = 'PRESIDENT'
@@ -1385,15 +1370,15 @@ ORDER BY g.country ASC, h.term_start ASC
 ----
 
 ....
-+---------+----------------------------+--------+---------------------+--------------+------------+
-| country |         head_title         | number |        name         |    party     | term_start |
-+---------+----------------------------+--------+---------------------+--------------+------------+
-| FR      | Président de la République |     12 | Alexandre Millerand | Indépendant  | 1920-09-23 |
-| FR      | Président de la République |     14 | Paul Doumer         | Indépendant  | 1931-06-13 |
-| KR      | 대통령                     |      4 | 윤보선              | 무소속       | 1960-08-12 |
-| KR      | 대통령                     |     10 | 최규하              | 무소속       | 1979-12-06 |
-| US      | President                  |      1 | George Washington   | Unaffiliated | 1789-04-30 |
-+---------+----------------------------+--------+---------------------+--------------+------------+
++---------+-----------+----------------------------+----------------------------------------------------------------------------------------------------------------------+-----+---------+--------+------------+------------+---------------------+--------------+------+------+
+| country | head_kind |         head_title         |                                                      numbering                                                       | id  | country | number | term_start |  term_end  |        name         |    party     | born | died |
++---------+-----------+----------------------------+----------------------------------------------------------------------------------------------------------------------+-----+---------+--------+------------+------------+---------------------+--------------+------+------+
+| FR      | PRESIDENT | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each |  13 | FR      |     12 | 1920-09-23 | 1924-06-11 | Alexandre Millerand | Indépendant  | 1859 | 1943 |
+| FR      | PRESIDENT | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each |  15 | FR      |     14 | 1931-06-13 | 1932-05-07 | Paul Doumer         | Indépendant  | 1857 | 1932 |
+| KR      | PRESIDENT | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                           | 221 | KR      |      4 | 1960-08-12 | 1962-03-22 | 윤보선              | 무소속       | 1897 | 1990 |
+| KR      | PRESIDENT | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                           | 227 | KR      |     10 | 1979-12-06 | 1980-08-16 | 최규하              | 무소속       | 1919 | 2006 |
+| US      | PRESIDENT | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number         | 239 | US      |      1 | 1789-04-30 | 1797-03-04 | George Washington   | Unaffiliated | 1732 | 1799 |
++---------+-----------+----------------------------+----------------------------------------------------------------------------------------------------------------------+-----+---------+--------+------------+------------+---------------------+--------------+------+------+
 ....
 
 ====
@@ -1409,23 +1394,23 @@ The date goes into the join condition, not WHERE, so an office with no such term
 ====
 [source,sql]
 ----
-SELECT g.country, g.head_title, COUNT(h.id) AS terms
+SELECT g.*, COUNT(h.id) AS terms
 FROM office g
          LEFT JOIN head h ON h.country = g.country AND h.term_start >= '2000-01-01'
-GROUP BY g.country, g.head_title
+GROUP BY g.country
 ORDER BY terms DESC, g.country ASC
 ----
 
 ....
-+---------+----------------------------+-------+
-| country |         head_title         | terms |
-+---------+----------------------------+-------+
-| JP      | 内閣総理大臣               |    21 |
-| GB      | Prime Minister             |     8 |
-| KR      | 대통령                     |     6 |
-| FR      | Président de la République |     5 |
-| US      | President                  |     5 |
-+---------+----------------------------+-------+
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | terms |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |    21 |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |     8 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |     6 |
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |     5 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |     5 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+
 ....
 
 ====
@@ -1464,27 +1449,26 @@ Per office: how many terms, how many distinct numbers, the highest number, and t
 ====
 [source,sql]
 ----
-SELECT g.country,
+SELECT g.*,
        COUNT(*)                 AS terms,
        COUNT(DISTINCT h.number) AS numbers,
-       MAX(h.number)            AS highest,
-       g.numbering
+       MAX(h.number)            AS highest
 FROM office g
          JOIN head h ON h.country = g.country
-GROUP BY g.country, g.numbering
+GROUP BY g.country
 ORDER BY g.country ASC
 ----
 
 ....
-+---------+-------+---------+---------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-| country | terms | numbers | highest |                                                                     numbering                                                                      |
-+---------+-------+---------+---------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-| FR      |    31 |      25 |      25 | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |
-| GB      |    81 |      59 |      59 | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |
-| JP      |   105 |     105 |     105 | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |
-| KR      |    21 |      21 |      21 | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |
-| US      |    47 |      47 |      47 | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |
-+---------+-------+---------+---------+----------------------------------------------------------------------------------------------------------------------------------------------------+
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+---------+---------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | terms | numbers | highest |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+---------+---------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |    31 |      25 |      25 |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |    81 |      59 |      59 |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |   105 |     105 |     105 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |    21 |      21 |      21 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |    47 |      47 |      47 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+---------+---------+
 ....
 
 ====
@@ -1499,28 +1483,27 @@ Per office, the first term's start, the latest term's start and the years betwee
 ====
 [source,sql]
 ----
-SELECT g.country,
-       g.head_title,
+SELECT g.*,
        MIN(h.term_start)                                         AS first_term_start,
        MAX(h.term_start)                                         AS latest_term_start,
        CAST(SUBSTR(MAX(h.term_start), 1, 4) AS INTEGER)
            - CAST(SUBSTR(MIN(h.term_start), 1, 4) AS INTEGER)    AS years
 FROM office g
          JOIN head h ON h.country = g.country
-GROUP BY g.country, g.head_title
+GROUP BY g.country
 ORDER BY g.country ASC
 ----
 
 ....
-+---------+----------------------------+------------------+-------------------+-------+
-| country |         head_title         | first_term_start | latest_term_start | years |
-+---------+----------------------------+------------------+-------------------+-------+
-| FR      | Président de la République | 1848-12-20       | 2022-05-14        |   174 |
-| GB      | Prime Minister             | 1721-04-03       | 2026-07-20        |   305 |
-| JP      | 内閣総理大臣               | 1885-12-22       | 2026-02-18        |   141 |
-| KR      | 대통령                     | 1948-07-24       | 2025-06-04        |    77 |
-| US      | President                  | 1789-04-30       | 2025-01-20        |   236 |
-+---------+----------------------------+------------------+-------------------+-------+
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+------------------+-------------------+-------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | first_term_start | latest_term_start | years |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+------------------+-------------------+-------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               | 1848-12-20       | 2022-05-14        |   174 |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      | 1721-04-03       | 2026-07-20        |   305 |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each | 1885-12-22       | 2026-02-18        |   141 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         | 1948-07-24       | 2025-06-04        |    77 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       | 1789-04-30       | 2025-01-20        |   236 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+------------------+-------------------+-------+
 ....
 
 ====
@@ -1536,24 +1519,24 @@ A name is taken as one person within a country.
 ====
 [source,sql]
 ----
-SELECT g.country, g.head_title, COUNT(DISTINCT h.name) AS living
+SELECT g.*, COUNT(DISTINCT h.name) AS living
 FROM office g
          JOIN head h ON h.country = g.country
 WHERE h.died IS NULL
-GROUP BY g.country, g.head_title
+GROUP BY g.country
 ORDER BY g.country ASC
 ----
 
 ....
-+---------+----------------------------+--------+
-| country |         head_title         | living |
-+---------+----------------------------+--------+
-| FR      | Président de la République |      3 |
-| GB      | Prime Minister             |     10 |
-| JP      | 内閣総理大臣               |     12 |
-| KR      | 대통령                     |      5 |
-| US      | President                  |      5 |
-+---------+----------------------------+--------+
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+--------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | living |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+--------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |      3 |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |     10 |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |     12 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |      5 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |      5 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+--------+
 ....
 
 ====
@@ -1569,28 +1552,27 @@ A SUM of CASE per column turns the rows of a GROUP BY into columns.
 ====
 [source,sql]
 ----
-SELECT g.country,
-       g.head_title,
+SELECT g.*,
        SUM(CASE WHEN h.term_start < '1800' THEN 1 ELSE 0 END)                            AS c18,
        SUM(CASE WHEN h.term_start >= '1800' AND h.term_start < '1900' THEN 1 ELSE 0 END) AS c19,
        SUM(CASE WHEN h.term_start >= '1900' AND h.term_start < '2000' THEN 1 ELSE 0 END) AS c20,
        SUM(CASE WHEN h.term_start >= '2000' THEN 1 ELSE 0 END)                           AS c21
 FROM office g
          JOIN head h ON h.country = g.country
-GROUP BY g.country, g.head_title
+GROUP BY g.country
 ORDER BY g.country ASC
 ----
 
 ....
-+---------+----------------------------+-----+-----+-----+-----+
-| country |         head_title         | c18 | c19 | c20 | c21 |
-+---------+----------------------------+-----+-----+-----+-----+
-| FR      | Président de la République |   0 |   9 |  17 |   5 |
-| GB      | Prime Minister             |  16 |  33 |  24 |   8 |
-| JP      | 内閣総理大臣               |   0 |   9 |  75 |  21 |
-| KR      | 대통령                     |   0 |   0 |  15 |   6 |
-| US      | President                  |   2 |  23 |  17 |   5 |
-+---------+----------------------------+-----+-----+-----+-----+
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+-----+-----+-----+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | c18 | c19 | c20 | c21 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+-----+-----+-----+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |   0 |   9 |  17 |   5 |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |  16 |  33 |  24 |   8 |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |   0 |   9 |  75 |  21 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |   0 |   0 |  15 |   6 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |   2 |  23 |  17 |   5 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+-----+-----+-----+
 ....
 
 ====
@@ -1641,11 +1623,8 @@ An open term has no term_end, so julianday gives NULL and the term drops out.
 ====
 [source,sql]
 ----
-SELECT g.country,
-       g.head_title,
-       h.name,
-       h.term_start,
-       h.term_end,
+SELECT g.*,
+       h.*,
        CAST(julianday(h.term_end) - julianday(h.term_start) AS INTEGER) AS days
 FROM office g
          JOIN head h ON h.country = g.country
@@ -1657,15 +1636,15 @@ ORDER BY g.country ASC, h.term_start ASC
 ----
 
 ....
-+---------+----------------------------+------------------------+------------+------------+------+
-| country |         head_title         |          name          | term_start |  term_end  | days |
-+---------+----------------------------+------------------------+------------+------------+------+
-| FR      | Président de la République | Jean Casimir-Perier    | 1894-06-27 | 1895-01-16 |  203 |
-| GB      | Prime Minister             | Arthur Wellesley       | 1834-11-17 | 1834-12-09 |   22 |
-| JP      | 内閣総理大臣               | 岸田文雄               | 2021-10-04 | 2021-11-10 |   37 |
-| KR      | 대통령                     | 전두환                 | 1980-08-27 | 1981-02-24 |  181 |
-| US      | President                  | William Henry Harrison | 1841-03-04 | 1841-04-04 |   31 |
-+---------+----------------------------+------------------------+------------+------------+------+
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+---------+--------+------------+------------+------------------------+--------------------------+------+------+------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | id  | country | number | term_start |  term_end  |          name          |          party           | born | died | days |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+---------+--------+------------+------------+------------------------+--------------------------+------+------+------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |   7 | FR      |      6 | 1894-06-27 | 1895-01-16 | Jean Casimir-Perier    | Républicain_opportuniste | 1847 | 1907 |  203 |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |  59 | GB      |     21 | 1834-11-17 | 1834-12-09 | Arthur Wellesley       | Tory                     | 1769 | 1852 |   22 |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each | 212 | JP      |    100 | 2021-10-04 | 2021-11-10 | 岸田文雄               | 自由民主党               | 1957 |      |   37 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         | 228 | KR      |     11 | 1980-08-27 | 1981-02-24 | 전두환                 | 무소속/민주정의당        | 1931 | 2021 |  181 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       | 247 | US      |      9 | 1841-03-04 | 1841-04-04 | William Henry Harrison | Whig                     | 1773 | 1841 |   31 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+---------+--------+------------+------------+------------------------+--------------------------+------+------+------+
 ....
 
 ====
@@ -1709,7 +1688,7 @@ A reader gives a date and wants every office with its head on that day, or 'vaca
 ====
 [source,sql]
 ----
-SELECT g.country, g.head_title, COALESCE(h.name, '(vacant)') AS name, h.term_start, h.term_end
+SELECT g.*, COALESCE(h.name, '(vacant)') AS name, h.*
 FROM office g
          LEFT JOIN head h ON h.country = g.country
     AND h.term_start <= :date
@@ -1730,12 +1709,7 @@ One row per pair, the incumbent first.
 ====
 [source,sql]
 ----
-SELECT i.country     AS country,
-       i.name        AS incumbent,
-       i.term_start  AS since,
-       o.country     AS other,
-       g.head_title,
-       o.name        AS head
+SELECT i.*, o.*, g.*
 FROM head i
          JOIN head o ON o.country <> i.country
     AND o.term_start <= i.term_start
@@ -1746,30 +1720,30 @@ ORDER BY i.country ASC, o.country ASC
 ----
 
 ....
-+---------+-----------------+------------+-------+----------------------------+-----------------+
-| country |    incumbent    |   since    | other |         head_title         |      head       |
-+---------+-----------------+------------+-------+----------------------------+-----------------+
-| FR      | Emmanuel Macron | 2022-05-14 | GB    | Prime Minister             | Boris Johnson   |
-| FR      | Emmanuel Macron | 2022-05-14 | JP    | 内閣総理大臣               | 岸田文雄        |
-| FR      | Emmanuel Macron | 2022-05-14 | KR    | 대통령                     | 윤석열          |
-| FR      | Emmanuel Macron | 2022-05-14 | US    | President                  | Joe Biden       |
-| GB      | Andy Burnham    | 2026-07-20 | FR    | Président de la République | Emmanuel Macron |
-| GB      | Andy Burnham    | 2026-07-20 | JP    | 内閣総理大臣               | 高市早苗        |
-| GB      | Andy Burnham    | 2026-07-20 | KR    | 대통령                     | 이재명          |
-| GB      | Andy Burnham    | 2026-07-20 | US    | President                  | Donald Trump    |
-| JP      | 高市早苗        | 2026-02-18 | FR    | Président de la République | Emmanuel Macron |
-| JP      | 高市早苗        | 2026-02-18 | GB    | Prime Minister             | Keir Starmer    |
-| JP      | 高市早苗        | 2026-02-18 | KR    | 대통령                     | 이재명          |
-| JP      | 高市早苗        | 2026-02-18 | US    | President                  | Donald Trump    |
-| KR      | 이재명          | 2025-06-04 | FR    | Président de la République | Emmanuel Macron |
-| KR      | 이재명          | 2025-06-04 | GB    | Prime Minister             | Keir Starmer    |
-| KR      | 이재명          | 2025-06-04 | JP    | 内閣総理大臣               | 石破茂          |
-| KR      | 이재명          | 2025-06-04 | US    | President                  | Donald Trump    |
-| US      | Donald Trump    | 2025-01-20 | FR    | Président de la République | Emmanuel Macron |
-| US      | Donald Trump    | 2025-01-20 | GB    | Prime Minister             | Keir Starmer    |
-| US      | Donald Trump    | 2025-01-20 | JP    | 内閣総理大臣               | 石破茂          |
-| US      | Donald Trump    | 2025-01-20 | KR    | 대통령                     | 윤석열          |
-+---------+-----------------+------------+-------+----------------------------+-----------------+
++-----+---------+--------+------------+----------+-----------------+------------------+------+------+-----+---------+--------+------------+------------+-----------------+------------------+------+------+---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+| id  | country | number | term_start | term_end |      name       |      party       | born | died | id  | country | number | term_start |  term_end  |      name       |      party       | born | died | country |   head_kind    |         head_title         |                                                                     numbering                                                                      |
++-----+---------+--------+------------+----------+-----------------+------------------+------+------+-----+---------+--------+------------+------------+-----------------+------------------+------+------+---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+|  31 | FR      |     25 | 2022-05-14 |          | Emmanuel Macron | LREM/Renaissance | 1977 |      | 108 | GB      |     55 | 2019-07-24 | 2022-09-06 | Boris Johnson   | Conservative     | 1964 |      | GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |
+|  31 | FR      |     25 | 2022-05-14 |          | Emmanuel Macron | LREM/Renaissance | 1977 |      | 213 | JP      |    101 | 2021-11-10 | 2024-10-01 | 岸田文雄        | 自由民主党       | 1957 |      | JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |
+|  31 | FR      |     25 | 2022-05-14 |          | Emmanuel Macron | LREM/Renaissance | 1977 |      | 237 | KR      |     20 | 2022-05-10 | 2025-04-04 | 윤석열          | 국민의힘         | 1960 |      | KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |
+|  31 | FR      |     25 | 2022-05-14 |          | Emmanuel Macron | LREM/Renaissance | 1977 |      | 284 | US      |     46 | 2021-01-20 | 2025-01-20 | Joe Biden       | Democratic       | 1942 |      | US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |
+| 112 | GB      |     59 | 2026-07-20 |          | Andy Burnham    | Labour           | 1970 |      |  31 | FR      |     25 | 2022-05-14 |            | Emmanuel Macron | LREM/Renaissance | 1977 |      | FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |
+| 112 | GB      |     59 | 2026-07-20 |          | Andy Burnham    | Labour           | 1970 |      | 217 | JP      |    105 | 2026-02-18 |            | 高市早苗        | 自由民主党       | 1961 |      | JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |
+| 112 | GB      |     59 | 2026-07-20 |          | Andy Burnham    | Labour           | 1970 |      | 238 | KR      |     21 | 2025-06-04 |            | 이재명          | 더불어민주당     | 1963 |      | KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |
+| 112 | GB      |     59 | 2026-07-20 |          | Andy Burnham    | Labour           | 1970 |      | 285 | US      |     47 | 2025-01-20 |            | Donald Trump    | Republican       | 1946 |      | US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |
+| 217 | JP      |    105 | 2026-02-18 |          | 高市早苗        | 自由民主党       | 1961 |      |  31 | FR      |     25 | 2022-05-14 |            | Emmanuel Macron | LREM/Renaissance | 1977 |      | FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |
+| 217 | JP      |    105 | 2026-02-18 |          | 高市早苗        | 自由民主党       | 1961 |      | 111 | GB      |     58 | 2024-07-05 | 2026-07-20 | Keir Starmer    | Labour           | 1962 |      | GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |
+| 217 | JP      |    105 | 2026-02-18 |          | 高市早苗        | 自由民主党       | 1961 |      | 238 | KR      |     21 | 2025-06-04 |            | 이재명          | 더불어민주당     | 1963 |      | KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |
+| 217 | JP      |    105 | 2026-02-18 |          | 高市早苗        | 自由民主党       | 1961 |      | 285 | US      |     47 | 2025-01-20 |            | Donald Trump    | Republican       | 1946 |      | US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |
+| 238 | KR      |     21 | 2025-06-04 |          | 이재명          | 더불어민주당     | 1963 |      |  31 | FR      |     25 | 2022-05-14 |            | Emmanuel Macron | LREM/Renaissance | 1977 |      | FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |
+| 238 | KR      |     21 | 2025-06-04 |          | 이재명          | 더불어민주당     | 1963 |      | 111 | GB      |     58 | 2024-07-05 | 2026-07-20 | Keir Starmer    | Labour           | 1962 |      | GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |
+| 238 | KR      |     21 | 2025-06-04 |          | 이재명          | 더불어민주당     | 1963 |      | 215 | JP      |    103 | 2024-11-11 | 2025-10-21 | 石破茂          | 自由民主党       | 1957 |      | JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |
+| 238 | KR      |     21 | 2025-06-04 |          | 이재명          | 더불어민주당     | 1963 |      | 285 | US      |     47 | 2025-01-20 |            | Donald Trump    | Republican       | 1946 |      | US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |
+| 285 | US      |     47 | 2025-01-20 |          | Donald Trump    | Republican       | 1946 |      |  31 | FR      |     25 | 2022-05-14 |            | Emmanuel Macron | LREM/Renaissance | 1977 |      | FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |
+| 285 | US      |     47 | 2025-01-20 |          | Donald Trump    | Republican       | 1946 |      | 111 | GB      |     58 | 2024-07-05 | 2026-07-20 | Keir Starmer    | Labour           | 1962 |      | GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |
+| 285 | US      |     47 | 2025-01-20 |          | Donald Trump    | Republican       | 1946 |      | 215 | JP      |    103 | 2024-11-11 | 2025-10-21 | 石破茂          | 自由民主党       | 1957 |      | JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |
+| 285 | US      |     47 | 2025-01-20 |          | Donald Trump    | Republican       | 1946 |      | 237 | KR      |     20 | 2022-05-10 | 2025-04-04 | 윤석열          | 국민의힘         | 1960 |      | KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |
++-----+---------+--------+------------+----------+-----------------+------------------+------+------+-----+---------+--------+------------+------------+-----------------+------------------+------+------+---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 ....
 
 ====
@@ -1824,32 +1798,32 @@ Two terms overlap when each starts on or before the other's end, the handover da
 ====
 [source,sql]
 ----
-SELECT p.country, p.name, p.term_start, p.term_end, COUNT(DISTINCT m.country || ' ' || m.name) AS prime_ministers
+SELECT p.*, COUNT(DISTINCT m.country || ' ' || m.name) AS prime_ministers
 FROM head p
          JOIN office pg ON pg.country = p.country AND pg.head_kind = 'PRESIDENT'
          JOIN head m ON m.term_start <= COALESCE(p.term_end, '9999-12-31')
     AND COALESCE(m.term_end, '9999-12-31') >= p.term_start
          JOIN office mg ON mg.country = m.country AND mg.head_kind = 'PRIME_MINISTER'
-GROUP BY p.id, p.country, p.name, p.term_start, p.term_end
+GROUP BY p.id
 ORDER BY prime_ministers DESC, p.term_start ASC, p.country ASC
 LIMIT 10
 ----
 
 ....
-+---------+--------------------------+------------+------------+-----------------+
-| country |           name           | term_start |  term_end  | prime_ministers |
-+---------+--------------------------+------------+------------+-----------------+
-| US      | Franklin D. Roosevelt    | 1933-03-04 | 1945-04-12 |              15 |
-| FR      | Alexandre Millerand      | 1920-09-23 | 1924-06-11 |              10 |
-| FR      | Albert Lebrun            | 1932-05-10 | 1939-05-10 |              10 |
-| FR      | François Mitterrand      | 1988-05-21 | 1995-05-17 |               9 |
-| US      | Bill Clinton             | 1993-01-20 | 2001-01-20 |               9 |
-| FR      | Nicolas Sarkozy          | 2007-05-16 | 2012-05-15 |               9 |
-| US      | Calvin Coolidge          | 1923-08-02 | 1929-03-04 |               8 |
-| US      | Harry S. Truman          | 1945-04-12 | 1953-01-20 |               8 |
-| US      | Dwight D. Eisenhower     | 1953-01-20 | 1961-01-20 |               8 |
-| FR      | Valéry Giscard d'Estaing | 1974-05-27 | 1981-05-21 |               8 |
-+---------+--------------------------+------------+------------+-----------------+
++-----+---------+--------+------------+------------+--------------------------+-----------------------+------+------+-----------------+
+| id  | country | number | term_start |  term_end  |           name           |         party         | born | died | prime_ministers |
++-----+---------+--------+------------+------------+--------------------------+-----------------------+------+------+-----------------+
+| 270 | US      |     32 | 1933-03-04 | 1945-04-12 | Franklin D. Roosevelt    | Democratic            | 1882 | 1945 |              15 |
+|  13 | FR      |     12 | 1920-09-23 | 1924-06-11 | Alexandre Millerand      | Indépendant           | 1859 | 1943 |              10 |
+|  16 | FR      |     15 | 1932-05-10 | 1939-05-10 | Albert Lebrun            | Alliance_démocratique | 1871 | 1950 |              10 |
+|  25 | FR      |     21 | 1988-05-21 | 1995-05-17 | François Mitterrand      | PS                    | 1916 | 1996 |               9 |
+| 280 | US      |     42 | 1993-01-20 | 2001-01-20 | Bill Clinton             | Democratic            | 1946 |      |               9 |
+|  28 | FR      |     23 | 2007-05-16 | 2012-05-15 | Nicolas Sarkozy          | UMP                   | 1955 |      |               9 |
+| 268 | US      |     30 | 1923-08-02 | 1929-03-04 | Calvin Coolidge          | Republican            | 1872 | 1933 |               8 |
+| 271 | US      |     33 | 1945-04-12 | 1953-01-20 | Harry S. Truman          | Democratic            | 1884 | 1972 |               8 |
+| 272 | US      |     34 | 1953-01-20 | 1961-01-20 | Dwight D. Eisenhower     | Republican            | 1890 | 1969 |               8 |
+|  23 | FR      |     20 | 1974-05-27 | 1981-05-21 | Valéry Giscard d'Estaing | RI/UDF                | 1926 | 2020 |               8 |
++-----+---------+--------+------------+------------+--------------------------+-----------------------+------+------+-----------------+
 ....
 
 ====

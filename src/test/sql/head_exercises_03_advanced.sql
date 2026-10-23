@@ -30,17 +30,11 @@
 -- --------------------------------------------------------------------------------------------- HOG-HEAD-A-01 Vacancies
 -- Per country, each gap of more than a day between a term's end and the next term's start, with its length; a day
 -- between is only how some sources write a succession, so it does not count.
-SELECT country,
-       previous_name,
-       previous_term_end,
-       name,
-       term_start,
+SELECT *,
        CAST(julianday(term_start) - julianday(previous_term_end) AS INTEGER) - 1 AS days_vacant
-FROM (SELECT country,
-             name,
-             term_start,
+FROM (SELECT h.*,
              LAG(name) OVER (PARTITION BY country ORDER BY term_start)     AS previous_name, LAG(term_end) OVER (PARTITION BY country ORDER BY term_start) AS previous_term_end
-      FROM head)
+      FROM head AS h)
 WHERE julianday(term_start) - julianday(previous_term_end) > 1
 ORDER BY country ASC, term_start ASC
 ;
@@ -115,14 +109,10 @@ ORDER BY country ASC, term_start ASC, position ASC
 -- ----------------------------------------------------------------------------- HOG-HEAD-A-05 Predecessor and successor
 -- For a person named exactly, each of their terms with who held the office immediately before and after it in that
 -- country; the incumbent has no successor.
-SELECT country, number, term_start, term_end, predecessor, successor
-FROM (SELECT country,
-             number,
-             name,
-             term_start,
-             term_end,
+SELECT *
+FROM (SELECT h.*,
              LAG(name) OVER (PARTITION BY country ORDER BY term_start)  AS predecessor, LEAD(name) OVER (PARTITION BY country ORDER BY term_start) AS successor
-      FROM head)
+      FROM head AS h)
 WHERE name = :name
 ORDER BY country ASC, term_start ASC
 ;
@@ -132,20 +122,21 @@ ORDER BY country ASC, term_start ASC
 -- Per country, over the successions where the head changed (not a head following themselves), how many also changed the
 -- party, and that as a percentage, by country code. LAG gives the previous term's name and party; a succession ('A/B')
 -- counts as a party of its own.
-SELECT country,
-       COUNT(*)                                                  AS successions,
-       SUM(party <> previous_party)                              AS party_changes,
-       ROUND(100.0 * SUM(party <> previous_party) / COUNT(*), 1) AS change_share
+SELECT g.*,
+       COUNT(*)                                                      AS successions,
+       SUM(h.party <> h.previous_party)                              AS party_changes,
+       ROUND(100.0 * SUM(h.party <> h.previous_party) / COUNT(*), 1) AS change_share
 FROM (SELECT country,
              name,
              party,
              LAG(name) OVER (PARTITION BY country ORDER BY term_start)  AS previous_name,
              LAG(party) OVER (PARTITION BY country ORDER BY term_start) AS previous_party
-      FROM head)
-WHERE previous_name IS NOT NULL
-  AND name <> previous_name
-GROUP BY country
-ORDER BY country ASC
+      FROM head) h
+         JOIN office g ON g.country = h.country
+WHERE h.previous_name IS NOT NULL
+  AND h.name <> h.previous_name
+GROUP BY g.country
+ORDER BY g.country ASC
 ;
 
 

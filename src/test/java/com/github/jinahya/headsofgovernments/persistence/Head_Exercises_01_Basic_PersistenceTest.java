@@ -37,27 +37,30 @@ class Head_Exercises_01_Basic_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT h.country, h.number, h.name, h.party, h.termStart, h.termEnd
+                                    SELECT h
                                     FROM Head AS h
                                     WHERE h.termStart <= :date
                                       AND (h.termEnd IS NULL OR h.termEnd >= :date)
                                     ORDER BY h.country ASC""",
-                            Object[].class
+                            Head.class
                     )
                     .setParameter("date", "1960-01-01")
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getParty(), h.getTermStart(),
+                                                           h.getTermEnd()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
         void __CriteriaApi() {
             final var list = __Exercises_TestUtils.apply(em -> {
                 final var cb = em.getCriteriaBuilder();
-                final var cq = cb.createQuery(Object[].class);
+                final var cq = cb.createQuery(Head.class);
                 final var h = cq.from(Head.class);
                 final var date = cb.parameter(String.class, "date");
-                cq.select(cb.array(h.get(Head_.country), h.get(Head_.number), h.get(Head_.name), h.get(Head_.party),
-                                   h.get(Head_.termStart), h.get(Head_.termEnd)))
+                cq.select(h)
                         .where(cb.lessThanOrEqualTo(h.get(Head_.termStart), date),
                                cb.or(cb.isNull(h.get(Head_.termEnd)), cb.greaterThanOrEqualTo(h.get(Head_.termEnd), date)))
                         .orderBy(cb.asc(h.get(Head_.country)));
@@ -65,7 +68,11 @@ class Head_Exercises_01_Basic_PersistenceTest {
                         .setParameter("date", "1960-01-01")
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getParty(), h.getTermStart(),
+                                                           h.getTermEnd()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -155,30 +162,35 @@ class Head_Exercises_01_Basic_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT h.country, h.number, h.name, h.party, h.termStart
+                                    SELECT h
                                     FROM Head AS h
                                     WHERE h.termEnd IS NULL
                                     ORDER BY h.country ASC""",
-                            Object[].class
+                            Head.class
                     )
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getParty(), h.getTermStart()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
         void __CriteriaApi() {
             final var list = __Exercises_TestUtils.apply(em -> {
                 final var cb = em.getCriteriaBuilder();
-                final var cq = cb.createQuery(Object[].class);
+                final var cq = cb.createQuery(Head.class);
                 final var h = cq.from(Head.class);
-                cq.select(cb.array(h.get(Head_.country), h.get(Head_.number), h.get(Head_.name), h.get(Head_.party),
-                                   h.get(Head_.termStart)))
+                cq.select(h)
                         .where(cb.isNull(h.get(Head_.termEnd)))
                         .orderBy(cb.asc(h.get(Head_.country)));
                 return em.createQuery(cq)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getParty(), h.getTermStart()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -195,25 +207,27 @@ class Head_Exercises_01_Basic_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT h.country, h.number, h.name, h.termStart, h.termEnd
+                                    SELECT h
                                     FROM Head AS h
                                     WHERE h.name LIKE CONCAT('%', :name, '%')
                                     ORDER BY h.country ASC, h.termStart ASC""",
-                            Object[].class
+                            Head.class
                     )
                     .setParameter("name", "churchill")
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getTermStart(), h.getTermEnd()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
         void __CriteriaApi() {
             final var list = __Exercises_TestUtils.apply(em -> {
                 final var cb = em.getCriteriaBuilder();
-                final var cq = cb.createQuery(Object[].class);
+                final var cq = cb.createQuery(Head.class);
                 final var h = cq.from(Head.class);
-                cq.select(cb.array(h.get(Head_.country), h.get(Head_.number), h.get(Head_.name), h.get(Head_.termStart),
-                                   h.get(Head_.termEnd)))
+                cq.select(h)
                         .where(cb.like(h.get(Head_.name),
                                        cb.concat(List.of(cb.literal("%"), cb.parameter(String.class, "name"), cb.literal("%")))))
                         .orderBy(cb.asc(h.get(Head_.country)), cb.asc(h.get(Head_.termStart)));
@@ -221,7 +235,10 @@ class Head_Exercises_01_Basic_PersistenceTest {
                         .setParameter("name", "churchill")
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getTermStart(), h.getTermEnd()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -241,32 +258,38 @@ class Head_Exercises_01_Basic_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT h.termStart, h.country, h.number, h.name
+                                    SELECT h
                                     FROM Head AS h
                                     WHERE h.termStart BETWEEN CONCAT(:year, '-01-01') AND CONCAT(:year, '-12-31')
                                     ORDER BY h.termStart ASC, h.country ASC""",
-                            Object[].class
+                            Head.class
                     )
                     .setParameter("year", "1945")
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getTermStart(), h.getCountry(), h.getNumber(), h.getName()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
         void __CriteriaApi() {
             final var list = __Exercises_TestUtils.apply(em -> {
                 final var cb = em.getCriteriaBuilder();
-                final var cq = cb.createQuery(Object[].class);
+                final var cq = cb.createQuery(Head.class);
                 final var h = cq.from(Head.class);
                 final var year = cb.parameter(String.class, "year");
-                cq.select(cb.array(h.get(Head_.termStart), h.get(Head_.country), h.get(Head_.number), h.get(Head_.name)))
+                cq.select(h)
                         .where(cb.between(h.get(Head_.termStart), cb.concat(year, "-01-01"), cb.concat(year, "-12-31")))
                         .orderBy(cb.asc(h.get(Head_.termStart)), cb.asc(h.get(Head_.country)));
                 return em.createQuery(cq)
                         .setParameter("year", "1945")
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getTermStart(), h.getCountry(), h.getNumber(), h.getName()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -287,6 +310,7 @@ class Head_Exercises_01_Basic_PersistenceTest {
                 row("US", "Bill Clinton", 1946L)
         );
 
+        // selects no entity: a row is a person, DISTINCT over the terms of one, not a head
         @Test
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
@@ -341,30 +365,35 @@ class Head_Exercises_01_Basic_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT h.termStart, h.country, h.number, h.name, h.party
+                                    SELECT h
                                     FROM Head AS h
                                     WHERE h.termStart BETWEEN '1939-09-01' AND '1945-09-02'
                                     ORDER BY h.termStart ASC, h.country ASC""",
-                            Object[].class
+                            Head.class
                     )
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getTermStart(), h.getCountry(), h.getNumber(), h.getName(), h.getParty()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
         void __CriteriaApi() {
             final var list = __Exercises_TestUtils.apply(em -> {
                 final var cb = em.getCriteriaBuilder();
-                final var cq = cb.createQuery(Object[].class);
+                final var cq = cb.createQuery(Head.class);
                 final var h = cq.from(Head.class);
-                cq.select(cb.array(h.get(Head_.termStart), h.get(Head_.country), h.get(Head_.number), h.get(Head_.name),
-                                   h.get(Head_.party)))
+                cq.select(h)
                         .where(cb.between(h.get(Head_.termStart), "1939-09-01", "1945-09-02"))
                         .orderBy(cb.asc(h.get(Head_.termStart)), cb.asc(h.get(Head_.country)));
                 return em.createQuery(cq)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getTermStart(), h.getCountry(), h.getNumber(), h.getName(), h.getParty()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -386,6 +415,7 @@ class Head_Exercises_01_Basic_PersistenceTest {
                 row("US", "Ronald Reagan", 1911L, 2004L, 93L)
         );
 
+        // selects no entity: a row is a person, DISTINCT over the terms of one, not a head
         @Test
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(

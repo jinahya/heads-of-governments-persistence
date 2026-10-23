@@ -36,8 +36,7 @@ ORDER BY head_kind ASC
 
 -- -------------------------------------------------------------------------------- HOG-OFFICE-I-02 Titles outside ASCII
 -- head_title is in the country's own language. Which titles use a character outside ASCII, and which do not?
-SELECT country,
-       head_title,
+SELECT *,
        CASE WHEN head_title GLOB '*[^ -~]*' THEN 'non-ASCII' ELSE 'ASCII' END AS script
 FROM office
 ORDER BY script ASC, country ASC
@@ -47,7 +46,7 @@ ORDER BY script ASC, country ASC
 -- ------------------------------------------------------------------------ HOG-OFFICE-I-03 Offices without an incumbent
 -- Every office should have a head in office now, a term with no end. List the offices that have none, by country code;
 -- the check passes when nothing comes back.
-SELECT g.country, g.head_title
+SELECT g.*
 FROM office g
 WHERE NOT EXISTS (SELECT 1
                   FROM head h

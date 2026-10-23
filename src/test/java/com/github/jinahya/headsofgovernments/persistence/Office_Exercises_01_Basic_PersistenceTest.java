@@ -33,30 +33,35 @@ class Office_Exercises_01_Basic_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT o.country, o.headKind, o.headTitle, o.numbering
+                                    SELECT o
                                     FROM Office AS o
                                     WHERE o.country = UPPER(:country)""",
-                            Object[].class
+                            Office.class
                     )
                     .setParameter("country", "kr")
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(o -> new Object[]{o.getCountry(), o.getHeadKind(), o.getHeadTitle(), o.getNumbering()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
         void __CriteriaApi() {
             final var list = __Exercises_TestUtils.apply(em -> {
                 final var cb = em.getCriteriaBuilder();
-                final var cq = cb.createQuery(Object[].class);
+                final var cq = cb.createQuery(Office.class);
                 final var o = cq.from(Office.class);
-                cq.select(cb.array(o.get(Office_.country), o.get(Office_.headKind), o.get(Office_.headTitle),
-                                   o.get(Office_.numbering)))
+                cq.select(o)
                         .where(cb.equal(o.get(Office_.country), cb.upper(cb.parameter(String.class, "country"))));
                 return em.createQuery(cq)
                         .setParameter("country", "kr")
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(o -> new Object[]{o.getCountry(), o.getHeadKind(), o.getHeadTitle(), o.getNumbering()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -76,27 +81,33 @@ class Office_Exercises_01_Basic_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT o.country, o.headKind, o.headTitle
+                                    SELECT o
                                     FROM Office AS o
                                     ORDER BY o.country ASC""",
-                            Object[].class
+                            Office.class
                     )
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(o -> new Object[]{o.getCountry(), o.getHeadKind(), o.getHeadTitle()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
         void __CriteriaApi() {
             final var list = __Exercises_TestUtils.apply(em -> {
                 final var cb = em.getCriteriaBuilder();
-                final var cq = cb.createQuery(Object[].class);
+                final var cq = cb.createQuery(Office.class);
                 final var o = cq.from(Office.class);
-                cq.select(cb.array(o.get(Office_.country), o.get(Office_.headKind), o.get(Office_.headTitle)))
+                cq.select(o)
                         .orderBy(cb.asc(o.get(Office_.country)));
                 return em.createQuery(cq)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(o -> new Object[]{o.getCountry(), o.getHeadKind(), o.getHeadTitle()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -113,29 +124,35 @@ class Office_Exercises_01_Basic_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT o.country, o.headTitle, o.numbering
+                                    SELECT o
                                     FROM Office AS o
                                     WHERE o.numbering LIKE '%keeps the same number%'
                                     ORDER BY o.country ASC""",
-                            Object[].class
+                            Office.class
                     )
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(o -> new Object[]{o.getCountry(), o.getHeadTitle(), o.getNumbering()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
         void __CriteriaApi() {
             final var list = __Exercises_TestUtils.apply(em -> {
                 final var cb = em.getCriteriaBuilder();
-                final var cq = cb.createQuery(Object[].class);
+                final var cq = cb.createQuery(Office.class);
                 final var o = cq.from(Office.class);
-                cq.select(cb.array(o.get(Office_.country), o.get(Office_.headTitle), o.get(Office_.numbering)))
+                cq.select(o)
                         .where(cb.like(o.get(Office_.numbering), "%keeps the same number%"))
                         .orderBy(cb.asc(o.get(Office_.country)));
                 return em.createQuery(cq)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(o -> new Object[]{o.getCountry(), o.getHeadTitle(), o.getNumbering()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 }

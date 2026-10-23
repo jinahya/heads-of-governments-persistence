@@ -50,11 +50,11 @@ class Office_Exercises_02_Intermediate_PersistenceTest {
     class Exercise2Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
-                row("GB", "Prime Minister", "ASCII"),
-                row("US", "President", "ASCII"),
-                row("FR", "Président de la République", "non-ASCII"),
-                row("JP", "内閣総理大臣", "non-ASCII"),
-                row("KR", "대통령", "non-ASCII")
+                row("GB", "PRIME_MINISTER", "Prime Minister", "ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each", "ASCII"),
+                row("US", "PRESIDENT", "President", "presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number", "ASCII"),
+                row("FR", "PRESIDENT", "Président de la République", "ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each", "non-ASCII"),
+                row("JP", "PRIME_MINISTER", "内閣総理大臣", "代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each", "non-ASCII"),
+                row("KR", "PRESIDENT", "대통령", "대, one per election; a person re-elected keeps one line per term with consecutive numbers", "non-ASCII")
         );
 
         // JPQL has no character class; LIKE matches no range of characters, GLOB '*[^ -~]*' is SQLite's own,
@@ -63,8 +63,7 @@ class Office_Exercises_02_Intermediate_PersistenceTest {
         void nativeQuery() {
             final var list = __Exercises_TestUtils.apply(em -> (List<?>) em.createNativeQuery(
                             """
-                                    SELECT country,
-                                           head_title,
+                                    SELECT *,
                                            CASE WHEN head_title GLOB '*[^ -~]*' THEN 'non-ASCII' ELSE 'ASCII' END AS script
                                     FROM office
                                     ORDER BY script ASC, country ASC"""
@@ -84,36 +83,42 @@ class Office_Exercises_02_Intermediate_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT o.country, o.headTitle
+                                    SELECT o
                                     FROM Office AS o
                                     WHERE NOT EXISTS (SELECT h
                                                       FROM Head AS h
                                                       WHERE h.office = o
                                                         AND h.termEnd IS NULL)
                                     ORDER BY o.country ASC""",
-                            Object[].class
+                            Office.class
                     )
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(o -> new Object[]{o.getCountry(), o.getHeadTitle()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
         void __CriteriaApi() {
             final var list = __Exercises_TestUtils.apply(em -> {
                 final var cb = em.getCriteriaBuilder();
-                final var cq = cb.createQuery(Object[].class);
+                final var cq = cb.createQuery(Office.class);
                 final var o = cq.from(Office.class);
                 final var incumbent = cq.subquery(Head.class);
                 final var h = incumbent.from(Head.class);
                 incumbent.select(h)
                         .where(cb.equal(h.get(Head_.office), o), cb.isNull(h.get(Head_.termEnd)));
-                cq.select(cb.array(o.get(Office_.country), o.get(Office_.headTitle)))
+                cq.select(o)
                         .where(cb.not(cb.exists(incumbent)))
                         .orderBy(cb.asc(o.get(Office_.country)));
                 return em.createQuery(cq)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(o -> new Object[]{o.getCountry(), o.getHeadTitle()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 }

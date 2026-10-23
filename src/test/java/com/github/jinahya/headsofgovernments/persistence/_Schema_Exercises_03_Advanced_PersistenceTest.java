@@ -79,7 +79,7 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT g.country, g.headTitle, COALESCE(h.name, '(vacant)'), h.termStart, h.termEnd
+                                    SELECT g, COALESCE(h.name, '(vacant)'), h
                                     FROM Office AS g
                                          LEFT JOIN g.heads AS h ON h.termStart <= :date AND (h.termEnd IS NULL OR h.termEnd >= :date)
                                     ORDER BY g.country ASC""",
@@ -87,7 +87,15 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                     )
                     .setParameter("date", "1945-01-01")
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var g = (Office) r[0];
+                                        final var h = (Head) r[2];
+                                        return new Object[]{g.getCountry(), g.getHeadTitle(), r[1], h == null ? null : h.getTermStart(),
+                                                            h == null ? null : h.getTermEnd()};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
@@ -100,14 +108,21 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                 final var date = cb.parameter(String.class, "date");
                 h.on(cb.lessThanOrEqualTo(h.get(Head_.termStart), date),
                      cb.or(cb.isNull(h.get(Head_.termEnd)), cb.greaterThanOrEqualTo(h.get(Head_.termEnd), date)));
-                cq.select(cb.array(g.get(Office_.country), g.get(Office_.headTitle), cb.coalesce(h.get(Head_.name), "(vacant)"),
-                                   h.get(Head_.termStart), h.get(Head_.termEnd)))
+                cq.select(cb.array(g, cb.coalesce(h.get(Head_.name), "(vacant)"), h))
                         .orderBy(cb.asc(g.get(Office_.country)));
                 return em.createQuery(cq)
                         .setParameter("date", "1945-01-01")
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var g = (Office) r[0];
+                                        final var h = (Head) r[2];
+                                        return new Object[]{g.getCountry(), g.getHeadTitle(), r[1], h == null ? null : h.getTermStart(),
+                                                            h == null ? null : h.getTermEnd()};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -142,7 +157,7 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT i.country, i.name, i.termStart, o.country, g.headTitle, o.name
+                                    SELECT i, o, g
                                     FROM Head AS i
                                          JOIN Head AS o ON o.country <> i.country
                                                        AND o.termStart <= i.termStart
@@ -153,7 +168,16 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                             Object[].class
                     )
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var i = (Head) r[0];
+                                        final var o = (Head) r[1];
+                                        final var g = (Office) r[2];
+                                        return new Object[]{i.getCountry(), i.getName(), i.getTermStart(), o.getCountry(),
+                                                            g.getHeadTitle(), o.getName()};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
@@ -167,14 +191,22 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                      cb.lessThanOrEqualTo(o.get(Head_.termStart), i.get(Head_.termStart)),
                      cb.or(cb.isNull(o.get(Head_.termEnd)), cb.greaterThanOrEqualTo(o.get(Head_.termEnd), i.get(Head_.termStart))));
                 final var g = o.join(Head_.office);
-                cq.select(cb.array(i.get(Head_.country), i.get(Head_.name), i.get(Head_.termStart), o.get(Head_.country),
-                                   g.get(Office_.headTitle), o.get(Head_.name)))
+                cq.select(cb.array(i, o, g))
                         .where(cb.isNull(i.get(Head_.termEnd)))
                         .orderBy(cb.asc(i.get(Head_.country)), cb.asc(o.get(Head_.country)));
                 return em.createQuery(cq)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var i = (Head) r[0];
+                                        final var o = (Head) r[1];
+                                        final var g = (Office) r[2];
+                                        return new Object[]{i.getCountry(), i.getName(), i.getTermStart(), o.getCountry(),
+                                                            g.getHeadTitle(), o.getName()};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
@@ -190,6 +222,7 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                 row("US", "President", "Jimmy Carter", 1924L, 2024L, 100L)
         );
 
+        // selects no entity: a row is a person, DISTINCT over the terms of one, not a head
         @Test
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
@@ -254,10 +287,7 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT p.country,
-                                           p.name,
-                                           p.termStart,
-                                           p.termEnd,
+                                    SELECT p,
                                            COUNT(DISTINCT CONCAT(m.country, ' ', m.name)) AS primeMinisters
                                     FROM Head AS p
                                          JOIN p.office AS pg
@@ -266,13 +296,19 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                                          JOIN m.office AS mg
                                     WHERE pg.headKind = 'PRESIDENT'
                                       AND mg.headKind = 'PRIME_MINISTER'
-                                    GROUP BY p.id, p.country, p.name, p.termStart, p.termEnd
+                                    GROUP BY p
                                     ORDER BY primeMinisters DESC, p.termStart ASC, p.country ASC""",
                             Object[].class
                     )
                     .setMaxResults(10)
                     .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var p = (Head) r[0];
+                                        return new Object[]{p.getCountry(), p.getName(), p.getTermStart(), p.getTermEnd(), r[1]};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
 
         @Test
@@ -288,18 +324,22 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                 final var mg = m.join(Head_.office);
                 final var primeMinisters = cb.countDistinct(
                         cb.concat(List.of(m.get(Head_.country), cb.literal(" "), m.get(Head_.name))));
-                cq.select(cb.array(p.get(Head_.country), p.get(Head_.name), p.get(Head_.termStart), p.get(Head_.termEnd),
-                                   primeMinisters))
+                cq.select(cb.array(p, primeMinisters))
                         .where(cb.equal(pg.get(Office_.headKind), Office.HeadKind.PRESIDENT.name()),
                                cb.equal(mg.get(Office_.headKind), Office.HeadKind.PRIME_MINISTER.name()))
-                        .groupBy(p.get(Head_.id), p.get(Head_.country), p.get(Head_.name), p.get(Head_.termStart),
-                                 p.get(Head_.termEnd))
+                        .groupBy(p)
                         .orderBy(cb.desc(primeMinisters), cb.asc(p.get(Head_.termStart)), cb.asc(p.get(Head_.country)));
                 return em.createQuery(cq)
                         .setMaxResults(10)
                         .getResultList();
             });
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var p = (Head) r[0];
+                                        return new Object[]{p.getCountry(), p.getName(), p.getTermStart(), p.getTermEnd(), r[1]};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
         }
     }
 
