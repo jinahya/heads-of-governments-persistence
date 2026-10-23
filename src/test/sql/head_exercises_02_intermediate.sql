@@ -17,67 +17,14 @@
 -- #L%
 ---
 --
--- Exercises on head, a problem per query that reads head alone; Basic, then Intermediate, then Advanced. Each problem
--- states the request it answers, then the SQL that answers it.
+-- Exercises at the intermediate level on head, a problem per query that reads head alone. Each problem states the
+-- request it answers, then the SQL that answers it.
 --
 -- Parameters are bind variables (:name); the sqlite3 shell binds one with `.parameter set :name 'value'`, and an IDE
 -- prompts for them when a statement runs. Dates are ISO-8601 text, so they compare as strings and date() and
 -- julianday() read them directly; an incumbent's open term is measured to date('now'). A sort key that can be NULL
 -- says NULLS FIRST or NULLS LAST, even where that is SQLite's default; a NOT NULL key does not.
 --
-
-
--- =============================================================================================================== BASIC
-
-
--- ------------------------------------------------------------------------------ HOG-HEAD-B-01 Who held office on a day
--- A reader gives a date and wants each country's head on that day. A country whose office was vacant is absent.
-SELECT country, number, name, party, term_start, term_end
-FROM head
-WHERE term_start <= :date
-  AND (term_end IS NULL OR term_end >= :date)
-ORDER BY country ASC
-;
-
-
--- ------------------------------------------------------------------------------------ HOG-HEAD-B-02 One country's list
--- A reader wants a country's heads, first to latest, as the source lists them.
-SELECT *
-FROM head
-WHERE country = :country
-ORDER BY term_start ASC
-;
-
-
--- ---------------------------------------------------------------------------------------- HOG-HEAD-B-03 The incumbents
--- The dashboard shows who is in office now, per country, and since when.
-SELECT country, number, name, party, term_start
-FROM head
-WHERE term_end IS NULL
-ORDER BY country ASC
-;
-
-
--- ----------------------------------------------------------------------------------------- HOG-HEAD-B-04 Terms by name
--- A reader types part of a name and wants every term of anyone matching it. LIKE folds case for ASCII letters only,
--- so 'churchill' finds Churchill and '吉田' finds 吉田茂; the index on name does not help a leading wildcard.
-SELECT country, number, name, term_start, term_end
-FROM head
-WHERE name LIKE '%' || :name || '%'
-ORDER BY country ASC, term_start ASC
-;
-
-
--- ---------------------------------------------------------------------------- HOG-HEAD-B-05 Terms that began in a year
--- A timeline wants every term that began in a given year, in any country, in date order.
-SELECT term_start, country, number, name
-FROM head
-WHERE term_start BETWEEN :year || '-01-01' AND :year || '-12-31'
-ORDER BY term_start ASC, country ASC
-;
-
-
--- ======================================================================================================== INTERMEDIATE
 
 
 -- ------------------------------------------------------------------------ HOG-HEAD-I-01 The longest terms of a country
@@ -223,105 +170,48 @@ ORDER BY country ASC, tenure_share DESC
 ;
 
 
--- ============================================================================================================ ADVANCED
+-- ------------------------------------------------------------ HOG-HEAD-I-12 Terms that ended in the year the head died
+-- Per country, how many terms ended in the same year their head died, by country code. It catches the heads who died in
+-- office, but also those who left office and died later that year; died is a year, so the data cannot tell the two
+-- apart.
+SELECT country, COUNT(*) AS terms
+FROM head
+WHERE died = CAST(SUBSTR(term_end, 1, 4) AS INTEGER)
+GROUP BY country
+ORDER BY country ASC
+;
 
 
--- --------------------------------------------------------------------------------------------- HOG-HEAD-A-01 Vacancies
--- Per country, each gap of more than a day between a term's end and the next term's start, with its length; a day
--- between is only how some sources write a succession, so it does not count.
+-- ----------------------------------------------------------------------- HOG-HEAD-I-13 Terms begun per day of the week
+-- Across all countries, how many terms began on each day of the week, Sunday first. strftime('%w', ...) gives the day
+-- as a digit, Sunday as 0; a CASE turns it into a name.
+SELECT CASE strftime('%w', term_start)
+           WHEN '0' THEN 'Sunday'
+           WHEN '1' THEN 'Monday'
+           WHEN '2' THEN 'Tuesday'
+           WHEN '3' THEN 'Wednesday'
+           WHEN '4' THEN 'Thursday'
+           WHEN '5' THEN 'Friday'
+           ELSE 'Saturday'
+           END  AS weekday,
+       COUNT(*) AS terms
+FROM head
+GROUP BY strftime('%w', term_start)
+ORDER BY strftime('%w', term_start) ASC
+;
+
+
+-- ---------------------------------------------------------------------- HOG-HEAD-I-14 Years lived after leaving office
+-- For the heads who have died, the years between the end of their last term and their death, the ten longest first. A
+-- name is taken as one person within a country; at a tie, by country, then by name.
 SELECT country,
-       previous_name,
-       previous_term_end,
        name,
-       term_start,
-       CAST(julianday(term_start) - julianday(previous_term_end) AS INTEGER) - 1 AS days_vacant
-FROM (SELECT country,
-             name,
-             term_start,
-             LAG(name) OVER (PARTITION BY country ORDER BY term_start)     AS previous_name, LAG(term_end) OVER (PARTITION BY country ORDER BY term_start) AS previous_term_end
-      FROM head)
-WHERE julianday(term_start) - julianday(previous_term_end) > 1
-ORDER BY country ASC, term_start ASC
-;
-
-
--- ------------------------------------------------------------------------------------- HOG-HEAD-A-02 Longest in office
--- Per country, the person with the most days in office over all their terms, counting an open term to today; ties
--- share the place.
-SELECT country, name, terms, days
-FROM (SELECT country,
-             name,
-             COUNT(*)                                                                                  AS terms,
-             CAST(SUM(julianday(COALESCE(term_end, date ('now'))) - julianday(term_start)) AS INTEGER) AS days,
-             RANK()                                                                                       OVER (PARTITION BY country
-                 ORDER BY SUM(julianday(COALESCE(term_end, date('now'))) - julianday(term_start)) DESC) AS place
-      FROM head
-      GROUP BY country, name)
-WHERE place = 1
-ORDER BY country ASC
-;
-
-
--- -------------------------------------------------------------------------- HOG-HEAD-A-03 The longest run of one party
--- Per country, the longest unbroken run of consecutive terms held by the same party, with when it began and ended;
--- a run is counted in terms, not days, and a succession ('UNR/UDR') is a party of its own.
-WITH ordered AS (SELECT country,
-                        party,
-                        term_start,
-                        term_end,
-                        ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start)        AS seq, ROW_NUMBER() OVER (PARTITION BY country, party ORDER BY term_start) AS seq_in_party
-                 FROM head),
-     runs AS (SELECT country,
-                     party,
-                     COUNT(*)                              AS terms,
-                     MIN(term_start)                       AS since,
-                     MAX(COALESCE(term_end, date ('now'))) AS until
-              FROM ordered
-              GROUP BY country, party, seq - seq_in_party),
-     placed AS (SELECT *, RANK() OVER (PARTITION BY country ORDER BY terms DESC, since ASC) AS place
-                FROM runs)
-SELECT country, party, terms, since, until
-FROM placed
-WHERE place = 1
-ORDER BY country ASC
-;
-
-
--- -------------------------------------------------------------------- HOG-HEAD-A-04 Every party of a head, one per row
--- party may be a succession, 'A/B', when the party was renamed or changed under the head. Give the heads whose party
--- is one, with each party on its own row and its position in the succession.
-WITH RECURSIVE parts(id, country, name, term_start, position, party, rest) AS
-                   (SELECT id, country, name, term_start, 0, NULL, party || '/'
-                    FROM head
-                    WHERE party LIKE '%/%'
-                    UNION ALL
-                    SELECT id,
-                           country,
-                           name,
-                           term_start,
-                           position + 1,
-                           SUBSTR(rest, 1, INSTR(rest, '/') - 1),
-                           SUBSTR(rest, INSTR(rest, '/') + 1)
-                    FROM parts
-                    WHERE rest <> '')
-SELECT country, name, term_start, position, party
-FROM parts
-WHERE position > 0
-ORDER BY country ASC, term_start ASC, position ASC
-;
-
-
--- ----------------------------------------------------------------------------- HOG-HEAD-A-05 Predecessor and successor
--- For a person named exactly, each of their terms with who held the office immediately before and after it in that
--- country; the incumbent has no successor.
-SELECT country, number, term_start, term_end, predecessor, successor
-FROM (SELECT country,
-             number,
-             name,
-             term_start,
-             term_end,
-             LAG(name) OVER (PARTITION BY country ORDER BY term_start)  AS predecessor, LEAD(name) OVER (PARTITION BY country ORDER BY term_start) AS successor
-      FROM head)
-WHERE name = :name
-ORDER BY country ASC, term_start ASC
+       MAX(term_end)                                       AS last_term_end,
+       died,
+       died - CAST(SUBSTR(MAX(term_end), 1, 4) AS INTEGER) AS years_after
+FROM head
+WHERE died IS NOT NULL
+GROUP BY country, name, died
+ORDER BY years_after DESC NULLS LAST, country ASC, name ASC
+LIMIT 10
 ;

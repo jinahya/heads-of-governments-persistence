@@ -119,10 +119,13 @@ the build does not run them. `sqlite3 db/heads_of_governments.sqlite3 '.read src
 - `office.sql` and `head.sql` profile a table, a section per column under a ruler, each query
   prefaced by what it looks for and what the result should be; `-- no rows:` marks a check that passes
   when nothing comes back. The last section covers the table as a whole.
-- `*_exercises.sql` pose a problem per query, under `BASIC`, `INTERMEDIATE` and `ADVANCED` rulers. Each
+- `<table>_exercises_<nn>_<level>.sql` pose a problem per query, a file per level (`01_basic`, `02_intermediate`,
+  `03_advanced`; the number only orders the files), and `_schema_exercises_<nn>_<level>.sql` the same for the whole
+  schema. Each
   carries an id, `HOG-<TABLE>-<B|I|A>-<nn>` (`HOG-SCHEMA-` for the whole schema), and restates the
   request it answers. Parameters are bind variables (`:name`); the shell binds one with
-  `.parameter set :name 'value'`.
+  `.parameter set :name 'value'`. `EXERCISES_COORDINATES.asciidoc` states every problem, and `EXERCISES.yaml` registers every id; ids are permanent, a new exercise takes
+  the next unused number of its section and tier, and a removed one's id is marked `retired: true`, never reused.
 
 Every file starts with the Apache 2.0 header in the `-- #%L` form, rulers are 120 columns, and lines
 stay within 120. A sort key that can be NULL (`term_end`, `died`, an aggregate of either, `sqlite_stat1.idx`)

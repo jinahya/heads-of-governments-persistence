@@ -37,6 +37,7 @@ $ sqlite3 -header db/heads_of_governments.sqlite3 "select * from office"
 ```
 
 Queries to profile each table, and exercises on them, are under [src/test/sql](src/test/sql).
+The exercises are listed, with their ids, in [EXERCISES.asciidoc](EXERCISES.asciidoc).
 
 ## Building
 
