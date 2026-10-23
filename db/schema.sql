@@ -17,9 +17,9 @@
 -- #L%
 ---
 --
--- The schema of db/heads_of_governments.sqlite3, in execution order. The generator runs it statement by statement,
--- split on a ';' that ends a line, with the comment lines before a statement dropped; the ERD test runs the same on
--- an in-memory database. SQLite keeps each statement's text in sqlite_master.sql, comments included, so a '--'
+-- The schema of db/heads_of_governments.sqlite3, in execution order. The file was built from it statement by
+-- statement, split on a ';' that ends a line, with the comment lines before a statement dropped; the ERD test runs
+-- it the same way on an in-memory database. SQLite keeps each statement's text in sqlite_master.sql, comments included, so a '--'
 -- comment inside a statement ships in the file and .schema shows it. Keep db/heads_of_governments.sqlite3.md in
 -- step.
 --
@@ -33,7 +33,7 @@ CREATE TABLE office (
     CHECK (head_kind IN ('PRESIDENT', 'PRIME_MINISTER'))
 ) WITHOUT ROWID;
 
--- id is the rowid, so SQLite assigns it; the generator inserts by country then term_start, so it is 1..N in that
+-- id is the rowid, so SQLite assigned it; the file was loaded by country then term_start, so it is 1..N in that
 -- order. id is a surrogate; (country, term_start) is the business key, declared by idx_head_country_term_start.
 CREATE TABLE head (
     -- one term of a head of government

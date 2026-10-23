@@ -1,10 +1,10 @@
-# Registry of the exercises in EXERCISES_COORDINATES.asciidoc and src/test/sql/*_exercises_*.sql.
+# Registry of the exercises in EXERCISES.asciidoc and src/test/sql/*_exercises_*.sql.
 #
 # An id is HOG-<SECTION>-<TIER>-<NN>: the table the exercise reads alone, or SCHEMA for one that reads more than one,
 # the tier (B for Basic, I for Intermediate, A for Advanced), and a number within that section and tier.
 #
 # Ids are permanent. A new exercise takes the next unused number of its section and tier; an exercise that moves or
-# changes tier keeps its id; an id of a removed exercise is marked `retired: true` and never reused. EXERCISES_COORDINATES.asciidoc
+# changes tier keeps its id; an id of a removed exercise is marked `retired: true` and never reused. EXERCISES.asciidoc
 # carries each id as the anchor and the prefix of the exercise's heading, and the .sql file carries it in the marker
 # above the statement, followed by the title.
 

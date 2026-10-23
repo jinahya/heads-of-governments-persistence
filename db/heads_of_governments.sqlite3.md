@@ -50,7 +50,7 @@ erDiagram
     }
 
     head {
-        INTEGER id         PK "the rowid; assigned by the generator, not stable across runs"
+        INTEGER id         PK "the rowid; assigned by SQLite as the file was loaded"
         TEXT    country    FK, UK "references office (country); with term_start, the business key"
         INTEGER number        "the term number, counted as office.numbering says"
         TEXT    term_start UK "ISO 8601 calendar date (yyyy-MM-dd); with country, the business key"
@@ -64,8 +64,8 @@ erDiagram
 
 The crow's foot is what the schema declares: a head belongs to exactly one office, and nothing stops
 an office from having no head. `UK` marks the business key, `(country, term_start)`, which a unique
-index declares. The generator asserts the rest after the inserts -- every office has at least one
-term, and exactly one with `term_end IS NULL` -- so the file as built is stricter than the diagram. The same as images, drawn from the DDL by the build
+index declares. The data was checked for the rest when the file was built -- every office has at least
+one term, and exactly one with `term_end IS NULL` -- so the file is stricter than the diagram. The same as images, drawn from the DDL by the build
 and not by hand: [both tables](erd/all.svg), [office alone](erd/office.svg),
 [head alone](erd/head.svg).
 
@@ -84,8 +84,7 @@ permanent and has one holder at a time. One row per country.
 ## `head`
 
 One term of a head of government. `id` is the key, a surrogate: it is the rowid, assigned by SQLite
-as the generator inserts, and the file is regenerated from scratch on every run, so an `id` is not
-stable across runs and means nothing outside the file it is in. What identifies a term is
+as the file was loaded, so an `id` means nothing outside the file it is in. What identifies a term is
 `(country, term_start)`, the business key, which the unique index `idx_head_country_term_start`
 declares: a country's head does not take office twice on one day. `number` is not unique within a country everywhere: France and the United Kingdom
 keep a person's number across terms.
@@ -103,7 +102,7 @@ keep a person's number across terms.
 | `died`       | the year of death                             | `NULL` while living                          |
 
 The schema declares no uniqueness beyond `id` and `(country, term_start)`, by decision: the file is
-built for its readers, and the generator checks the data once, at build time, that each office has
+built for its readers, and the data was checked once, when the file was built, that each office has
 exactly one row with `term_end IS NULL`.
 
 `name` is not declared unique either, but within a country it names one person: every repeated
