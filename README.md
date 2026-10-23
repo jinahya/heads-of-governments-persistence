@@ -36,6 +36,8 @@ $ sqlite3 db/heads_of_governments.sqlite3 .schema
 $ sqlite3 -header db/heads_of_governments.sqlite3 "select * from office"
 ```
 
+Queries to profile each table, and exercises on them, are under [src/test/sql](src/test/sql).
+
 ## Building
 
 Main sources target Java 17 and test sources Java 25, so the build needs a **JDK 25 or newer**.
