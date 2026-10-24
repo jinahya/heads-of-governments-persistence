@@ -404,6 +404,16 @@
         <version>2.7.1</version>
         <configuration>
           <licenseName>apache_v2</licenseName>
+          <!-- A .sql header opens and closes with a dash after the comment marker, the mysql style, in every module:
+               the default sql style would open and close with three dashes, which MySQL does not take for a comment. -->
+          <extraExtensions>
+            <sql>mysql</sql>
+          </extraExtensions>
+          <!-- src alone: by default the plugin also walks target/generated-sources, and would put a header on every
+               generated metamodel class, which the next build throws away. -->
+          <roots>
+            <root>src</root>
+          </roots>
           <excludes>
             <exclude>**/*.json</exclude>
           </excludes>
