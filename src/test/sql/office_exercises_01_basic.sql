@@ -25,7 +25,7 @@
 --
 
 
--- -------------------------------------------------------------------------------- HOG-OFFICE-B-01 An office by country
+-- -------------------------------------------------------------------------------- HOG_OFFICE_B_01 An office by country
 -- A reader has a country code, typed in whatever case, and wants that office.
 SELECT *
 FROM office
@@ -33,7 +33,7 @@ WHERE country = UPPER(:country)
 ;
 
 
--- ----------------------------------------------------------------------------------------- HOG-OFFICE-B-02 The offices
+-- ----------------------------------------------------------------------------------------- HOG_OFFICE_B_02 The offices
 -- The front page lists every office with the title of its head, by country code.
 SELECT *
 FROM office
@@ -41,7 +41,7 @@ ORDER BY country ASC
 ;
 
 
--- ------------------------------------------------------------------- HOG-OFFICE-B-03 Offices where a number can repeat
+-- ------------------------------------------------------------------- HOG_OFFICE_B_03 Offices where a number can repeat
 -- The offices whose numbering says a person keeps the same number on each term, by country code. There, number does not
 -- identify a term, which is why head carries an id.
 SELECT *

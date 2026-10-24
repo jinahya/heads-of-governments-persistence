@@ -27,9 +27,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class _Schema_Exercises_02_Intermediate_PersistenceTest {
 
-    @DisplayName("exercise 1: Presidents against prime ministers")
+    @DisplayName("HOG_SCHEMA_I_01: Presidents against prime ministers")
     @Nested
-    class Exercise1Test {
+    class HOG_SCHEMA_I_01_Test {
 
         /**
          * The average counts each open term to today, so it is worked out here: the days of the completed
@@ -69,9 +69,9 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 2: Numbering in practice")
+    @DisplayName("HOG_SCHEMA_I_02: Numbering in practice")
     @Nested
-    class Exercise2Test {
+    class HOG_SCHEMA_I_02_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", 31L, 25L, 25L, "ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each"),
@@ -125,9 +125,9 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 3: The span of each list")
+    @DisplayName("HOG_SCHEMA_I_03: The span of each list")
     @Nested
-    class Exercise3Test {
+    class HOG_SCHEMA_I_03_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", "Président de la République", "1848-12-20", "2022-05-14", 174L),
@@ -187,9 +187,9 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 4: Living heads per office")
+    @DisplayName("HOG_SCHEMA_I_04: Living heads per office")
     @Nested
-    class Exercise4Test {
+    class HOG_SCHEMA_I_04_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", "Président de la République", 3L),
@@ -239,9 +239,9 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 5: Terms per century, side by side")
+    @DisplayName("HOG_SCHEMA_I_05: Terms per century, side by side")
     @Nested
-    class Exercise5Test {
+    class HOG_SCHEMA_I_05_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", "Président de la République", 0L, 9L, 17L, 5L),
@@ -306,9 +306,9 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 6: Age at first taking office, by the kind of head")
+    @DisplayName("HOG_SCHEMA_I_06: Age at first taking office, by the kind of head")
     @Nested
-    class Exercise6Test {
+    class HOG_SCHEMA_I_06_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("PRESIDENT", 84L, 40L, 79L, 58.1d),
@@ -366,9 +366,9 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 7: The shortest completed term of each office")
+    @DisplayName("HOG_SCHEMA_I_07: The shortest completed term of each office")
     @Nested
-    class Exercise7Test {
+    class HOG_SCHEMA_I_07_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", "PRESIDENT", "Président de la République", "ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each", 7L, "FR", 6L, "1894-06-27", "1895-01-16", "Jean Casimir-Perier", "Républicain_opportuniste", 1847L, 1907L, 203L),

@@ -122,7 +122,7 @@ the build does not run them. `sqlite3 db/heads_of_governments.sqlite3 '.read src
 - `<table>_exercises_<nn>_<level>.sql` pose a problem per query, a file per level (`01_basic`, `02_intermediate`,
   `03_advanced`; the number only orders the files), and `_schema_exercises_<nn>_<level>.sql` the same for the whole
   schema. Each
-  carries an id, `HOG-<TABLE>-<B|I|A>-<nn>` (`HOG-SCHEMA-` for the whole schema), and restates the
+  carries an id, `HOG_<TABLE>_<B|I|A>_<nn>` (`HOG_SCHEMA_` for the whole schema), and restates the
   request it answers. Parameters are bind variables (`:name`); the shell binds one with
   `.parameter set :name 'value'`. `EXERCISES.asciidoc` states every problem, and `EXERCISES.yaml` registers every id; ids are permanent, a new exercise takes
   the next unused number of its section and tier, and a removed one's id is marked `retired: true`, never reused.

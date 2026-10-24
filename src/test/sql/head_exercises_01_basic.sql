@@ -27,7 +27,7 @@
 --
 
 
--- ------------------------------------------------------------------------------ HOG-HEAD-B-01 Who held office on a day
+-- ------------------------------------------------------------------------------ HOG_HEAD_B_01 Who held office on a day
 -- A reader gives a date and wants each country's head on that day. A country whose office was vacant is absent.
 SELECT *
 FROM head
@@ -37,7 +37,7 @@ ORDER BY country ASC
 ;
 
 
--- ------------------------------------------------------------------------------------ HOG-HEAD-B-02 One country's list
+-- ------------------------------------------------------------------------------------ HOG_HEAD_B_02 One country's list
 -- A reader wants a country's heads, first to latest, as the source lists them.
 SELECT *
 FROM head
@@ -46,7 +46,7 @@ ORDER BY term_start ASC
 ;
 
 
--- ---------------------------------------------------------------------------------------- HOG-HEAD-B-03 The incumbents
+-- ---------------------------------------------------------------------------------------- HOG_HEAD_B_03 The incumbents
 -- The dashboard shows who is in office now, per country, and since when.
 SELECT *
 FROM head
@@ -55,7 +55,7 @@ ORDER BY country ASC
 ;
 
 
--- ----------------------------------------------------------------------------------------- HOG-HEAD-B-04 Terms by name
+-- ----------------------------------------------------------------------------------------- HOG_HEAD_B_04 Terms by name
 -- A reader types part of a name and wants every term of anyone matching it. LIKE folds case for ASCII letters only,
 -- so 'churchill' finds Churchill and '吉田' finds 吉田茂; the index on name does not help a leading wildcard.
 SELECT *
@@ -65,7 +65,7 @@ ORDER BY country ASC, term_start ASC
 ;
 
 
--- ---------------------------------------------------------------------------- HOG-HEAD-B-05 Terms that began in a year
+-- ---------------------------------------------------------------------------- HOG_HEAD_B_05 Terms that began in a year
 -- A timeline wants every term that began in a given year, in any country, in date order.
 SELECT *
 FROM head
@@ -74,7 +74,7 @@ ORDER BY term_start ASC, country ASC
 ;
 
 
--- ------------------------------------------------------------------------------- HOG-HEAD-B-06 The oldest living heads
+-- ------------------------------------------------------------------------------- HOG_HEAD_B_06 The oldest living heads
 -- The ten earliest-born heads still living, in any country, oldest first. A person with several terms appears once; at
 -- the same year of birth, by country, then by name.
 SELECT DISTINCT country, name, born
@@ -85,7 +85,7 @@ LIMIT 10
 ;
 
 
--- --------------------------------------------------------------- HOG-HEAD-B-07 Terms begun during the Second World War
+-- --------------------------------------------------------------- HOG_HEAD_B_07 Terms begun during the Second World War
 -- Every term that began between 1 September 1939 and 2 September 1945, both days included, in date order and, on the
 -- same day, by country.
 SELECT *
@@ -95,7 +95,7 @@ ORDER BY term_start ASC, country ASC
 ;
 
 
--- ----------------------------------------------------------------------- HOG-HEAD-B-08 Heads who lived past ninety-two
+-- ----------------------------------------------------------------------- HOG_HEAD_B_08 Heads who lived past ninety-two
 -- The heads whose year of death less their year of birth is 93 or more, once per person, the greatest first and, at a
 -- tie, by country, then by name. born and died are years, so the age is as fine as the data allows and may be a year
 -- too high.

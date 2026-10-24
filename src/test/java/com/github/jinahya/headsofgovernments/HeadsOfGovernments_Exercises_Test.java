@@ -68,7 +68,7 @@ class HeadsOfGovernments_Exercises_Test {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    @DisplayName("HOG-OFFICE-B-02 The offices")
+    @DisplayName("HOG_OFFICE_B_02 The offices")
     @Test
     void offices() throws Exception {
         final var sql = """
@@ -88,7 +88,7 @@ class HeadsOfGovernments_Exercises_Test {
         }
     }
 
-    @DisplayName("HOG-HEAD-B-02 One country's list")
+    @DisplayName("HOG_HEAD_B_02 One country's list")
     @ParameterizedTest(name = "[{index}] {0}")
     @ValueSource(strings = {"FR", "GB", "JP", "KR", "US"})
     void heads(final String country) throws Exception {
@@ -122,7 +122,7 @@ class HeadsOfGovernments_Exercises_Test {
         }
     }
 
-    @DisplayName("HOG-HEAD-I-11 Party share of completed terms, the top three per country")
+    @DisplayName("HOG_HEAD_I_11 Party share of completed terms, the top three per country")
     @Test
     void partyShareTopThree() throws Exception {
         final var sql = """

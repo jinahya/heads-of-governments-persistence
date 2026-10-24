@@ -25,7 +25,7 @@
 --
 
 
--- ------------------------------------------------------------------------- HOG-OFFICE-I-01 Offices by the kind of head
+-- ------------------------------------------------------------------------- HOG_OFFICE_I_01 Offices by the kind of head
 -- How many offices have a president and how many a prime minister, naming the countries of each.
 SELECT head_kind, COUNT(*) AS offices, GROUP_CONCAT(country, ', ' ORDER BY country) AS countries
 FROM office
@@ -34,7 +34,7 @@ ORDER BY head_kind ASC
 ;
 
 
--- -------------------------------------------------------------------------------- HOG-OFFICE-I-02 Titles outside ASCII
+-- -------------------------------------------------------------------------------- HOG_OFFICE_I_02 Titles outside ASCII
 -- head_title is in the country's own language. Which titles use a character outside ASCII, and which do not?
 SELECT *,
        CASE WHEN head_title GLOB '*[^ -~]*' THEN 'non-ASCII' ELSE 'ASCII' END AS script
@@ -43,7 +43,7 @@ ORDER BY script ASC, country ASC
 ;
 
 
--- ------------------------------------------------------------------------ HOG-OFFICE-I-03 Offices without an incumbent
+-- ------------------------------------------------------------------------ HOG_OFFICE_I_03 Offices without an incumbent
 -- Every office should have a head in office now, a term with no end. List the offices that have none, by country code;
 -- the check passes when nothing comes back.
 SELECT g.*

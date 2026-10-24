@@ -22,9 +22,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class Head_Exercises_03_Advanced_PersistenceTest {
 
-    @DisplayName("exercise 1: Vacancies")
+    @DisplayName("HOG_HEAD_A_01: Vacancies")
     @Nested
-    class Exercise1Test {
+    class HOG_HEAD_A_01_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row(2L, "FR", 2L, "1871-08-31", "1873-05-24", "Adolphe Thiers", "Orléaniste/Républicain_opportuniste", 1797L, 1877L, "Louis-Napoléon Bonaparte", "1852-12-02", 6845L),
@@ -109,9 +109,9 @@ class Head_Exercises_03_Advanced_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 2: Longest in office")
+    @DisplayName("HOG_HEAD_A_02: Longest in office")
     @Nested
-    class Exercise2Test {
+    class HOG_HEAD_A_02_Test {
 
         /**
          * Each place is held by a completed term or terms, so what date('now') adds to an open term does not
@@ -148,9 +148,9 @@ class Head_Exercises_03_Advanced_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 3: The longest run of one party")
+    @DisplayName("HOG_HEAD_A_03: The longest run of one party")
     @Nested
-    class Exercise3Test {
+    class HOG_HEAD_A_03_Test {
 
         /**
          * Each run ended, so date('now'), which closes an open run, does not move it.
@@ -194,9 +194,9 @@ class Head_Exercises_03_Advanced_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 4: Every party of a head, one per row")
+    @DisplayName("HOG_HEAD_A_04: Every party of a head, one per row")
     @Nested
-    class Exercise4Test {
+    class HOG_HEAD_A_04_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", "Adolphe Thiers", "1871-08-31", 1L, "Orléaniste"),
@@ -273,9 +273,9 @@ class Head_Exercises_03_Advanced_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 5: Predecessor and successor")
+    @DisplayName("HOG_HEAD_A_05: Predecessor and successor")
     @Nested
-    class Exercise5Test {
+    class HOG_HEAD_A_05_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("US", 45L, "2017-01-20", "2021-01-20", "Barack Obama", "Joe Biden"),
@@ -362,9 +362,9 @@ class Head_Exercises_03_Advanced_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 6: How often a new head brings a new party")
+    @DisplayName("HOG_HEAD_A_06: How often a new head brings a new party")
     @Nested
-    class Exercise6Test {
+    class HOG_HEAD_A_06_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", 24L, 19L, 79.2d),
@@ -434,9 +434,9 @@ class Head_Exercises_03_Advanced_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 7: Comebacks")
+    @DisplayName("HOG_HEAD_A_07: Comebacks")
     @Nested
-    class Exercise7Test {
+    class HOG_HEAD_A_07_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("GB", "William Ewart Gladstone", 4L, "1868, 1880, 1886, 1892"),

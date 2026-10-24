@@ -25,7 +25,7 @@
 --
 
 
--- ------------------------------------------------------------------ HOG-SCHEMA-A-01 Each office's longest-serving head
+-- ------------------------------------------------------------------ HOG_SCHEMA_A_01 Each office's longest-serving head
 -- Per office, the person with the most days in office over all their terms, with the title they held; ties
 -- share the place.
 SELECT country, head_title, name, terms, days
@@ -44,7 +44,7 @@ ORDER BY country ASC
 ;
 
 
--- ---------------------------------------------------------------- HOG-SCHEMA-A-02 Every office on a day, vacant or not
+-- ---------------------------------------------------------------- HOG_SCHEMA_A_02 Every office on a day, vacant or not
 -- A reader gives a date and wants every office with its head on that day, or 'vacant' where the office was empty
 -- or the list had not yet begun.
 SELECT g.*, COALESCE(h.name, '(vacant)') AS name, h.*
@@ -56,7 +56,7 @@ ORDER BY g.country ASC
 ;
 
 
--- ---------------------------------------------------------------------- HOG-SCHEMA-A-03 The incumbents' contemporaries
+-- ---------------------------------------------------------------------- HOG_SCHEMA_A_03 The incumbents' contemporaries
 -- On the day each incumbent took office, who headed the other offices? One row per pair, the incumbent first.
 SELECT i.*, o.*, g.*
 FROM head i
@@ -69,7 +69,7 @@ ORDER BY i.country ASC, o.country ASC
 ;
 
 
--- -------------------------------------------------------------------- HOG-SCHEMA-A-04 Each office's longest-lived head
+-- -------------------------------------------------------------------- HOG_SCHEMA_A_04 Each office's longest-lived head
 -- Per office, with its title, the head who lived the most years (died less born) among those who have died; ties share
 -- the place and are listed by name.
 SELECT country, head_title, name, born, died, age
@@ -88,7 +88,7 @@ ORDER BY country ASC, name ASC
 ;
 
 
--- ---------------------------------------------------- HOG-SCHEMA-A-05 Presidents and the prime ministers of their time
+-- ---------------------------------------------------- HOG_SCHEMA_A_05 Presidents and the prime ministers of their time
 -- For each president's term, how many different prime ministers, of any office, were in office at some point during it;
 -- the ten terms with the most first and, at a tie, the earlier term first, then by country. Two terms overlap when each
 -- starts on or before the other's end, the handover day counting for both; an open term ends at '9999-12-31'.
@@ -104,7 +104,7 @@ LIMIT 10
 ;
 
 
--- --------------------------------------------------------- HOG-SCHEMA-A-06 New heads per century, with a running total
+-- --------------------------------------------------------- HOG_SCHEMA_A_06 New heads per century, with a running total
 -- Per office, with its title, how many persons first took office in each century, and the running total of persons up
 -- to that century, by country, then by century. The century is the first two digits of the year plus one, so 1800
 -- counts in the 19th; a name is taken as one person within a country.
@@ -128,7 +128,7 @@ ORDER BY country ASC, century ASC
 ;
 
 
--- --------------------------------------------------------- HOG-SCHEMA-A-07 Decades in which every office changed hands
+-- --------------------------------------------------------- HOG_SCHEMA_A_07 Decades in which every office changed hands
 -- The decades in which a term began in every office, with how many terms began in all, oldest first. This is relational
 -- division: a decade qualifies when the number of distinct countries with a term begun in it equals the number of
 -- offices.

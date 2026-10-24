@@ -27,7 +27,7 @@
 --
 
 
--- --------------------------------------------------------------------------------------------- HOG-HEAD-A-01 Vacancies
+-- --------------------------------------------------------------------------------------------- HOG_HEAD_A_01 Vacancies
 -- Per country, each gap of more than a day between a term's end and the next term's start, with its length; a day
 -- between is only how some sources write a succession, so it does not count.
 SELECT *,
@@ -40,7 +40,7 @@ ORDER BY country ASC, term_start ASC
 ;
 
 
--- ------------------------------------------------------------------------------------- HOG-HEAD-A-02 Longest in office
+-- ------------------------------------------------------------------------------------- HOG_HEAD_A_02 Longest in office
 -- Per country, the person with the most days in office over all their terms, counting an open term to today; ties
 -- share the place.
 SELECT country, name, terms, days
@@ -57,7 +57,7 @@ ORDER BY country ASC
 ;
 
 
--- -------------------------------------------------------------------------- HOG-HEAD-A-03 The longest run of one party
+-- -------------------------------------------------------------------------- HOG_HEAD_A_03 The longest run of one party
 -- Per country, the longest unbroken run of consecutive terms held by the same party, with when it began and ended;
 -- a run is counted in terms, not days, and a succession ('UNR/UDR') is a party of its own.
 WITH ordered AS (SELECT country,
@@ -82,7 +82,7 @@ ORDER BY country ASC
 ;
 
 
--- -------------------------------------------------------------------- HOG-HEAD-A-04 Every party of a head, one per row
+-- -------------------------------------------------------------------- HOG_HEAD_A_04 Every party of a head, one per row
 -- party may be a succession, 'A/B', when the party was renamed or changed under the head. Give the heads whose party
 -- is one, with each party on its own row and its position in the succession.
 WITH RECURSIVE parts(id, country, name, term_start, position, party, rest) AS
@@ -106,7 +106,7 @@ ORDER BY country ASC, term_start ASC, position ASC
 ;
 
 
--- ----------------------------------------------------------------------------- HOG-HEAD-A-05 Predecessor and successor
+-- ----------------------------------------------------------------------------- HOG_HEAD_A_05 Predecessor and successor
 -- For a person named exactly, each of their terms with who held the office immediately before and after it in that
 -- country; the incumbent has no successor.
 SELECT *
@@ -118,7 +118,7 @@ ORDER BY country ASC, term_start ASC
 ;
 
 
--- --------------------------------------------------------------- HOG-HEAD-A-06 How often a new head brings a new party
+-- --------------------------------------------------------------- HOG_HEAD_A_06 How often a new head brings a new party
 -- Per country, over the successions where the head changed (not a head following themselves), how many also changed the
 -- party, and that as a percentage, by country code. LAG gives the previous term's name and party; a succession ('A/B')
 -- counts as a party of its own.
@@ -140,7 +140,7 @@ ORDER BY g.country ASC
 ;
 
 
--- --------------------------------------------------------------------------------------------- HOG-HEAD-A-07 Comebacks
+-- --------------------------------------------------------------------------------------------- HOG_HEAD_A_07 Comebacks
 -- A stint is an unbroken run of terms by one person; a head who left and came back has more than one. Give the heads
 -- with three stints or more, with the year each stint began, most stints first and, at a tie, by country, then by the
 -- first term. A term starts a stint when the term before it in that country was someone else's.

@@ -25,7 +25,7 @@
 --
 
 
--- --------------------------------------------------------------------- HOG-OFFICE-A-01 What number counts, in a phrase
+-- --------------------------------------------------------------------- HOG_OFFICE_A_01 What number counts, in a phrase
 -- numbering is a sentence, but each opens by naming what is counted -- 'ordinal of the person by first election',
 -- '代', '대', 'presidency number' -- before its first comma or semicolon. Show each office with that phrase alone.
 SELECT *,

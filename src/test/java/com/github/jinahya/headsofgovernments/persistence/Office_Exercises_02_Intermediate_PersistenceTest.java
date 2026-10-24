@@ -21,9 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class Office_Exercises_02_Intermediate_PersistenceTest {
 
-    @DisplayName("exercise 1: Offices by the kind of head")
+    @DisplayName("HOG_OFFICE_I_01: Offices by the kind of head")
     @Nested
-    class Exercise1Test {
+    class HOG_OFFICE_I_01_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("PRESIDENT", 3L, "FR, KR, US"),
@@ -45,9 +45,9 @@ class Office_Exercises_02_Intermediate_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 2: Titles outside ASCII")
+    @DisplayName("HOG_OFFICE_I_02: Titles outside ASCII")
     @Nested
-    class Exercise2Test {
+    class HOG_OFFICE_I_02_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("GB", "PRIME_MINISTER", "Prime Minister", "ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each", "ASCII"),
@@ -73,9 +73,9 @@ class Office_Exercises_02_Intermediate_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 3: Offices without an incumbent")
+    @DisplayName("HOG_OFFICE_I_03: Offices without an incumbent")
     @Nested
-    class Exercise3Test {
+    class HOG_OFFICE_I_03_Test {
 
         private static final List<List<Object>> EXPECTED = List.of();
 

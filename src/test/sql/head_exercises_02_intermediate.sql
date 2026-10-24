@@ -27,7 +27,7 @@
 --
 
 
--- ------------------------------------------------------------------------ HOG-HEAD-I-01 The longest terms of a country
+-- ------------------------------------------------------------------------ HOG_HEAD_I_01 The longest terms of a country
 -- For one country, each term with its length in days, longest first; the incumbent's term runs to today.
 SELECT *,
        CAST(julianday(COALESCE(term_end, date ('now'))) - julianday(term_start) AS INTEGER) AS days
@@ -37,7 +37,7 @@ ORDER BY days DESC, term_start ASC
 ;
 
 
--- ------------------------------------------------------------------------------------ HOG-HEAD-I-02 More than one term
+-- ------------------------------------------------------------------------------------ HOG_HEAD_I_02 More than one term
 -- Per country, the persons with more than one term, with how many and the numbers they held.
 SELECT country, name, COUNT(*) AS terms, GROUP_CONCAT(number, ', ' ORDER BY term_start) AS numbers
 FROM head
@@ -47,7 +47,7 @@ ORDER BY country ASC, MIN(term_start) ASC
 ;
 
 
--- ---------------------------------------------------------------------------------- HOG-HEAD-I-03 Age on taking office
+-- ---------------------------------------------------------------------------------- HOG_HEAD_I_03 Age on taking office
 -- Per country, the youngest, the oldest and the average age at which a term began, in whole years of the calendar
 -- (the year of term_start less the year of birth; born is a year, so that is as fine as the data allows).
 SELECT g.*,
@@ -61,7 +61,7 @@ ORDER BY g.country ASC
 ;
 
 
--- --------------------------------------------------------------------------------------- HOG-HEAD-I-04 Terms per party
+-- --------------------------------------------------------------------------------------- HOG_HEAD_I_04 Terms per party
 -- For one country, each party with how many terms it held and how many different persons, most terms first. A party
 -- written as a succession ('RPR/UMP') counts as its own value.
 SELECT party, COUNT(*) AS terms, COUNT(DISTINCT name) AS persons
@@ -72,7 +72,7 @@ ORDER BY terms DESC, party ASC
 ;
 
 
--- ----------------------------------------------------------------------------------- HOG-HEAD-I-05 Living former heads
+-- ----------------------------------------------------------------------------------- HOG_HEAD_I_05 Living former heads
 -- Per country, the former heads still living, with the day their last term ended, most recent first.
 SELECT country, name, born, MAX(term_end) AS last_term_end
 FROM head
@@ -83,7 +83,7 @@ ORDER BY country ASC, last_term_end DESC NULLS LAST
 ;
 
 
--- -------------------------------------------------------------------------------- HOG-HEAD-I-06 Terms begun per decade
+-- -------------------------------------------------------------------------------- HOG_HEAD_I_06 Terms begun per decade
 -- Across all countries, how many terms began in each decade, with the countries that had one.
 SELECT SUBSTR(term_start, 1, 3) || '0s' AS decade,
        COUNT(*)                         AS terms,
@@ -94,7 +94,7 @@ ORDER BY decade ASC
 ;
 
 
--- ---------------------------------------------------------------------- HOG-HEAD-I-07 The latest terms of each country
+-- ---------------------------------------------------------------------- HOG_HEAD_I_07 The latest terms of each country
 -- Per country, the :n most recent terms, oldest of them first. Terms, not persons: a head re-elected appears once per
 -- term. term_start is NOT NULL and distinct within a country, so the numbering has no ties.
 SELECT *
@@ -105,7 +105,7 @@ ORDER BY country ASC, term_start ASC
 ;
 
 
--- -------------------------------------------------------- HOG-HEAD-I-08 The first and the latest terms of each country
+-- -------------------------------------------------------- HOG_HEAD_I_08 The first and the latest terms of each country
 -- Per country, its first :n terms and its most recent :n, each row saying which it is. A row is 'first' when it is
 -- among the first :n, so with a country of 2 * :n terms or fewer the two sets overlap and 'first' wins.
 SELECT *,
@@ -119,7 +119,7 @@ ORDER BY country ASC, term_start ASC
 ;
 
 
--- ------------------------------------------------------------------- HOG-HEAD-I-09 The first two terms of each country
+-- ------------------------------------------------------------------- HOG_HEAD_I_09 The first two terms of each country
 -- Per country, its first two terms, the earlier first. Terms, not persons: a head whose first two terms were
 -- consecutive appears twice. term_start is NOT NULL and distinct within a country, so the numbering has no ties.
 SELECT *
@@ -129,7 +129,7 @@ WHERE first_rn <= 2
 ORDER BY country ASC, term_start ASC
 ;
 
--- ---------------------------------------------------------- HOG-HEAD-I-10 Two or more terms, the top three per country
+-- ---------------------------------------------------------- HOG_HEAD_I_10 Two or more terms, the top three per country
 -- Per country, up to three heads with two or more terms, most terms first and, at a tie, the earlier first term first;
 -- a name is taken as one person.
 SELECT country, name, terms
@@ -145,7 +145,7 @@ ORDER BY country ASC, place ASC
 ;
 
 
--- --------------------------------------------- HOG-HEAD-I-11 Party share of completed terms, the top three per country
+-- --------------------------------------------- HOG_HEAD_I_11 Party share of completed terms, the top three per country
 -- Per country, over the terms that have ended, each party's share of the days in office as a percentage of that
 -- country's total (its tenure share), the top three parties; a succession ('A/B') counts as a party of its own.
 SELECT country, party, tenure_share
@@ -164,7 +164,7 @@ ORDER BY country ASC, tenure_share DESC
 ;
 
 
--- ------------------------------------------------------------ HOG-HEAD-I-12 Terms that ended in the year the head died
+-- ------------------------------------------------------------ HOG_HEAD_I_12 Terms that ended in the year the head died
 -- Per country, how many terms ended in the same year their head died, by country code. It catches the heads who died in
 -- office, but also those who left office and died later that year; died is a year, so the data cannot tell the two
 -- apart.
@@ -177,7 +177,7 @@ ORDER BY g.country ASC
 ;
 
 
--- ----------------------------------------------------------------------- HOG-HEAD-I-13 Terms begun per day of the week
+-- ----------------------------------------------------------------------- HOG_HEAD_I_13 Terms begun per day of the week
 -- Across all countries, how many terms began on each day of the week, Sunday first. strftime('%w', ...) gives the day
 -- as a digit, Sunday as 0; a CASE turns it into a name.
 SELECT CASE strftime('%w', term_start)
@@ -196,7 +196,7 @@ ORDER BY strftime('%w', term_start) ASC
 ;
 
 
--- ---------------------------------------------------------------------- HOG-HEAD-I-14 Years lived after leaving office
+-- ---------------------------------------------------------------------- HOG_HEAD_I_14 Years lived after leaving office
 -- For the heads who have died, the years between the end of their last term and their death, the ten longest first. A
 -- name is taken as one person within a country; at a tie, by country, then by name.
 SELECT country,

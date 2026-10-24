@@ -21,9 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class Office_Exercises_01_Basic_PersistenceTest {
 
-    @DisplayName("exercise 1: An office by country")
+    @DisplayName("HOG_OFFICE_B_01: An office by country")
     @Nested
-    class Exercise1Test {
+    class HOG_OFFICE_B_01_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("KR", "PRESIDENT", "대통령", "대, one per election; a person re-elected keeps one line per term with consecutive numbers")
@@ -65,9 +65,9 @@ class Office_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 2: The offices")
+    @DisplayName("HOG_OFFICE_B_02: The offices")
     @Nested
-    class Exercise2Test {
+    class HOG_OFFICE_B_02_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", "PRESIDENT", "Président de la République"),
@@ -111,9 +111,9 @@ class Office_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 3: Offices where a number can repeat")
+    @DisplayName("HOG_OFFICE_B_03: Offices where a number can repeat")
     @Nested
-    class Exercise3Test {
+    class HOG_OFFICE_B_03_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", "Président de la République", "ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each"),

@@ -21,9 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class Office_Exercises_03_Advanced_PersistenceTest {
 
-    @DisplayName("exercise 1: What number counts, in a phrase")
+    @DisplayName("HOG_OFFICE_A_01: What number counts, in a phrase")
     @Nested
-    class Exercise1Test {
+    class HOG_OFFICE_A_01_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", "ordinal of the person by first election"),

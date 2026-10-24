@@ -25,7 +25,7 @@
 --
 
 
--- ------------------------------------------------------------------ HOG-SCHEMA-I-01 Presidents against prime ministers
+-- ------------------------------------------------------------------ HOG_SCHEMA_I_01 Presidents against prime ministers
 -- By the kind of head: how many terms, how many different persons, and the average length of a term in days, an open
 -- term counted to today.
 SELECT g.head_kind,
@@ -39,7 +39,7 @@ ORDER BY g.head_kind ASC
 ;
 
 
--- ------------------------------------------------------------------------------- HOG-SCHEMA-I-02 Numbering in practice
+-- ------------------------------------------------------------------------------- HOG_SCHEMA_I_02 Numbering in practice
 -- Per office: how many terms, how many distinct numbers, the highest number, and the rule; where terms exceed
 -- numbers, number is the person's and repeats.
 SELECT g.*,
@@ -53,7 +53,7 @@ ORDER BY g.country ASC
 ;
 
 
--- ------------------------------------------------------------------------------- HOG-SCHEMA-I-03 The span of each list
+-- ------------------------------------------------------------------------------- HOG_SCHEMA_I_03 The span of each list
 -- Per office, the first term's start, the latest term's start and the years between them, with the head's title.
 SELECT g.*,
        MIN(h.term_start)                                         AS first_term_start,
@@ -67,7 +67,7 @@ ORDER BY g.country ASC
 ;
 
 
--- ----------------------------------------------------------------------------- HOG-SCHEMA-I-04 Living heads per office
+-- ----------------------------------------------------------------------------- HOG_SCHEMA_I_04 Living heads per office
 -- Per office, with its title, how many of its heads are still living, the incumbent included, by country code. A name
 -- is taken as one person within a country.
 SELECT g.*, COUNT(DISTINCT h.name) AS living
@@ -79,7 +79,7 @@ ORDER BY g.country ASC
 ;
 
 
--- --------------------------------------------------------------------- HOG-SCHEMA-I-05 Terms per century, side by side
+-- --------------------------------------------------------------------- HOG_SCHEMA_I_05 Terms per century, side by side
 -- Per office, with its title, the terms begun in each century from the 18th to the 21st, one column per century, by
 -- country code. A SUM of CASE per column turns the rows of a GROUP BY into columns.
 SELECT g.*,
@@ -94,9 +94,9 @@ ORDER BY g.country ASC
 ;
 
 
--- ----------------------------------------------------- HOG-SCHEMA-I-06 Age at first taking office, by the kind of head
+-- ----------------------------------------------------- HOG_SCHEMA_I_06 Age at first taking office, by the kind of head
 -- By the kind of head: how many persons, and the youngest, the oldest and the average age at which each first took
--- office, in years of the calendar. Each person counts once, at their first term, unlike HOG-HEAD-I-03, which counts
+-- office, in years of the calendar. Each person counts once, at their first term, unlike HOG_HEAD_I_03, which counts
 -- every term; a name is taken as one person within a country.
 SELECT g.head_kind,
        COUNT(*)                                                             AS persons,
@@ -112,7 +112,7 @@ ORDER BY g.head_kind ASC
 ;
 
 
--- ---------------------------------------------------------- HOG-SCHEMA-I-07 The shortest completed term of each office
+-- ---------------------------------------------------------- HOG_SCHEMA_I_07 The shortest completed term of each office
 -- Per office, with its title, the completed term with the fewest days and who held it, by country code; at a tie, every
 -- such term, the earlier first. An open term has no term_end, so julianday gives NULL and the term drops out.
 SELECT g.*,

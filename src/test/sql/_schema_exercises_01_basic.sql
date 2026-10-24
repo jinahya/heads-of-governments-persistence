@@ -25,7 +25,7 @@
 --
 
 
--- ------------------------------------------------------------------- HOG-SCHEMA-B-01 The incumbents, with their titles
+-- ------------------------------------------------------------------- HOG_SCHEMA_B_01 The incumbents, with their titles
 -- The front page names each country's head of government today, with the title the country gives the office.
 SELECT g.*, h.*
 FROM office g
@@ -34,7 +34,7 @@ ORDER BY g.country ASC
 ;
 
 
--- ----------------------------------------------------- HOG-SCHEMA-B-02 A country's list, with the rule for its numbers
+-- ----------------------------------------------------- HOG_SCHEMA_B_02 A country's list, with the rule for its numbers
 -- A reader asks for one country's list and should see, with it, what number counts there.
 SELECT g.*, h.*
 FROM office g
@@ -44,7 +44,7 @@ ORDER BY h.term_start ASC
 ;
 
 
--- ------------------------------------------------------------------------------------ HOG-SCHEMA-B-03 Terms per office
+-- ------------------------------------------------------------------------------------ HOG_SCHEMA_B_03 Terms per office
 -- Each office with the kind of head it has and how many terms the list holds.
 SELECT g.*, COUNT(h.id) AS terms
 FROM office g
@@ -54,7 +54,7 @@ ORDER BY g.country ASC
 ;
 
 
--- ----------------------------------------------------------------------- HOG-SCHEMA-B-04 The first head of each office
+-- ----------------------------------------------------------------------- HOG_SCHEMA_B_04 The first head of each office
 -- Each office's head numbered 1, with the title of the office, the oldest list first.
 SELECT g.*, h.*
 FROM office g
@@ -64,7 +64,7 @@ ORDER BY h.term_start ASC
 ;
 
 
--- ------------------------------------------------------------------------------- HOG-SCHEMA-B-05 Presidents since 2000
+-- ------------------------------------------------------------------------------- HOG_SCHEMA_B_05 Presidents since 2000
 -- Every term of a president (head_kind 'PRESIDENT') that began in 2000 or later, with the title, in date order and, on
 -- the same day, by country.
 SELECT g.*, h.*
@@ -76,7 +76,7 @@ ORDER BY h.term_start ASC, g.country ASC
 ;
 
 
--- -------------------------------------------------------------------------- HOG-SCHEMA-B-06 Presidents without a party
+-- -------------------------------------------------------------------------- HOG_SCHEMA_B_06 Presidents without a party
 -- The presidents' terms whose party is one of 'Indépendant', 'Unaffiliated' or '무소속', by country, then in date order. A
 -- succession that includes one of them ('무소속/민주정의당') is a different value and does not match.
 SELECT g.*, h.*
@@ -88,7 +88,7 @@ ORDER BY g.country ASC, h.term_start ASC
 ;
 
 
--- ------------------------------------------------------------------------- HOG-SCHEMA-B-07 Terms since 2000 per office
+-- ------------------------------------------------------------------------- HOG_SCHEMA_B_07 Terms since 2000 per office
 -- Each office with the number of terms that began in 2000 or later, most first and, at a tie, by country code. The date
 -- goes into the join condition, not WHERE, so an office with no such term would still show, with 0.
 SELECT g.*, COUNT(h.id) AS terms

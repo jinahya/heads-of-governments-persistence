@@ -22,13 +22,13 @@ The `head` table: a row per term of a head of government.
 
 === Basic
 
-[[HOG-HEAD-B-01]]
-==== HOG-HEAD-B-01: Who held office on a day
+[[HOG_HEAD_B_01]]
+==== HOG_HEAD_B_01: Who held office on a day
 
 A reader gives a date and wants each country's head on that day.
 A country whose office was vacant is absent.
 
-.`head_exercises_01_basic.sql`, HOG-HEAD-B-01
+.`head_exercises_01_basic.sql`, HOG_HEAD_B_01
 [%collapsible]
 ====
 [source,sql]
@@ -42,12 +42,12 @@ ORDER BY country ASC
 
 ====
 
-[[HOG-HEAD-B-02]]
-==== HOG-HEAD-B-02: One country's list
+[[HOG_HEAD_B_02]]
+==== HOG_HEAD_B_02: One country's list
 
 A reader wants a country's heads, first to latest, as the source lists them.
 
-.`head_exercises_01_basic.sql`, HOG-HEAD-B-02
+.`head_exercises_01_basic.sql`, HOG_HEAD_B_02
 [%collapsible]
 ====
 [source,sql]
@@ -60,12 +60,12 @@ ORDER BY term_start ASC
 
 ====
 
-[[HOG-HEAD-B-03]]
-==== HOG-HEAD-B-03: The incumbents
+[[HOG_HEAD_B_03]]
+==== HOG_HEAD_B_03: The incumbents
 
 The dashboard shows who is in office now, per country, and since when.
 
-.`head_exercises_01_basic.sql`, HOG-HEAD-B-03
+.`head_exercises_01_basic.sql`, HOG_HEAD_B_03
 [%collapsible]
 ====
 [source,sql]
@@ -90,13 +90,13 @@ ORDER BY country ASC
 
 ====
 
-[[HOG-HEAD-B-04]]
-==== HOG-HEAD-B-04: Terms by name
+[[HOG_HEAD_B_04]]
+==== HOG_HEAD_B_04: Terms by name
 
 A reader types part of a name and wants every term of anyone matching it.
 LIKE folds case for ASCII letters only, so 'churchill' finds Churchill and '吉田' finds 吉田茂; the index on name does not help a leading wildcard.
 
-.`head_exercises_01_basic.sql`, HOG-HEAD-B-04
+.`head_exercises_01_basic.sql`, HOG_HEAD_B_04
 [%collapsible]
 ====
 [source,sql]
@@ -109,12 +109,12 @@ ORDER BY country ASC, term_start ASC
 
 ====
 
-[[HOG-HEAD-B-05]]
-==== HOG-HEAD-B-05: Terms that began in a year
+[[HOG_HEAD_B_05]]
+==== HOG_HEAD_B_05: Terms that began in a year
 
 A timeline wants every term that began in a given year, in any country, in date order.
 
-.`head_exercises_01_basic.sql`, HOG-HEAD-B-05
+.`head_exercises_01_basic.sql`, HOG_HEAD_B_05
 [%collapsible]
 ====
 [source,sql]
@@ -127,13 +127,13 @@ ORDER BY term_start ASC, country ASC
 
 ====
 
-[[HOG-HEAD-B-06]]
-==== HOG-HEAD-B-06: The oldest living heads
+[[HOG_HEAD_B_06]]
+==== HOG_HEAD_B_06: The oldest living heads
 
 The ten earliest-born heads still living, in any country, oldest first.
 A person with several terms appears once; at the same year of birth, by country, then by name.
 
-.`head_exercises_01_basic.sql`, HOG-HEAD-B-06
+.`head_exercises_01_basic.sql`, HOG_HEAD_B_06
 [%collapsible]
 ====
 [source,sql]
@@ -164,12 +164,12 @@ LIMIT 10
 
 ====
 
-[[HOG-HEAD-B-07]]
-==== HOG-HEAD-B-07: Terms begun during the Second World War
+[[HOG_HEAD_B_07]]
+==== HOG_HEAD_B_07: Terms begun during the Second World War
 
 Every term that began between 1 September 1939 and 2 September 1945, both days included, in date order and, on the same day, by country.
 
-.`head_exercises_01_basic.sql`, HOG-HEAD-B-07
+.`head_exercises_01_basic.sql`, HOG_HEAD_B_07
 [%collapsible]
 ====
 [source,sql]
@@ -199,12 +199,12 @@ ORDER BY term_start ASC, country ASC
 
 ====
 
-[[HOG-HEAD-B-08]]
-==== HOG-HEAD-B-08: Heads who lived past ninety-two
+[[HOG_HEAD_B_08]]
+==== HOG_HEAD_B_08: Heads who lived past ninety-two
 
 The heads whose year of death less their year of birth is 93 or more, once per person, the greatest first and, at a tie, by country, then by name. born and died are years, so the age is as fine as the data allows and may be a year too high.
 
-.`head_exercises_01_basic.sql`, HOG-HEAD-B-08
+.`head_exercises_01_basic.sql`, HOG_HEAD_B_08
 [%collapsible]
 ====
 [source,sql]
@@ -237,12 +237,12 @@ ORDER BY age DESC, country ASC, name ASC
 
 === Intermediate
 
-[[HOG-HEAD-I-01]]
-==== HOG-HEAD-I-01: The longest terms of a country
+[[HOG_HEAD_I_01]]
+==== HOG_HEAD_I_01: The longest terms of a country
 
 For one country, each term with its length in days, longest first; the incumbent's term runs to today.
 
-.`head_exercises_02_intermediate.sql`, HOG-HEAD-I-01
+.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_01
 [%collapsible]
 ====
 [source,sql]
@@ -256,12 +256,12 @@ ORDER BY days DESC, term_start ASC
 
 ====
 
-[[HOG-HEAD-I-02]]
-==== HOG-HEAD-I-02: More than one term
+[[HOG_HEAD_I_02]]
+==== HOG_HEAD_I_02: More than one term
 
 Per country, the persons with more than one term, with how many and the numbers they held.
 
-.`head_exercises_02_intermediate.sql`, HOG-HEAD-I-02
+.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_02
 [%collapsible]
 ====
 [source,sql]
@@ -294,12 +294,12 @@ ORDER BY country ASC, MIN(term_start) ASC
 
 ====
 
-[[HOG-HEAD-I-03]]
-==== HOG-HEAD-I-03: Age on taking office
+[[HOG_HEAD_I_03]]
+==== HOG_HEAD_I_03: Age on taking office
 
 Per country, the youngest, the oldest and the average age at which a term began, in whole years of the calendar (the year of term_start less the year of birth; born is a year, so that is as fine as the data allows).
 
-.`head_exercises_02_intermediate.sql`, HOG-HEAD-I-03
+.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_03
 [%collapsible]
 ====
 [source,sql]
@@ -328,13 +328,13 @@ ORDER BY g.country ASC
 
 ====
 
-[[HOG-HEAD-I-04]]
-==== HOG-HEAD-I-04: Terms per party
+[[HOG_HEAD_I_04]]
+==== HOG_HEAD_I_04: Terms per party
 
 For one country, each party with how many terms it held and how many different persons, most terms first.
 A party written as a succession ('RPR/UMP') counts as its own value.
 
-.`head_exercises_02_intermediate.sql`, HOG-HEAD-I-04
+.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_04
 [%collapsible]
 ====
 [source,sql]
@@ -348,12 +348,12 @@ ORDER BY terms DESC, party ASC
 
 ====
 
-[[HOG-HEAD-I-05]]
-==== HOG-HEAD-I-05: Living former heads
+[[HOG_HEAD_I_05]]
+==== HOG_HEAD_I_05: Living former heads
 
 Per country, the former heads still living, with the day their last term ended, most recent first.
 
-.`head_exercises_02_intermediate.sql`, HOG-HEAD-I-05
+.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_05
 [%collapsible]
 ====
 [source,sql]
@@ -387,12 +387,12 @@ ORDER BY country ASC, last_term_end DESC NULLS LAST
 
 ====
 
-[[HOG-HEAD-I-06]]
-==== HOG-HEAD-I-06: Terms begun per decade
+[[HOG_HEAD_I_06]]
+==== HOG_HEAD_I_06: Terms begun per decade
 
 Across all countries, how many terms began in each decade, with the countries that had one.
 
-.`head_exercises_02_intermediate.sql`, HOG-HEAD-I-06
+.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_06
 [%collapsible]
 ====
 [source,sql]
@@ -426,13 +426,13 @@ ORDER BY decade ASC
 
 ====
 
-[[HOG-HEAD-I-07]]
-==== HOG-HEAD-I-07: The latest terms of each country
+[[HOG_HEAD_I_07]]
+==== HOG_HEAD_I_07: The latest terms of each country
 
 Per country, the :n most recent terms, oldest of them first.
 Terms, not persons: a head re-elected appears once per term. term_start is NOT NULL and distinct within a country, so the numbering has no ties.
 
-.`head_exercises_02_intermediate.sql`, HOG-HEAD-I-07
+.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_07
 [%collapsible]
 ====
 [source,sql]
@@ -446,13 +446,13 @@ ORDER BY country ASC, term_start ASC
 
 ====
 
-[[HOG-HEAD-I-08]]
-==== HOG-HEAD-I-08: The first and the latest terms of each country
+[[HOG_HEAD_I_08]]
+==== HOG_HEAD_I_08: The first and the latest terms of each country
 
 Per country, its first :n terms and its most recent :n, each row saying which it is.
 A row is 'first' when it is among the first :n, so with a country of 2 * :n terms or fewer the two sets overlap and 'first' wins.
 
-.`head_exercises_02_intermediate.sql`, HOG-HEAD-I-08
+.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_08
 [%collapsible]
 ====
 [source,sql]
@@ -469,13 +469,13 @@ ORDER BY country ASC, term_start ASC
 
 ====
 
-[[HOG-HEAD-I-09]]
-==== HOG-HEAD-I-09: The first two terms of each country
+[[HOG_HEAD_I_09]]
+==== HOG_HEAD_I_09: The first two terms of each country
 
 Per country, its first two terms, the earlier first.
 Terms, not persons: a head whose first two terms were consecutive appears twice. term_start is NOT NULL and distinct within a country, so the numbering has no ties.
 
-.`head_exercises_02_intermediate.sql`, HOG-HEAD-I-09
+.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_09
 [%collapsible]
 ====
 [source,sql]
@@ -506,12 +506,12 @@ ORDER BY country ASC, term_start ASC
 
 ====
 
-[[HOG-HEAD-I-10]]
-==== HOG-HEAD-I-10: Two or more terms, the top three per country
+[[HOG_HEAD_I_10]]
+==== HOG_HEAD_I_10: Two or more terms, the top three per country
 
 Per country, up to three heads with two or more terms, most terms first and, at a tie, the earlier first term first; a name is taken as one person.
 
-.`head_exercises_02_intermediate.sql`, HOG-HEAD-I-10
+.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_10
 [%collapsible]
 ====
 [source,sql]
@@ -551,12 +551,12 @@ ORDER BY country ASC, place ASC
 
 ====
 
-[[HOG-HEAD-I-11]]
-==== HOG-HEAD-I-11: Party share of completed terms, the top three per country
+[[HOG_HEAD_I_11]]
+==== HOG_HEAD_I_11: Party share of completed terms, the top three per country
 
 Per country, over the terms that have ended, each party's share of the days in office as a percentage of that country's total (its tenure share), the top three parties; a succession ('A/B') counts as a party of its own.
 
-.`head_exercises_02_intermediate.sql`, HOG-HEAD-I-11
+.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_11
 [%collapsible]
 ====
 [source,sql]
@@ -600,13 +600,13 @@ ORDER BY country ASC, tenure_share DESC
 
 ====
 
-[[HOG-HEAD-I-12]]
-==== HOG-HEAD-I-12: Terms that ended in the year the head died
+[[HOG_HEAD_I_12]]
+==== HOG_HEAD_I_12: Terms that ended in the year the head died
 
 Per country, how many terms ended in the same year their head died, by country code.
 It catches the heads who died in office, but also those who left office and died later that year; died is a year, so the data cannot tell the two apart.
 
-.`head_exercises_02_intermediate.sql`, HOG-HEAD-I-12
+.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_12
 [%collapsible]
 ====
 [source,sql]
@@ -633,12 +633,12 @@ ORDER BY g.country ASC
 
 ====
 
-[[HOG-HEAD-I-13]]
-==== HOG-HEAD-I-13: Terms begun per day of the week
+[[HOG_HEAD_I_13]]
+==== HOG_HEAD_I_13: Terms begun per day of the week
 
 Across all countries, how many terms began on each day of the week, Sunday first. strftime('%w', ...) gives the day as a digit, Sunday as 0; a CASE turns it into a name.
 
-.`head_exercises_02_intermediate.sql`, HOG-HEAD-I-13
+.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_13
 [%collapsible]
 ====
 [source,sql]
@@ -674,13 +674,13 @@ ORDER BY strftime('%w', term_start) ASC
 
 ====
 
-[[HOG-HEAD-I-14]]
-==== HOG-HEAD-I-14: Years lived after leaving office
+[[HOG_HEAD_I_14]]
+==== HOG_HEAD_I_14: Years lived after leaving office
 
 For the heads who have died, the years between the end of their last term and their death, the ten longest first.
 A name is taken as one person within a country; at a tie, by country, then by name.
 
-.`head_exercises_02_intermediate.sql`, HOG-HEAD-I-14
+.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_14
 [%collapsible]
 ====
 [source,sql]
@@ -718,12 +718,12 @@ LIMIT 10
 
 === Advanced
 
-[[HOG-HEAD-A-01]]
-==== HOG-HEAD-A-01: Vacancies
+[[HOG_HEAD_A_01]]
+==== HOG_HEAD_A_01: Vacancies
 
 Per country, each gap of more than a day between a term's end and the next term's start, with its length; a day between is only how some sources write a succession, so it does not count.
 
-.`head_exercises_03_advanced.sql`, HOG-HEAD-A-01
+.`head_exercises_03_advanced.sql`, HOG_HEAD_A_01
 [%collapsible]
 ====
 [source,sql]
@@ -758,12 +758,12 @@ ORDER BY country ASC, term_start ASC
 
 ====
 
-[[HOG-HEAD-A-02]]
-==== HOG-HEAD-A-02: Longest in office
+[[HOG_HEAD_A_02]]
+==== HOG_HEAD_A_02: Longest in office
 
 Per country, the person with the most days in office over all their terms, counting an open term to today; ties share the place.
 
-.`head_exercises_03_advanced.sql`, HOG-HEAD-A-02
+.`head_exercises_03_advanced.sql`, HOG_HEAD_A_02
 [%collapsible]
 ====
 [source,sql]
@@ -783,12 +783,12 @@ ORDER BY country ASC
 
 ====
 
-[[HOG-HEAD-A-03]]
-==== HOG-HEAD-A-03: The longest run of one party
+[[HOG_HEAD_A_03]]
+==== HOG_HEAD_A_03: The longest run of one party
 
 Per country, the longest unbroken run of consecutive terms held by the same party, with when it began and ended; a run is counted in terms, not days, and a succession ('UNR/UDR') is a party of its own.
 
-.`head_exercises_03_advanced.sql`, HOG-HEAD-A-03
+.`head_exercises_03_advanced.sql`, HOG_HEAD_A_03
 [%collapsible]
 ====
 [source,sql]
@@ -828,13 +828,13 @@ ORDER BY country ASC
 
 ====
 
-[[HOG-HEAD-A-04]]
-==== HOG-HEAD-A-04: Every party of a head, one per row
+[[HOG_HEAD_A_04]]
+==== HOG_HEAD_A_04: Every party of a head, one per row
 
 party may be a succession, 'A/B', when the party was renamed or changed under the head.
 Give the heads whose party is one, with each party on its own row and its position in the succession.
 
-.`head_exercises_03_advanced.sql`, HOG-HEAD-A-04
+.`head_exercises_03_advanced.sql`, HOG_HEAD_A_04
 [%collapsible]
 ====
 [source,sql]
@@ -880,12 +880,12 @@ ORDER BY country ASC, term_start ASC, position ASC
 
 ====
 
-[[HOG-HEAD-A-05]]
-==== HOG-HEAD-A-05: Predecessor and successor
+[[HOG_HEAD_A_05]]
+==== HOG_HEAD_A_05: Predecessor and successor
 
 For a person named exactly, each of their terms with who held the office immediately before and after it in that country; the incumbent has no successor.
 
-.`head_exercises_03_advanced.sql`, HOG-HEAD-A-05
+.`head_exercises_03_advanced.sql`, HOG_HEAD_A_05
 [%collapsible]
 ====
 [source,sql]
@@ -900,13 +900,13 @@ ORDER BY country ASC, term_start ASC
 
 ====
 
-[[HOG-HEAD-A-06]]
-==== HOG-HEAD-A-06: How often a new head brings a new party
+[[HOG_HEAD_A_06]]
+==== HOG_HEAD_A_06: How often a new head brings a new party
 
 Per country, over the successions where the head changed (not a head following themselves), how many also changed the party, and that as a percentage, by country code.
 LAG gives the previous term's name and party; a succession ('A/B') counts as a party of its own.
 
-.`head_exercises_03_advanced.sql`, HOG-HEAD-A-06
+.`head_exercises_03_advanced.sql`, HOG_HEAD_A_06
 [%collapsible]
 ====
 [source,sql]
@@ -942,14 +942,14 @@ ORDER BY g.country ASC
 
 ====
 
-[[HOG-HEAD-A-07]]
-==== HOG-HEAD-A-07: Comebacks
+[[HOG_HEAD_A_07]]
+==== HOG_HEAD_A_07: Comebacks
 
 A stint is an unbroken run of terms by one person; a head who left and came back has more than one.
 Give the heads with three stints or more, with the year each stint began, most stints first and, at a tie, by country, then by the first term.
 A term starts a stint when the term before it in that country was someone else's.
 
-.`head_exercises_03_advanced.sql`, HOG-HEAD-A-07
+.`head_exercises_03_advanced.sql`, HOG_HEAD_A_07
 [%collapsible]
 ====
 [source,sql]
@@ -992,12 +992,12 @@ The `office` table: a row per country's office.
 
 === Basic
 
-[[HOG-OFFICE-B-01]]
-==== HOG-OFFICE-B-01: An office by country
+[[HOG_OFFICE_B_01]]
+==== HOG_OFFICE_B_01: An office by country
 
 A reader has a country code, typed in whatever case, and wants that office.
 
-.`office_exercises_01_basic.sql`, HOG-OFFICE-B-01
+.`office_exercises_01_basic.sql`, HOG_OFFICE_B_01
 [%collapsible]
 ====
 [source,sql]
@@ -1009,12 +1009,12 @@ WHERE country = UPPER(:country)
 
 ====
 
-[[HOG-OFFICE-B-02]]
-==== HOG-OFFICE-B-02: The offices
+[[HOG_OFFICE_B_02]]
+==== HOG_OFFICE_B_02: The offices
 
 The front page lists every office with the title of its head, by country code.
 
-.`office_exercises_01_basic.sql`, HOG-OFFICE-B-02
+.`office_exercises_01_basic.sql`, HOG_OFFICE_B_02
 [%collapsible]
 ====
 [source,sql]
@@ -1038,13 +1038,13 @@ ORDER BY country ASC
 
 ====
 
-[[HOG-OFFICE-B-03]]
-==== HOG-OFFICE-B-03: Offices where a number can repeat
+[[HOG_OFFICE_B_03]]
+==== HOG_OFFICE_B_03: Offices where a number can repeat
 
 The offices whose numbering says a person keeps the same number on each term, by country code.
 There, number does not identify a term, which is why head carries an id.
 
-.`office_exercises_01_basic.sql`, HOG-OFFICE-B-03
+.`office_exercises_01_basic.sql`, HOG_OFFICE_B_03
 [%collapsible]
 ====
 [source,sql]
@@ -1068,12 +1068,12 @@ ORDER BY country ASC
 
 === Intermediate
 
-[[HOG-OFFICE-I-01]]
-==== HOG-OFFICE-I-01: Offices by the kind of head
+[[HOG_OFFICE_I_01]]
+==== HOG_OFFICE_I_01: Offices by the kind of head
 
 How many offices have a president and how many a prime minister, naming the countries of each.
 
-.`office_exercises_02_intermediate.sql`, HOG-OFFICE-I-01
+.`office_exercises_02_intermediate.sql`, HOG_OFFICE_I_01
 [%collapsible]
 ====
 [source,sql]
@@ -1095,13 +1095,13 @@ ORDER BY head_kind ASC
 
 ====
 
-[[HOG-OFFICE-I-02]]
-==== HOG-OFFICE-I-02: Titles outside ASCII
+[[HOG_OFFICE_I_02]]
+==== HOG_OFFICE_I_02: Titles outside ASCII
 
 head_title is in the country's own language.
 Which titles use a character outside ASCII, and which do not?
 
-.`office_exercises_02_intermediate.sql`, HOG-OFFICE-I-02
+.`office_exercises_02_intermediate.sql`, HOG_OFFICE_I_02
 [%collapsible]
 ====
 [source,sql]
@@ -1126,13 +1126,13 @@ ORDER BY script ASC, country ASC
 
 ====
 
-[[HOG-OFFICE-I-03]]
-==== HOG-OFFICE-I-03: Offices without an incumbent
+[[HOG_OFFICE_I_03]]
+==== HOG_OFFICE_I_03: Offices without an incumbent
 
 Every office should have a head in office now, a term with no end.
 List the offices that have none, by country code; the check passes when nothing comes back.
 
-.`office_exercises_02_intermediate.sql`, HOG-OFFICE-I-03
+.`office_exercises_02_intermediate.sql`, HOG_OFFICE_I_03
 [%collapsible]
 ====
 [source,sql]
@@ -1154,13 +1154,13 @@ no rows.
 
 === Advanced
 
-[[HOG-OFFICE-A-01]]
-==== HOG-OFFICE-A-01: What number counts, in a phrase
+[[HOG_OFFICE_A_01]]
+==== HOG_OFFICE_A_01: What number counts, in a phrase
 
 numbering is a sentence, but each opens by naming what is counted -- 'ordinal of the person by first election', '代', '대', 'presidency number' -- before its first comma or semicolon.
 Show each office with that phrase alone.
 
-.`office_exercises_03_advanced.sql`, HOG-OFFICE-A-01
+.`office_exercises_03_advanced.sql`, HOG_OFFICE_A_01
 [%collapsible]
 ====
 [source,sql]
@@ -1196,12 +1196,12 @@ Exercises that read both tables.
 
 === Basic
 
-[[HOG-SCHEMA-B-01]]
-==== HOG-SCHEMA-B-01: The incumbents, with their titles
+[[HOG_SCHEMA_B_01]]
+==== HOG_SCHEMA_B_01: The incumbents, with their titles
 
 The front page names each country's head of government today, with the title the country gives the office.
 
-.`_schema_exercises_01_basic.sql`, HOG-SCHEMA-B-01
+.`_schema_exercises_01_basic.sql`, HOG_SCHEMA_B_01
 [%collapsible]
 ====
 [source,sql]
@@ -1226,12 +1226,12 @@ ORDER BY g.country ASC
 
 ====
 
-[[HOG-SCHEMA-B-02]]
-==== HOG-SCHEMA-B-02: A country's list, with the rule for its numbers
+[[HOG_SCHEMA_B_02]]
+==== HOG_SCHEMA_B_02: A country's list, with the rule for its numbers
 
 A reader asks for one country's list and should see, with it, what number counts there.
 
-.`_schema_exercises_01_basic.sql`, HOG-SCHEMA-B-02
+.`_schema_exercises_01_basic.sql`, HOG_SCHEMA_B_02
 [%collapsible]
 ====
 [source,sql]
@@ -1245,12 +1245,12 @@ ORDER BY h.term_start ASC
 
 ====
 
-[[HOG-SCHEMA-B-03]]
-==== HOG-SCHEMA-B-03: Terms per office
+[[HOG_SCHEMA_B_03]]
+==== HOG_SCHEMA_B_03: Terms per office
 
 Each office with the kind of head it has and how many terms the list holds.
 
-.`_schema_exercises_01_basic.sql`, HOG-SCHEMA-B-03
+.`_schema_exercises_01_basic.sql`, HOG_SCHEMA_B_03
 [%collapsible]
 ====
 [source,sql]
@@ -1276,12 +1276,12 @@ ORDER BY g.country ASC
 
 ====
 
-[[HOG-SCHEMA-B-04]]
-==== HOG-SCHEMA-B-04: The first head of each office
+[[HOG_SCHEMA_B_04]]
+==== HOG_SCHEMA_B_04: The first head of each office
 
 Each office's head numbered 1, with the title of the office, the oldest list first.
 
-.`_schema_exercises_01_basic.sql`, HOG-SCHEMA-B-04
+.`_schema_exercises_01_basic.sql`, HOG_SCHEMA_B_04
 [%collapsible]
 ====
 [source,sql]
@@ -1307,12 +1307,12 @@ ORDER BY h.term_start ASC
 
 ====
 
-[[HOG-SCHEMA-B-05]]
-==== HOG-SCHEMA-B-05: Presidents since 2000
+[[HOG_SCHEMA_B_05]]
+==== HOG_SCHEMA_B_05: Presidents since 2000
 
 Every term of a president (head_kind 'PRESIDENT') that began in 2000 or later, with the title, in date order and, on the same day, by country.
 
-.`_schema_exercises_01_basic.sql`, HOG-SCHEMA-B-05
+.`_schema_exercises_01_basic.sql`, HOG_SCHEMA_B_05
 [%collapsible]
 ====
 [source,sql]
@@ -1350,13 +1350,13 @@ ORDER BY h.term_start ASC, g.country ASC
 
 ====
 
-[[HOG-SCHEMA-B-06]]
-==== HOG-SCHEMA-B-06: Presidents without a party
+[[HOG_SCHEMA_B_06]]
+==== HOG_SCHEMA_B_06: Presidents without a party
 
 The presidents' terms whose party is one of 'Indépendant', 'Unaffiliated' or '무소속', by country, then in date order.
 A succession that includes one of them ('무소속/민주정의당') is a different value and does not match.
 
-.`_schema_exercises_01_basic.sql`, HOG-SCHEMA-B-06
+.`_schema_exercises_01_basic.sql`, HOG_SCHEMA_B_06
 [%collapsible]
 ====
 [source,sql]
@@ -1383,13 +1383,13 @@ ORDER BY g.country ASC, h.term_start ASC
 
 ====
 
-[[HOG-SCHEMA-B-07]]
-==== HOG-SCHEMA-B-07: Terms since 2000 per office
+[[HOG_SCHEMA_B_07]]
+==== HOG_SCHEMA_B_07: Terms since 2000 per office
 
 Each office with the number of terms that began in 2000 or later, most first and, at a tie, by country code.
 The date goes into the join condition, not WHERE, so an office with no such term would still show, with 0.
 
-.`_schema_exercises_01_basic.sql`, HOG-SCHEMA-B-07
+.`_schema_exercises_01_basic.sql`, HOG_SCHEMA_B_07
 [%collapsible]
 ====
 [source,sql]
@@ -1417,12 +1417,12 @@ ORDER BY terms DESC, g.country ASC
 
 === Intermediate
 
-[[HOG-SCHEMA-I-01]]
-==== HOG-SCHEMA-I-01: Presidents against prime ministers
+[[HOG_SCHEMA_I_01]]
+==== HOG_SCHEMA_I_01: Presidents against prime ministers
 
 By the kind of head: how many terms, how many different persons, and the average length of a term in days, an open term counted to today.
 
-.`_schema_exercises_02_intermediate.sql`, HOG-SCHEMA-I-01
+.`_schema_exercises_02_intermediate.sql`, HOG_SCHEMA_I_01
 [%collapsible]
 ====
 [source,sql]
@@ -1439,12 +1439,12 @@ ORDER BY g.head_kind ASC
 
 ====
 
-[[HOG-SCHEMA-I-02]]
-==== HOG-SCHEMA-I-02: Numbering in practice
+[[HOG_SCHEMA_I_02]]
+==== HOG_SCHEMA_I_02: Numbering in practice
 
 Per office: how many terms, how many distinct numbers, the highest number, and the rule; where terms exceed numbers, number is the person's and repeats.
 
-.`_schema_exercises_02_intermediate.sql`, HOG-SCHEMA-I-02
+.`_schema_exercises_02_intermediate.sql`, HOG_SCHEMA_I_02
 [%collapsible]
 ====
 [source,sql]
@@ -1473,12 +1473,12 @@ ORDER BY g.country ASC
 
 ====
 
-[[HOG-SCHEMA-I-03]]
-==== HOG-SCHEMA-I-03: The span of each list
+[[HOG_SCHEMA_I_03]]
+==== HOG_SCHEMA_I_03: The span of each list
 
 Per office, the first term's start, the latest term's start and the years between them, with the head's title.
 
-.`_schema_exercises_02_intermediate.sql`, HOG-SCHEMA-I-03
+.`_schema_exercises_02_intermediate.sql`, HOG_SCHEMA_I_03
 [%collapsible]
 ====
 [source,sql]
@@ -1508,13 +1508,13 @@ ORDER BY g.country ASC
 
 ====
 
-[[HOG-SCHEMA-I-04]]
-==== HOG-SCHEMA-I-04: Living heads per office
+[[HOG_SCHEMA_I_04]]
+==== HOG_SCHEMA_I_04: Living heads per office
 
 Per office, with its title, how many of its heads are still living, the incumbent included, by country code.
 A name is taken as one person within a country.
 
-.`_schema_exercises_02_intermediate.sql`, HOG-SCHEMA-I-04
+.`_schema_exercises_02_intermediate.sql`, HOG_SCHEMA_I_04
 [%collapsible]
 ====
 [source,sql]
@@ -1541,13 +1541,13 @@ ORDER BY g.country ASC
 
 ====
 
-[[HOG-SCHEMA-I-05]]
-==== HOG-SCHEMA-I-05: Terms per century, side by side
+[[HOG_SCHEMA_I_05]]
+==== HOG_SCHEMA_I_05: Terms per century, side by side
 
 Per office, with its title, the terms begun in each century from the 18th to the 21st, one column per century, by country code.
 A SUM of CASE per column turns the rows of a GROUP BY into columns.
 
-.`_schema_exercises_02_intermediate.sql`, HOG-SCHEMA-I-05
+.`_schema_exercises_02_intermediate.sql`, HOG_SCHEMA_I_05
 [%collapsible]
 ====
 [source,sql]
@@ -1577,13 +1577,13 @@ ORDER BY g.country ASC
 
 ====
 
-[[HOG-SCHEMA-I-06]]
-==== HOG-SCHEMA-I-06: Age at first taking office, by the kind of head
+[[HOG_SCHEMA_I_06]]
+==== HOG_SCHEMA_I_06: Age at first taking office, by the kind of head
 
 By the kind of head: how many persons, and the youngest, the oldest and the average age at which each first took office, in years of the calendar.
-Each person counts once, at their first term, unlike HOG-HEAD-I-03, which counts every term; a name is taken as one person within a country.
+Each person counts once, at their first term, unlike HOG_HEAD_I_03, which counts every term; a name is taken as one person within a country.
 
-.`_schema_exercises_02_intermediate.sql`, HOG-SCHEMA-I-06
+.`_schema_exercises_02_intermediate.sql`, HOG_SCHEMA_I_06
 [%collapsible]
 ====
 [source,sql]
@@ -1612,13 +1612,13 @@ ORDER BY g.head_kind ASC
 
 ====
 
-[[HOG-SCHEMA-I-07]]
-==== HOG-SCHEMA-I-07: The shortest completed term of each office
+[[HOG_SCHEMA_I_07]]
+==== HOG_SCHEMA_I_07: The shortest completed term of each office
 
 Per office, with its title, the completed term with the fewest days and who held it, by country code; at a tie, every such term, the earlier first.
 An open term has no term_end, so julianday gives NULL and the term drops out.
 
-.`_schema_exercises_02_intermediate.sql`, HOG-SCHEMA-I-07
+.`_schema_exercises_02_intermediate.sql`, HOG_SCHEMA_I_07
 [%collapsible]
 ====
 [source,sql]
@@ -1651,12 +1651,12 @@ ORDER BY g.country ASC, h.term_start ASC
 
 === Advanced
 
-[[HOG-SCHEMA-A-01]]
-==== HOG-SCHEMA-A-01: Each office's longest-serving head
+[[HOG_SCHEMA_A_01]]
+==== HOG_SCHEMA_A_01: Each office's longest-serving head
 
 Per office, the person with the most days in office over all their terms, with the title they held; ties share the place.
 
-.`_schema_exercises_03_advanced.sql`, HOG-SCHEMA-A-01
+.`_schema_exercises_03_advanced.sql`, HOG_SCHEMA_A_01
 [%collapsible]
 ====
 [source,sql]
@@ -1678,12 +1678,12 @@ ORDER BY country ASC
 
 ====
 
-[[HOG-SCHEMA-A-02]]
-==== HOG-SCHEMA-A-02: Every office on a day, vacant or not
+[[HOG_SCHEMA_A_02]]
+==== HOG_SCHEMA_A_02: Every office on a day, vacant or not
 
 A reader gives a date and wants every office with its head on that day, or 'vacant' where the office was empty or the list had not yet begun.
 
-.`_schema_exercises_03_advanced.sql`, HOG-SCHEMA-A-02
+.`_schema_exercises_03_advanced.sql`, HOG_SCHEMA_A_02
 [%collapsible]
 ====
 [source,sql]
@@ -1698,13 +1698,13 @@ ORDER BY g.country ASC
 
 ====
 
-[[HOG-SCHEMA-A-03]]
-==== HOG-SCHEMA-A-03: The incumbents' contemporaries
+[[HOG_SCHEMA_A_03]]
+==== HOG_SCHEMA_A_03: The incumbents' contemporaries
 
 On the day each incumbent took office, who headed the other offices?
 One row per pair, the incumbent first.
 
-.`_schema_exercises_03_advanced.sql`, HOG-SCHEMA-A-03
+.`_schema_exercises_03_advanced.sql`, HOG_SCHEMA_A_03
 [%collapsible]
 ====
 [source,sql]
@@ -1748,12 +1748,12 @@ ORDER BY i.country ASC, o.country ASC
 
 ====
 
-[[HOG-SCHEMA-A-04]]
-==== HOG-SCHEMA-A-04: Each office's longest-lived head
+[[HOG_SCHEMA_A_04]]
+==== HOG_SCHEMA_A_04: Each office's longest-lived head
 
 Per office, with its title, the head who lived the most years (died less born) among those who have died; ties share the place and are listed by name.
 
-.`_schema_exercises_03_advanced.sql`, HOG-SCHEMA-A-04
+.`_schema_exercises_03_advanced.sql`, HOG_SCHEMA_A_04
 [%collapsible]
 ====
 [source,sql]
@@ -1787,13 +1787,13 @@ ORDER BY country ASC, name ASC
 
 ====
 
-[[HOG-SCHEMA-A-05]]
-==== HOG-SCHEMA-A-05: Presidents and the prime ministers of their time
+[[HOG_SCHEMA_A_05]]
+==== HOG_SCHEMA_A_05: Presidents and the prime ministers of their time
 
 For each president's term, how many different prime ministers, of any office, were in office at some point during it; the ten terms with the most first and, at a tie, the earlier term first, then by country.
 Two terms overlap when each starts on or before the other's end, the handover day counting for both; an open term ends at '9999-12-31'.
 
-.`_schema_exercises_03_advanced.sql`, HOG-SCHEMA-A-05
+.`_schema_exercises_03_advanced.sql`, HOG_SCHEMA_A_05
 [%collapsible]
 ====
 [source,sql]
@@ -1828,13 +1828,13 @@ LIMIT 10
 
 ====
 
-[[HOG-SCHEMA-A-06]]
-==== HOG-SCHEMA-A-06: New heads per century, with a running total
+[[HOG_SCHEMA_A_06]]
+==== HOG_SCHEMA_A_06: New heads per century, with a running total
 
 Per office, with its title, how many persons first took office in each century, and the running total of persons up to that century, by country, then by century.
 The century is the first two digits of the year plus one, so 1800 counts in the 19th; a name is taken as one person within a country.
 
-.`_schema_exercises_03_advanced.sql`, HOG-SCHEMA-A-06
+.`_schema_exercises_03_advanced.sql`, HOG_SCHEMA_A_06
 [%collapsible]
 ====
 [source,sql]
@@ -1883,13 +1883,13 @@ ORDER BY country ASC, century ASC
 
 ====
 
-[[HOG-SCHEMA-A-07]]
-==== HOG-SCHEMA-A-07: Decades in which every office changed hands
+[[HOG_SCHEMA_A_07]]
+==== HOG_SCHEMA_A_07: Decades in which every office changed hands
 
 The decades in which a term began in every office, with how many terms began in all, oldest first.
 This is relational division: a decade qualifies when the number of distinct countries with a term begun in it equals the number of offices.
 
-.`_schema_exercises_03_advanced.sql`, HOG-SCHEMA-A-07
+.`_schema_exercises_03_advanced.sql`, HOG_SCHEMA_A_07
 [%collapsible]
 ====
 [source,sql]

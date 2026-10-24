@@ -21,9 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class Head_Exercises_01_Basic_PersistenceTest {
 
-    @DisplayName("exercise 1: Who held office on a day")
+    @DisplayName("HOG_HEAD_B_01: Who held office on a day")
     @Nested
-    class Exercise1Test {
+    class HOG_HEAD_B_01_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", 18L, "Charles de Gaulle", "UNR", "1959-01-08", "1966-01-08"),
@@ -76,9 +76,9 @@ class Head_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 2: One country's list")
+    @DisplayName("HOG_HEAD_B_02: One country's list")
     @Nested
-    class Exercise2Test {
+    class HOG_HEAD_B_02_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row(218L, "KR", 1L, "1948-07-24", "1952-08-14", "이승만", "대한독립촉성국민회/자유당", 1875L, 1965L),
@@ -146,9 +146,9 @@ class Head_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 3: The incumbents")
+    @DisplayName("HOG_HEAD_B_03: The incumbents")
     @Nested
-    class Exercise3Test {
+    class HOG_HEAD_B_03_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", 25L, "Emmanuel Macron", "LREM/Renaissance", "2022-05-14"),
@@ -194,9 +194,9 @@ class Head_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 4: Terms by name")
+    @DisplayName("HOG_HEAD_B_04: Terms by name")
     @Nested
-    class Exercise4Test {
+    class HOG_HEAD_B_04_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("GB", 41L, "Winston Churchill", "1940-05-10", "1945-07-26"),
@@ -242,9 +242,9 @@ class Head_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 5: Terms that began in a year")
+    @DisplayName("HOG_HEAD_B_05: Terms that began in a year")
     @Nested
-    class Exercise5Test {
+    class HOG_HEAD_B_05_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("1945-04-07", "JP", 42L, "鈴木貫太郎"),
@@ -293,9 +293,9 @@ class Head_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 6: The oldest living heads")
+    @DisplayName("HOG_HEAD_B_06: The oldest living heads")
     @Nested
-    class Exercise6Test {
+    class HOG_HEAD_B_06_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("JP", "福田康夫", 1936L),
@@ -344,9 +344,9 @@ class Head_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 7: Terms begun during the Second World War")
+    @DisplayName("HOG_HEAD_B_07: Terms begun during the Second World War")
     @Nested
-    class Exercise7Test {
+    class HOG_HEAD_B_07_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("1940-01-16", "JP", 37L, "米内光政", "無所属"),
@@ -397,9 +397,9 @@ class Head_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 8: Heads who lived past ninety-two")
+    @DisplayName("HOG_HEAD_B_08: Heads who lived past ninety-two")
     @Nested
-    class Exercise8Test {
+    class HOG_HEAD_B_08_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("JP", "東久邇宮稔彦王", 1887L, 1990L, 103L),

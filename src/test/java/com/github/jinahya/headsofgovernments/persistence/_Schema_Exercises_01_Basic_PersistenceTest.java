@@ -22,9 +22,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class _Schema_Exercises_01_Basic_PersistenceTest {
 
-    @DisplayName("exercise 1: The incumbents, with their titles")
+    @DisplayName("HOG_SCHEMA_B_01: The incumbents, with their titles")
     @Nested
-    class Exercise1Test {
+    class HOG_SCHEMA_B_01_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", "Président de la République", "Emmanuel Macron", "2022-05-14"),
@@ -79,9 +79,9 @@ class _Schema_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 2: A country's list, with the rule for its numbers")
+    @DisplayName("HOG_SCHEMA_B_02: A country's list, with the rule for its numbers")
     @Nested
-    class Exercise2Test {
+    class HOG_SCHEMA_B_02_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("대통령", "대, one per election; a person re-elected keeps one line per term with consecutive numbers", 1L, "1948-07-24", "1952-08-14", "이승만", "대한독립촉성국민회/자유당"),
@@ -157,9 +157,9 @@ class _Schema_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 3: Terms per office")
+    @DisplayName("HOG_SCHEMA_B_03: Terms per office")
     @Nested
-    class Exercise3Test {
+    class HOG_SCHEMA_B_03_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", "PRESIDENT", 31L),
@@ -207,9 +207,9 @@ class _Schema_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 4: The first head of each office")
+    @DisplayName("HOG_SCHEMA_B_04: The first head of each office")
     @Nested
-    class Exercise4Test {
+    class HOG_SCHEMA_B_04_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("GB", "Prime Minister", 1L, "Robert Walpole", "1721-04-03"),
@@ -265,9 +265,9 @@ class _Schema_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 5: Presidents since 2000")
+    @DisplayName("HOG_SCHEMA_B_05: Presidents since 2000")
     @Nested
-    class Exercise5Test {
+    class HOG_SCHEMA_B_05_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("2001-01-20", "US", "President", "George W. Bush", "Republican"),
@@ -336,9 +336,9 @@ class _Schema_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 6: Presidents without a party")
+    @DisplayName("HOG_SCHEMA_B_06: Presidents without a party")
     @Nested
-    class Exercise6Test {
+    class HOG_SCHEMA_B_06_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", "Président de la République", 12L, "Alexandre Millerand", "Indépendant", "1920-09-23"),
@@ -396,9 +396,9 @@ class _Schema_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("exercise 7: Terms since 2000 per office")
+    @DisplayName("HOG_SCHEMA_B_07: Terms since 2000 per office")
     @Nested
-    class Exercise7Test {
+    class HOG_SCHEMA_B_07_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
                 row("JP", "内閣総理大臣", 21L),
