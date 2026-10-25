@@ -2,7 +2,7 @@
   <code_scheme name="Project" version="173">
     <option name="AUTODETECT_INDENTS" value="false" />
     <option name="RIGHT_MARGIN" value="100" />
-    <option name="SOFT_MARGINS" value="100" />
+    <option name="SOFT_MARGINS" value="100,120" />
     <JavaCodeStyleSettings version="1">
       <option name="ANNOTATION_PARAMETER_WRAP" value="1" />
       <option name="ALIGN_MULTILINE_ANNOTATION_PARAMETERS" value="true" />
