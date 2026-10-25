@@ -79,7 +79,7 @@ class HeadsOfGovernments_Erd_Test {
         return PATH.resolveSibling(table.name() + ".svg");
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     record Column(String name, String type, boolean notNull, boolean pk) {
     }
 
@@ -164,7 +164,7 @@ class HeadsOfGovernments_Erd_Test {
         return tables;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     // geometry, in px; the text is 13px monospace, which is 8px per character in the common fonts
     static final int CHAR = 8;
 
@@ -334,7 +334,7 @@ class HeadsOfGovernments_Erd_Test {
         return svg.toString();
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Test
     void draw() throws Exception {
         final List<Table> tables;

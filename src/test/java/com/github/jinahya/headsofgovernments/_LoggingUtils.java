@@ -35,7 +35,7 @@ final class _LoggingUtils {
     /** The pattern {@link #messageOnly()} sets: the message alone, one per line. */
     static final String MESSAGE_ONLY_PATTERN = "%msg%n";
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
 
     /**
      * Replaces the appenders of the root logger with a single console appender that prints the message alone; the
@@ -57,7 +57,7 @@ final class _LoggingUtils {
         root.addAppender(appender);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     private _LoggingUtils() {
         throw new AssertionError("instantiation is not allowed");
     }

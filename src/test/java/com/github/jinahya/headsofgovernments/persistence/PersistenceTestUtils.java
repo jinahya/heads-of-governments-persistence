@@ -38,7 +38,7 @@ final class PersistenceTestUtils {
      */
     static final String PERSISTENCE_UNIT_NAME = "heads-of-governments";
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
 
     /**
      * Applies a newly created entity manager factory, for the {@link #PERSISTENCE_UNIT_NAME} unit, to the specified
@@ -73,7 +73,7 @@ final class PersistenceTestUtils {
         });
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Deprecated(forRemoval = true)
     private static String getEntityName(final EntityManager entityManager, final Class<?> entityClass) {
         Objects.requireNonNull(entityClass, "entityClass is null");
@@ -85,7 +85,7 @@ final class PersistenceTestUtils {
         return applyEntityManager(em -> getEntityName(em, entityClass));
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     private static long selectCount(final EntityManager entityManager, final Class<?> entityClass) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         Objects.requireNonNull(entityClass, "entityClass is null");
@@ -101,7 +101,7 @@ final class PersistenceTestUtils {
         return applyEntityManager(em -> selectCount(em, entityClass));
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     static <T> Optional<T> selectRandom(final Class<T> entityClass) {
         Objects.requireNonNull(entityClass, "entityClass is null");
         return applyEntityManager(em -> {
@@ -123,7 +123,7 @@ final class PersistenceTestUtils {
         });
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     private PersistenceTestUtils() {
         throw new AssertionError("instantiation is not allowed");
     }

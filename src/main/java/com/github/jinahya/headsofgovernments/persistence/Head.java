@@ -75,7 +75,7 @@ public class Head {
         super();
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
     @Override
     public String toString() {
         return super.toString() + '{' +
@@ -104,13 +104,13 @@ public class Head {
         return Objects.hashCode(getId());
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Id
     @Basic(fetch = FetchType.EAGER, optional = false)
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(fetch = FetchType.EAGER, optional = false)
     @Column(name = "country", nullable = false, insertable = false, updatable = false)
     @Getter(AccessLevel.PACKAGE)
@@ -122,7 +122,7 @@ public class Head {
     @ToString.Exclude
     private Office office;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(fetch = FetchType.EAGER, optional = false)
     @Column(name = "number", nullable = false, insertable = false, updatable = false)
     private Integer number;

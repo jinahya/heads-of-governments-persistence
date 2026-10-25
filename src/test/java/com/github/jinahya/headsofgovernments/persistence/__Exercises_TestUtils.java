@@ -57,7 +57,7 @@ final class __Exercises_TestUtils {
         return PersistenceTestUtils.applyEntityManager(function);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
 
     /**
      * Returns a row of the specified values, each number widened.
@@ -99,7 +99,7 @@ final class __Exercises_TestUtils {
         };
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     private __Exercises_TestUtils() {
         throw new AssertionError("instantiation is not allowed");
     }

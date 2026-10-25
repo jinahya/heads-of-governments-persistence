@@ -90,7 +90,7 @@ public class Office {
         PRIME_MINISTER
     }
 
-    // ------------------------------------------------------------------------------------------------ java.lang.Object
+    // ---------------------------------------------------------------------------- java.lang.Object
     @Override
     public String toString() {
         return super.toString() + '{' +
@@ -114,13 +114,13 @@ public class Office {
         return Objects.hashCode(getCountry());
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @jakarta.persistence.Id
     @jakarta.persistence.Basic(fetch = FetchType.EAGER, optional = false)
     @jakarta.persistence.Column(name = "country", nullable = false, updatable = false)
     private String country;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @Basic(fetch = FetchType.EAGER, optional = false)
     @Column(name = "head_kind", nullable = false, insertable = false, updatable = false)
     private String headKind;
@@ -133,7 +133,7 @@ public class Office {
     @Column(name = "numbering", nullable = false, insertable = false, updatable = false)
     private String numbering;
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "office")
     @Setter(AccessLevel.PACKAGE)
     @EqualsAndHashCode.Exclude
