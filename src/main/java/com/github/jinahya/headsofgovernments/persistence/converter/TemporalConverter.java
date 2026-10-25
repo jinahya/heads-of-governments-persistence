@@ -24,7 +24,19 @@ import jakarta.persistence.AttributeConverter;
 
 import java.time.temporal.Temporal;
 
+/**
+ * An abstract attribute converter for {@link Temporal} attributes.
+ *
+ * @param <X> the attribute type.
+ * @param <Y> the database column type.
+ */
 public abstract class TemporalConverter<X extends Temporal, Y>
         implements AttributeConverter<X, Y> {
 
+    /**
+     * Creates a new instance.
+     */
+    protected TemporalConverter() {
+        super();
+    }
 }

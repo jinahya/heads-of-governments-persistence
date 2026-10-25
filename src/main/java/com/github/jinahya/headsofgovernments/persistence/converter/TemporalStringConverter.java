@@ -22,7 +22,18 @@ package com.github.jinahya.headsofgovernments.persistence.converter;
 
 import java.time.temporal.Temporal;
 
+/**
+ * An abstract attribute converter between {@link Temporal} attributes and their text.
+ *
+ * @param <X> the attribute type.
+ */
 public abstract class TemporalStringConverter<X extends Temporal>
         extends TemporalConverter<X, String> {
 
+    /**
+     * Creates a new instance.
+     */
+    protected TemporalStringConverter() {
+        super();
+    }
 }

@@ -30,7 +30,6 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -64,9 +63,15 @@ import java.util.Objects;
 @Entity
 @Table(name = "office")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public class Office {
+
+    /**
+     * Creates a new instance.
+     */
+    protected Office() {
+        super();
+    }
 
     /**
      * Constants for the {@code head_kind} column: what kind of office the head of a government holds. The column is

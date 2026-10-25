@@ -26,9 +26,20 @@ import java.lang.invoke.MethodType;
 import java.time.temporal.Temporal;
 import java.util.Objects;
 
+/**
+ * An attribute converter between {@link Temporal} attributes and their text, read back through the attribute
+ * class's {@code public static parse(CharSequence)} method.
+ *
+ * @param <X> the attribute type.
+ */
 public abstract class ParsableTemporalStringConverter<X extends Temporal>
         extends TemporalStringConverter<X> {
 
+    /**
+     * Creates a new instance for the specified attribute class.
+     *
+     * @param attributeClass the attribute class, which declares a {@code public static parse(CharSequence)}.
+     */
     protected ParsableTemporalStringConverter(final Class<X> attributeClass) {
         super();
         this.attributeClass = Objects.requireNonNull(attributeClass, "attributeClass is null");

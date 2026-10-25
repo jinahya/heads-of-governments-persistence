@@ -30,7 +30,6 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,9 +65,15 @@ import java.util.Objects;
 @Entity
 @Table(name = "head")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public class Head {
+
+    /**
+     * Creates a new instance.
+     */
+    protected Head() {
+        super();
+    }
 
     // ------------------------------------------------------------------------------------------------ java.lang.Object
     @Override

@@ -22,15 +22,22 @@ package com.github.jinahya.headsofgovernments.persistence.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * An attribute converter between {@link LocalDate} attributes and their ISO-8601 text.
+ */
 @Converter(autoApply = false)
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class LocalDateConverter
         implements AttributeConverter<LocalDate, String> {
+
+    /**
+     * Creates a new instance.
+     */
+    public LocalDateConverter() {
+        super();
+    }
 
     @Override
     public String convertToDatabaseColumn(final LocalDate attribute) {

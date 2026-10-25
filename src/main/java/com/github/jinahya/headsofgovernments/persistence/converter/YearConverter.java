@@ -22,8 +22,6 @@ package com.github.jinahya.headsofgovernments.persistence.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 import java.time.Year;
 
@@ -36,9 +34,15 @@ import java.time.Year;
  */
 @Deprecated
 @Converter(autoApply = false)
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class YearConverter
         implements AttributeConverter<Year, String> {
+
+    /**
+     * Creates a new instance.
+     */
+    public YearConverter() {
+        super();
+    }
 
     @Override
     public String convertToDatabaseColumn(final Year attribute) {
