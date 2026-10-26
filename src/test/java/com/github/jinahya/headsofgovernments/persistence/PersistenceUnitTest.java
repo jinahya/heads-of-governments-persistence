@@ -32,7 +32,7 @@ class PersistenceUnitTest {
 
     @Test
     void __() {
-        try (var factory = Persistence.createEntityManagerFactory("heads-of-governments")) {
+        try (var factory = Persistence.createEntityManagerFactory("test")) {
             log.debug("properties");
             factory.getProperties().forEach((k, v) -> {
                 log.debug("\tproperty: {}: {}", k, v);

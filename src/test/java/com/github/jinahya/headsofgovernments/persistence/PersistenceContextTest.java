@@ -34,7 +34,7 @@ class PersistenceContextTest {
 
     @Test
     void find_sameInstance_sameIdentifier() {
-        try (var factory = Persistence.createEntityManagerFactory("heads-of-governments");
+        try (var factory = Persistence.createEntityManagerFactory("test");
              var manager = factory.createEntityManager()) {
             final var office1 = manager.find(Office.class, "KR");
             final var office2 = manager.find(Office.class, "KR");

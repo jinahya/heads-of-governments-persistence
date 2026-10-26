@@ -36,7 +36,7 @@ final class PersistenceTestUtils {
     /**
      * The name of the persistence unit declared in {@code META-INF/persistence.xml}.
      */
-    static final String PERSISTENCE_UNIT_NAME = "heads-of-governments";
+    static final String PERSISTENCE_UNIT_NAME = "test";
 
     // ---------------------------------------------------------------------------------------------
 
