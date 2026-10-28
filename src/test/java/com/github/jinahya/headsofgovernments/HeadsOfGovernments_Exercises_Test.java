@@ -31,9 +31,10 @@ import javax.sql.DataSource;
 import java.sql.DriverManager;
 
 /**
- * Runs a few exercises of {@code src/test/sql} through plain JDBC against {@code db/heads_of_governments.sqlite3} and
- * prints the rows they return. A query here is the text of its exercise in the file, which carries the same id, with a
- * bind variable ({@code :country}) written as {@code ?}; a change to one is a change to the other.
+ * Runs a few exercises of {@code src/test/sql/exercises} through plain JDBC against
+ * {@code db/heads_of_governments.sqlite3} and prints the rows they return. A query here is the text of its exercise in
+ * the file, which carries the same id, with a bind variable ({@code :country}) written as {@code ?}; a change to one is
+ * a change to the other.
  *
  * <p>The code is for the book, so it is kept plain: the driver is loaded once, by {@link Class#forName(String)} in a
  * static initializer; the first exercise connects through {@link DriverManager}, the others through a

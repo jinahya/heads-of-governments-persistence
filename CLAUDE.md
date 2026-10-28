@@ -96,7 +96,7 @@ Conventions the two classes follow, and new members must keep:
 
 ### The persistence unit and the static metamodel
 
-`src/main/resources/META-INF/persistence.xml` declares the single unit, `heads-of-governments`,
+`src/main/resources/META-INF/persistence.xml` declares the single unit, `test`,
 listing both entities. It sets no `<exclude-unlisted-classes>`, `<shared-cache-mode>` or `<validation-mode>`:
 the classes directory holds only the two entities, so scanning finds the same list, and the defaults suit
 a read-only file with no validator on the classpath. Its JDBC URL is
@@ -119,9 +119,9 @@ the build does not run them. `sqlite3 db/heads_of_governments.sqlite3 '.read src
 - `office.sql` and `head.sql` profile a table, a section per column under a ruler, each query
   prefaced by what it looks for and what the result should be; `-- no rows:` marks a check that passes
   when nothing comes back. The last section covers the table as a whole.
-- `<table>_exercises_<nn>_<level>.sql` pose a problem per query, a file per level (`01_basic`, `02_intermediate`,
-  `03_advanced`; the number only orders the files), and `_schema_exercises_<nn>_<level>.sql` the same for the whole
-  schema. Each
+- `exercises/<table>_exercises_<nn>_<level>.sql` pose a problem per query, a file per level (`01_basic`,
+  `02_intermediate`, `03_advanced`; the number only orders the files), and
+  `exercises/_schema_exercises_<nn>_<level>.sql` the same for the whole schema. Each
   carries an id, `HOG_<TABLE>_<B|I|A>_<nn>` (`HOG_SCHEMA_` for the whole schema), and restates the
   request it answers. Parameters are bind variables (`:name`); the shell binds one with
   `.parameter set :name 'value'`. `EXERCISES.asciidoc` states every problem, and `EXERCISES.yaml` registers every id; ids are permanent, a new exercise takes

@@ -13,7 +13,7 @@ Run a file as a whole:
 
 [source,sh]
 ----
-sqlite3 -readonly db/heads_of_governments.sqlite3 < src/test/sql/<file>.sql
+sqlite3 -readonly db/heads_of_governments.sqlite3 < src/test/sql/exercises/<file>.sql
 ----
 
 == head

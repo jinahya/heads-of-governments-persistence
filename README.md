@@ -36,7 +36,8 @@ $ sqlite3 db/heads_of_governments.sqlite3 .schema
 $ sqlite3 -header db/heads_of_governments.sqlite3 "select * from office"
 ```
 
-Queries to profile each table, and exercises on them, are under [src/test/sql](src/test/sql).
+Queries to profile each table are under [src/test/sql](src/test/sql), and the exercises on them under
+[src/test/sql/exercises](src/test/sql/exercises).
 The exercises are listed, with their ids, in [EXERCISES.asciidoc](EXERCISES.asciidoc).
 
 ## Building
