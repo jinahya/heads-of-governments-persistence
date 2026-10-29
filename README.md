@@ -6,7 +6,7 @@ one row per term of office.
 
 | | |
 | --- | --- |
-| database | `db/heads_of_governments.sqlite3`, opened read-only |
+| database | `src/main/resources/heads_of_governments.sqlite3`, opened read-only |
 | entities | `Office` (one per country) and `Head` (one per term), in `com.github.jinahya.headsofgovernments.persistence` |
 | sources | `docs/*.txt`, one tab-separated list per country, each headed by the pages it came from |
 | platform | Jakarta EE 11 / Jakarta Persistence 3.2, with Hibernate ORM as the provider |
@@ -32,8 +32,8 @@ election and a re-elected president keeps the number; Japan numbers cabinets (ไป
 hold several numbers. That is why `number` is not unique and `head` carries a surrogate `id`.
 
 ```shell
-$ sqlite3 db/heads_of_governments.sqlite3 .schema
-$ sqlite3 -header db/heads_of_governments.sqlite3 "select * from office"
+$ sqlite3 src/main/resources/heads_of_governments.sqlite3 .schema
+$ sqlite3 -header src/main/resources/heads_of_governments.sqlite3 "select * from office"
 ```
 
 Queries to profile each table are under [src/test/sql](src/test/sql), and the exercises on them under
@@ -72,7 +72,7 @@ default) so far. Dependency convergence is enforced on every build; see `CLAUDE.
 `src/test/resources/META-INF/persistence.xml` declares one unit, `heads-of-governments`, over
 
 ```
-jdbc:sqlite:db/heads_of_governments.sqlite3?open_mode=1
+jdbc:sqlite::resource:heads_of_governments.sqlite3?open_mode=1
 ```
 
 `open_mode=1` is `SQLITE_OPEN_READONLY`; a write fails at the driver. The path is relative to the

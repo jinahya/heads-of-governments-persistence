@@ -2,7 +2,7 @@
 :toc: left
 :toclevels: 3
 
-The exercises on `db/heads_of_governments.sqlite3`: a section for each table, with a section for each level, and, at the end, a section for the schema as a whole.
+The exercises on `src/main/resources/heads_of_governments.sqlite3`: a section for each table, with a section for each level, and, at the end, a section for the schema as a whole.
 Each exercise states the request it answers; the SQL that answers it is in the `.sql` file, under the same id.
 The ids are registered in `EXERCISES.yaml`.
 
@@ -13,7 +13,7 @@ Run a file as a whole:
 
 [source,sh]
 ----
-sqlite3 -readonly db/heads_of_governments.sqlite3 < src/test/sql/exercises/<file>.sql
+sqlite3 -readonly src/main/resources/heads_of_governments.sqlite3 < src/test/sql/exercises/<file>.sql
 ----
 
 == head

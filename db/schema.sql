@@ -17,11 +17,11 @@
 -- #L%
 ---
 --
--- The schema of db/heads_of_governments.sqlite3, in execution order. The file was built from it statement by
--- statement, split on a ';' that ends a line, with the comment lines before a statement dropped; the ERD test runs
--- it the same way on an in-memory database. SQLite keeps each statement's text in sqlite_master.sql, comments included, so a '--'
--- comment inside a statement ships in the file and .schema shows it. Keep db/heads_of_governments.sqlite3.md in
--- step.
+-- The schema of src/main/resources/heads_of_governments.sqlite3, in execution order. The file was built from it
+-- statement by statement, split on a ';' that ends a line, with the comment lines before a statement dropped; the
+-- ERD test runs it the same way on an in-memory database. SQLite keeps each statement's text in sqlite_master.sql,
+-- comments included, so a '--' comment inside a statement ships in the file and .schema shows it. Keep
+-- db/heads_of_governments.sqlite3.md in step.
 --
 ---
 CREATE TABLE office (

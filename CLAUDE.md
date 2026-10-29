@@ -4,7 +4,7 @@ Guidance for Claude Code when working in this repository.
 
 ## What this project is
 
-Jakarta Persistence mappings for `db/heads_of_governments.sqlite3`, a small SQLite file listing the
+Jakarta Persistence mappings for `src/main/resources/heads_of_governments.sqlite3`, a small SQLite file listing the
 heads of government of five countries. One Maven module, `io.github.jinahya:heads-of-governments-persistence`,
 one package, `com.github.jinahya.headsofgovernments.persistence`, two entities. Nothing downstream
 consumes the jar; the project exists to be read, built and run against the file.
@@ -58,7 +58,7 @@ attribute by its column, so JPQL string functions (`SUBSTRING(h.termStart, 1, 4)
 and `EXTRACT` does not; the Criteria API reaches the text with `.cast(String.class)`. `head_kind` is
 mapped as the nested `Office.HeadKind` enum, with `@Enumerated(EnumType.STRING)`.
 
-When the file changes, dump its schema (`sqlite3 db/heads_of_governments.sqlite3 .schema`) and bring the
+When the file changes, dump its schema (`sqlite3 src/main/resources/heads_of_governments.sqlite3 .schema`) and bring the
 entities back into line with it, then run the tests. The unit sets no
 `hibernate.hbm2ddl.auto`, so nothing checks the mappings at startup; a wrong column shows up as an
 SQLite error from the first query that reads it.
@@ -122,7 +122,7 @@ compile-time constant.
 ### The SQL files
 
 `src/test/sql` holds hand-written SQL against the file. They are for a reader with the `sqlite3` tool or an IDE;
-the build does not run them. `sqlite3 db/heads_of_governments.sqlite3 '.read src/test/sql/head.sql'` runs one whole.
+the build does not run them. `sqlite3 src/main/resources/heads_of_governments.sqlite3 '.read src/test/sql/head.sql'` runs one whole.
 
 - `office.sql` and `head.sql` profile a table, a section per column under a ruler, each query
   prefaced by what it looks for and what the result should be; `-- no rows:` marks a check that passes

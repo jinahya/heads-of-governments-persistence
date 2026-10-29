@@ -43,7 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Answers the exercises of {@code src/test/sql/exercises/_schema_exercises_02_intermediate.sql},
- * against {@code db/heads_of_governments.sqlite3}; a nested class per exercise, which answers it
+ * against {@code heads_of_governments.sqlite3}; a nested class per exercise, which answers it
  * with JPQL and with the Criteria API, or with a native query where neither can, and checks that it
  * gives what the SQL of the file gives.
  *

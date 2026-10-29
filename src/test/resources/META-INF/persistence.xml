@@ -26,7 +26,7 @@
                                  ${persistence.schemaLocation}"
              version="${persistence.version}">
   <persistence-unit name="test" transaction-type="RESOURCE_LOCAL">
-    <description>Persistence Unit for db/heads_of_governments.sqlite3</description>
+    <description>Persistence Unit for heads_of_governments.sqlite3, on the classpath</description>
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
     <class>com.github.jinahya.headsofgovernments.persistence.Office</class>
     <class>com.github.jinahya.headsofgovernments.persistence.Head</class>
@@ -34,7 +34,7 @@
     <properties>
       <property name="jakarta.persistence.jdbc.driver" value="org.sqlite.JDBC"/>
       <property name="jakarta.persistence.jdbc.url"
-                value="jdbc:sqlite:db/heads_of_governments.sqlite3?open_mode=1"/>
+                value="jdbc:sqlite::resource:heads_of_governments.sqlite3?open_mode=1"/>
       <property name="hibernate.format_sql" value="true"/>
       <property name="hibernate.highlight_sql" value="true"/>
     </properties>
