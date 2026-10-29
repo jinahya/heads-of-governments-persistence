@@ -30,7 +30,8 @@
 -- '代', '대', 'presidency number' -- before its first comma or semicolon. Show each office with that phrase alone.
 SELECT *,
        CASE
-           WHEN comma > 0 AND (semicolon = 0 OR comma < semicolon) THEN SUBSTR(numbering, 1, comma - 1)
+           WHEN comma > 0 AND (semicolon = 0 OR comma < semicolon)
+               THEN SUBSTR(numbering, 1, comma - 1)
            WHEN semicolon > 0 THEN SUBSTR(numbering, 1, semicolon - 1)
            ELSE numbering
            END AS counts

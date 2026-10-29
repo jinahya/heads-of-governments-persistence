@@ -1,4 +1,4 @@
-package com.github.jinahya.headsofgovernments.persistence;
+package com.github.jinahya.headsofgovernments.persistence.exercises;
 
 /*-
  * #%L
@@ -9,9 +9,9 @@ package com.github.jinahya.headsofgovernments.persistence;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,10 @@ package com.github.jinahya.headsofgovernments.persistence;
  * #L%
  */
 
+import com.github.jinahya.headsofgovernments.persistence.Head;
+import com.github.jinahya.headsofgovernments.persistence.Head_;
+import com.github.jinahya.headsofgovernments.persistence.Office;
+import com.github.jinahya.headsofgovernments.persistence.Office_;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import lombok.extern.slf4j.Slf4j;
@@ -33,14 +37,15 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.github.jinahya.headsofgovernments.persistence.__Exercises_TestUtils.row;
-import static com.github.jinahya.headsofgovernments.persistence.__Exercises_TestUtils.rows;
+import static com.github.jinahya.headsofgovernments.persistence.exercises.__Exercises_TestUtils.row;
+import static com.github.jinahya.headsofgovernments.persistence.exercises.__Exercises_TestUtils.rows;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Answers the exercises of {@code src/test/sql/exercises/_schema_exercises_02_intermediate.sql}, against {@code
- * db/heads_of_governments.sqlite3}; a nested class per exercise, which answers it with JPQL and with the Criteria
- * API, or with a native query where neither can, and checks that it gives what the SQL of the file gives.
+ * Answers the exercises of {@code src/test/sql/exercises/_schema_exercises_02_intermediate.sql},
+ * against {@code db/heads_of_governments.sqlite3}; a nested class per exercise, which answers it
+ * with JPQL and with the Criteria API, or with a native query where neither can, and checks that it
+ * gives what the SQL of the file gives.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -52,15 +57,19 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
     class HOG_SCHEMA_I_01_Test {
 
         /**
-         * The average counts each open term to today, so it is worked out here: the days of the completed
-         * terms, which do not change, plus those of the open terms to today, over the terms.
+         * The average counts each open term to today, so it is worked out here: the days of the
+         * completed terms, which do not change, plus those of the open terms to today, over the
+         * terms.
          */
         private static final List<List<Object>> EXPECTED = List.of(
-                row("PRESIDENT", 99L, 84L, averageDays(167226L, 99L, "2022-05-14", "2025-06-04", "2025-01-20")),
-                row("PRIME_MINISTER", 186L, 125L, averageDays(162223L, 186L, "2026-07-20", "2026-02-18"))
+                row("PRESIDENT", 99L, 84L,
+                    averageDays(167226L, 99L, "2022-05-14", "2025-06-04", "2025-01-20")),
+                row("PRIME_MINISTER", 186L, 125L,
+                    averageDays(162223L, 186L, "2026-07-20", "2026-02-18"))
         );
 
-        private static long averageDays(final long completedDays, final long terms, final String... openTermStarts) {
+        private static long averageDays(final long completedDays, final long terms,
+                                        final String... openTermStarts) {
             final var today = LocalDate.now(ZoneOffset.UTC);
             var days = completedDays;
             for (final var openTermStart : openTermStarts) {
@@ -69,7 +78,8 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
             return days / terms; // CAST(... AS INTEGER) truncates
         }
 
-        // JPQL has no difference of two dates, nor today's date as text; julianday() and date('now') are
+        // JPQL has no difference of two dates, nor today's date as text; julianday() and date
+        // ('now') are
         // SQLite's own, and the Criteria API has neither
         @Test
         void nativeQuery() {
@@ -94,11 +104,22 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
     class HOG_SCHEMA_I_02_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
-                row("FR", 31L, 25L, 25L, "ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each"),
-                row("GB", 81L, 59L, 59L, "ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each"),
-                row("JP", 105L, 105L, 105L, "代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each"),
-                row("KR", 21L, 21L, 21L, "대, one per election; a person re-elected keeps one line per term with consecutive numbers"),
-                row("US", 47L, 47L, 47L, "presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number")
+                row("FR", 31L, 25L, 25L,
+                    "ordinal of the person by first election; a person re-elected has one line " +
+                    "per term and keeps the same number on each"),
+                row("GB", 81L, 59L, 59L,
+                    "ordinal of the person by first appointment; a person who served " +
+                    "non-consecutive terms has one line per term and keeps the same number on " +
+                    "each"),
+                row("JP", 105L, 105L, 105L,
+                    "代, one per appointment; a cabinet re-formed after a general election starts " +
+                    "a new 代, so a person keeps one line per 代 with a new number on each"),
+                row("KR", 21L, 21L, 21L,
+                    "대, one per election; a person re-elected keeps one line per term with " +
+                    "consecutive numbers"),
+                row("US", 47L, 47L, 47L,
+                    "presidency number, one per non-consecutive presidency; a person returning " +
+                    "after an absence gets a new number")
         );
 
         @Test
@@ -116,7 +137,8 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
             assertThat(rows(list.stream()
                                     .map(r -> {
                                         final var g = (Office) r[0];
-                                        return new Object[]{g.getCountry(), r[1], r[2], r[3], g.getNumbering()};
+                                        return new Object[]{g.getCountry(), r[1], r[2], r[3],
+                                                g.getNumbering()};
                                     })
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
@@ -129,7 +151,8 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
                 final var cq = cb.createQuery(Object[].class);
                 final var g = cq.from(Office.class);
                 final var h = g.join(Office_.heads);
-                cq.select(cb.array(g, cb.count(h), cb.countDistinct(h.get(Head_.number)), cb.max(h.get(Head_.number))))
+                cq.select(cb.array(g, cb.count(h), cb.countDistinct(h.get(Head_.number)),
+                                   cb.max(h.get(Head_.number))))
                         .groupBy(g)
                         .orderBy(cb.asc(g.get(Office_.country)));
                 return em.createQuery(cq)
@@ -138,7 +161,8 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
             assertThat(rows(list.stream()
                                     .map(r -> {
                                         final var g = (Office) r[0];
-                                        return new Object[]{g.getCountry(), r[1], r[2], r[3], g.getNumbering()};
+                                        return new Object[]{g.getCountry(), r[1], r[2], r[3],
+                                                g.getNumbering()};
                                     })
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
@@ -175,7 +199,8 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
             assertThat(rows(list.stream()
                                     .map(r -> {
                                         final var g = (Office) r[0];
-                                        return new Object[]{g.getCountry(), g.getHeadTitle(), r[1], r[2], r[3]};
+                                        return new Object[]{g.getCountry(), g.getHeadTitle(),
+                                                r[1], r[2], r[3]};
                                     })
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
@@ -191,7 +216,8 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
                 final var first = cb.least(h.get(Head_.termStart));
                 final var latest = cb.greatest(h.get(Head_.termStart));
                 cq.select(cb.array(g, first, latest,
-                                   cb.diff(cb.substring(latest, 1, 4).cast(Integer.class), cb.substring(first, 1, 4).cast(Integer.class))))
+                                   cb.diff(cb.substring(latest.cast(String.class), 1, 4).cast(Integer.class),
+                                           cb.substring(first.cast(String.class), 1, 4).cast(Integer.class))))
                         .groupBy(g)
                         .orderBy(cb.asc(g.get(Office_.country)));
                 return em.createQuery(cq)
@@ -200,7 +226,8 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
             assertThat(rows(list.stream()
                                     .map(r -> {
                                         final var g = (Office) r[0];
-                                        return new Object[]{g.getCountry(), g.getHeadTitle(), r[1], r[2], r[3]};
+                                        return new Object[]{g.getCountry(), g.getHeadTitle(),
+                                                r[1], r[2], r[3]};
                                     })
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
@@ -233,7 +260,8 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
                     )
                     .getResultList());
             assertThat(rows(list.stream()
-                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), ((Office) r[0]).getHeadTitle(), r[1]})
+                                    .map(r -> new Object[]{((Office) r[0]).getCountry(),
+                                            ((Office) r[0]).getHeadTitle(), r[1]})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -253,7 +281,8 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
                         .getResultList();
             });
             assertThat(rows(list.stream()
-                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), ((Office) r[0]).getHeadTitle(), r[1]})
+                                    .map(r -> new Object[]{((Office) r[0]).getCountry(),
+                                            ((Office) r[0]).getHeadTitle(), r[1]})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -290,7 +319,8 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
             assertThat(rows(list.stream()
                                     .map(r -> {
                                         final var g = (Office) r[0];
-                                        return new Object[]{g.getCountry(), g.getHeadTitle(), r[1], r[2], r[3], r[4]};
+                                        return new Object[]{g.getCountry(), g.getHeadTitle(),
+                                                r[1], r[2], r[3], r[4]};
                                     })
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
@@ -307,10 +337,12 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
                 final Function<Predicate, Expression<Integer>> count
                         = p -> cb.sum(cb.<Integer>selectCase().when(p, 1).otherwise(0));
                 cq.select(cb.array(g,
-                                   count.apply(cb.lessThan(termStart, "1800")),
-                                   count.apply(cb.and(cb.greaterThanOrEqualTo(termStart, "1800"), cb.lessThan(termStart, "1900"))),
-                                   count.apply(cb.and(cb.greaterThanOrEqualTo(termStart, "1900"), cb.lessThan(termStart, "2000"))),
-                                   count.apply(cb.greaterThanOrEqualTo(termStart, "2000"))))
+                                   count.apply(cb.lessThan(termStart, "1800-01-01")),
+                                   count.apply(cb.and(cb.greaterThanOrEqualTo(termStart, "1800-01-01"),
+                                                      cb.lessThan(termStart, "1900-01-01"))),
+                                   count.apply(cb.and(cb.greaterThanOrEqualTo(termStart, "1900-01-01"),
+                                                      cb.lessThan(termStart, "2000-01-01"))),
+                                   count.apply(cb.greaterThanOrEqualTo(termStart, "2000-01-01"))))
                         .groupBy(g)
                         .orderBy(cb.asc(g.get(Office_.country)));
                 return em.createQuery(cq)
@@ -319,7 +351,8 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
             assertThat(rows(list.stream()
                                     .map(r -> {
                                         final var g = (Office) r[0];
-                                        return new Object[]{g.getCountry(), g.getHeadTitle(), r[1], r[2], r[3], r[4]};
+                                        return new Object[]{g.getCountry(), g.getHeadTitle(),
+                                                r[1], r[2], r[3], r[4]};
                                     })
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
@@ -367,15 +400,19 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
                 final var cq = cb.createQuery(Object[].class);
                 final var g = cq.from(Office.class);
                 final var h = g.join(Office_.heads);
-                // each person's first term, in place of the SQL's derived table of (country, name, born, MIN(term_start))
+                // each person's first term, in place of the SQL's derived table of (country,
+                // name, born, MIN(term_start))
                 final var first = cq.subquery(String.class);
                 final var f = first.from(Head.class);
                 first.select(cb.least(f.get(Head_.termStart)))
                         .where(cb.equal(f.get(Head_.country), h.get(Head_.country)),
                                cb.equal(f.get(Head_.name), h.get(Head_.name)),
                                cb.equal(f.get(Head_.born), h.get(Head_.born)));
-                final var age = cb.diff(cb.substring(h.get(Head_.termStart), 1, 4).cast(Integer.class), h.get(Head_.born));
-                cq.select(cb.array(g.get(Office_.headKind), cb.count(h), cb.min(age), cb.max(age), cb.round(cb.avg(age), 1)))
+                final var age =
+                        cb.diff(cb.substring(h.get(Head_.termStart), 1, 4).cast(Integer.class),
+                                h.get(Head_.born));
+                cq.select(cb.array(g.get(Office_.headKind), cb.count(h), cb.min(age), cb.max(age),
+                                   cb.round(cb.avg(age), 1)))
                         .where(cb.equal(h.get(Head_.termStart), first))
                         .groupBy(g.get(Office_.headKind))
                         .orderBy(cb.asc(g.get(Office_.headKind)));
@@ -391,14 +428,35 @@ class _Schema_Exercises_02_Intermediate_PersistenceTest {
     class HOG_SCHEMA_I_07_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
-                row("FR", "PRESIDENT", "Président de la République", "ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each", 7L, "FR", 6L, "1894-06-27", "1895-01-16", "Jean Casimir-Perier", "Républicain_opportuniste", 1847L, 1907L, 203L),
-                row("GB", "PRIME_MINISTER", "Prime Minister", "ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each", 59L, "GB", 21L, "1834-11-17", "1834-12-09", "Arthur Wellesley", "Tory", 1769L, 1852L, 22L),
-                row("JP", "PRIME_MINISTER", "内閣総理大臣", "代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each", 212L, "JP", 100L, "2021-10-04", "2021-11-10", "岸田文雄", "自由民主党", 1957L, null, 37L),
-                row("KR", "PRESIDENT", "대통령", "대, one per election; a person re-elected keeps one line per term with consecutive numbers", 228L, "KR", 11L, "1980-08-27", "1981-02-24", "전두환", "무소속/민주정의당", 1931L, 2021L, 181L),
-                row("US", "PRESIDENT", "President", "presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number", 247L, "US", 9L, "1841-03-04", "1841-04-04", "William Henry Harrison", "Whig", 1773L, 1841L, 31L)
+                row("FR", "PRESIDENT", "Président de la République",
+                    "ordinal of the person by first election; a person re-elected has one line " +
+                    "per term and keeps the same number on each",
+                    7L, "FR", 6L, "1894-06-27", "1895-01-16", "Jean Casimir-Perier",
+                    "Républicain_opportuniste", 1847L, 1907L, 203L),
+                row("GB", "PRIME_MINISTER", "Prime Minister",
+                    "ordinal of the person by first appointment; a person who served " +
+                    "non-consecutive terms has one line per term and keeps the same number on each",
+                    59L, "GB", 21L, "1834-11-17", "1834-12-09", "Arthur Wellesley", "Tory", 1769L,
+                    1852L, 22L),
+                row("JP", "PRIME_MINISTER", "内閣総理大臣",
+                    "代, one per appointment; a cabinet re-formed after a general election starts " +
+                    "a new 代, so a person keeps one line per 代 with a new number on each",
+                    212L, "JP", 100L, "2021-10-04", "2021-11-10", "岸田文雄", "自由民主党", 1957L,
+                    null, 37L),
+                row("KR", "PRESIDENT", "대통령",
+                    "대, one per election; a person re-elected keeps one line per term with " +
+                    "consecutive numbers",
+                    228L, "KR", 11L, "1980-08-27", "1981-02-24", "전두환", "무소속/민주정의당", 1931L, 2021L,
+                    181L),
+                row("US", "PRESIDENT", "President",
+                    "presidency number, one per non-consecutive presidency; a person returning " +
+                    "after an absence gets a new number",
+                    247L, "US", 9L, "1841-03-04", "1841-04-04", "William Henry Harrison", "Whig",
+                    1773L, 1841L, 31L)
         );
 
-        // JPQL has no difference of two dates; julianday() is SQLite's own, and the Criteria API has none
+        // JPQL has no difference of two dates; julianday() is SQLite's own, and the Criteria API
+        // has none
         @Test
         void nativeQuery() {
             final var list = __Exercises_TestUtils.apply(em -> (List<?>) em.createNativeQuery(

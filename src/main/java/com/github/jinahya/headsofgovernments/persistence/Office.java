@@ -9,9 +9,9 @@ package com.github.jinahya.headsofgovernments.persistence;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,8 @@ package com.github.jinahya.headsofgovernments.persistence;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -38,29 +40,24 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * An entity for the {@code office} table: one row per country, saying what that country's head of government is called
- * and how the country numbers them.
+ * An entity for the {@code office} table: one row per country, saying what that country's head of
+ * government is called and how the country numbers them.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see Head
  */
-@NamedQuery(name = "Office.selectAll_WhereHeadKindEqual_OrderByCountryAsc",
+@NamedQuery(name = "Office.selectAllByHeadKind",
             query = """
                     SELECT e
                     FROM Office AS e
                     WHERE e.headKind = :headKind
                     ORDER BY e.country ASC""")
-@NamedQuery(name = "Office.selectAllAndCountOfHeads_GroupByAll",
+@NamedQuery(name = "Office.selectAll",
             query = """
-                    SELECT e, COUNT(h)
-                    FROM Office AS e JOIN e.heads AS h
-                    GROUP BY e""")
-@NamedQuery(name = "Office.selectAllAndMinMaxTermStartOfHeads_GroupByAll",
-            query = """
-                    SELECT e, MIN(h.termStart), MAX(h.termStart)
-                    FROM Office AS e JOIN e.heads AS h
-                    GROUP BY e""")
-@Entity
+                    SELECT e
+                    FROM Office AS e
+                    ORDER BY e.country ASC""")
+@Entity(name = "Office")
 @Table(name = "office")
 @Getter
 @Slf4j
@@ -74,8 +71,9 @@ public class Office {
     }
 
     /**
-     * Constants for the {@code head_kind} column: what kind of office the head of a government holds. The column is
-     * mapped as a {@link String}; this enum lists the values the database allows.
+     * Constants for the {@code head_kind} column: what kind of office the head of a government
+     * holds. The {@code headKind} attribute is mapped with this enum by name, and its constants
+     * are the values the database allows.
      */
     public enum HeadKind {
 
@@ -114,16 +112,28 @@ public class Office {
         return Objects.hashCode(getCountry());
     }
 
+    // ------------------------------------------------------------------------------------- country
+
+    // ------------------------------------------------------------------------------------ headKind
+
+    // ----------------------------------------------------------------------------------- headTitle
+
+    // ----------------------------------------------------------------------------------- numbering
+
+    // --------------------------------------------------------------------------------------- heads
+
     // ---------------------------------------------------------------------------------------------
     @jakarta.persistence.Id
     @jakarta.persistence.Basic(fetch = FetchType.EAGER, optional = false)
-    @jakarta.persistence.Column(name = "country", nullable = false, updatable = false)
+    @jakarta.persistence.Column(name = "country", nullable = false, insertable = false,
+                                updatable = false)
     private String country;
 
     // ---------------------------------------------------------------------------------------------
+    @Enumerated(EnumType.STRING)
     @Basic(fetch = FetchType.EAGER, optional = false)
     @Column(name = "head_kind", nullable = false, insertable = false, updatable = false)
-    private String headKind;
+    private HeadKind headKind;
 
     @Basic(fetch = FetchType.EAGER, optional = false)
     @Column(name = "head_title", nullable = false, insertable = false, updatable = false)

@@ -1,4 +1,4 @@
-package com.github.jinahya.headsofgovernments.persistence;
+package com.github.jinahya.headsofgovernments.persistence.exercises;
 
 /*-
  * #%L
@@ -9,9 +9,9 @@ package com.github.jinahya.headsofgovernments.persistence;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,10 @@ package com.github.jinahya.headsofgovernments.persistence;
  * #L%
  */
 
+import com.github.jinahya.headsofgovernments.persistence.Head;
+import com.github.jinahya.headsofgovernments.persistence.Head_;
+import com.github.jinahya.headsofgovernments.persistence.Office;
+import com.github.jinahya.headsofgovernments.persistence.Office_;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Nulls;
 import lombok.extern.slf4j.Slf4j;
@@ -32,14 +36,15 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static com.github.jinahya.headsofgovernments.persistence.__Exercises_TestUtils.row;
-import static com.github.jinahya.headsofgovernments.persistence.__Exercises_TestUtils.rows;
+import static com.github.jinahya.headsofgovernments.persistence.exercises.__Exercises_TestUtils.row;
+import static com.github.jinahya.headsofgovernments.persistence.exercises.__Exercises_TestUtils.rows;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Answers the exercises of {@code src/test/sql/exercises/head_exercises_02_intermediate.sql}, against {@code
- * db/heads_of_governments.sqlite3}; a nested class per exercise, which answers it with JPQL and with the Criteria
- * API, or with a native query where neither can, and checks that it gives what the SQL of the file gives.
+ * Answers the exercises of {@code src/test/sql/exercises/head_exercises_02_intermediate.sql},
+ * against {@code db/heads_of_governments.sqlite3}; a nested class per exercise, which answers it
+ * with JPQL and with the Criteria API, or with a native query where neither can, and checks that it
+ * gives what the SQL of the file gives.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -54,29 +59,43 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
          * The completed terms; the incumbent's, measured to date('now'), is checked against today.
          */
         private static final List<List<Object>> EXPECTED = List.of(
-                row(229L, "KR", 12L, "1981-02-25", "1988-02-24", "전두환", "민주정의당", 1931L, 2021L, 2555L),
-                row(225L, "KR", 8L, "1972-12-27", "1978-12-26", "박정희", "민주공화당", 1917L, 1979L, 2190L),
-                row(230L, "KR", 13L, "1988-02-25", "1993-02-24", "노태우", "민주정의당/민주자유당/무소속", 1932L, 2021L, 1826L),
-                row(234L, "KR", 17L, "2008-02-25", "2013-02-24", "이명박", "한나라당/새누리당", 1941L, null, 1826L),
-                row(231L, "KR", 14L, "1993-02-25", "1998-02-24", "김영삼", "민주자유당/신한국당/무소속", 1929L, 2015L, 1825L),
-                row(232L, "KR", 15L, "1998-02-25", "2003-02-24", "김대중", "새정치국민회의/새천년민주당/무소속", 1924L, 2009L, 1825L),
-                row(233L, "KR", 16L, "2003-02-25", "2008-02-24", "노무현", "새천년민주당/무소속/열린우리당/무소속", 1946L, 2009L, 1825L),
-                row(236L, "KR", 19L, "2017-05-10", "2022-05-09", "문재인", "더불어민주당", 1953L, null, 1825L),
-                row(218L, "KR", 1L, "1948-07-24", "1952-08-14", "이승만", "대한독립촉성국민회/자유당", 1875L, 1965L, 1482L),
-                row(235L, "KR", 18L, "2013-02-25", "2017-03-10", "박근혜", "새누리당/자유한국당", 1952L, null, 1474L),
+                row(229L, "KR", 12L, "1981-02-25", "1988-02-24", "전두환", "민주정의당", 1931L, 2021L,
+                    2555L),
+                row(225L, "KR", 8L, "1972-12-27", "1978-12-26", "박정희", "민주공화당", 1917L, 1979L,
+                    2190L),
+                row(230L, "KR", 13L, "1988-02-25", "1993-02-24", "노태우", "민주정의당/민주자유당/무소속", 1932L,
+                    2021L, 1826L),
+                row(234L, "KR", 17L, "2008-02-25", "2013-02-24", "이명박", "한나라당/새누리당", 1941L, null,
+                    1826L),
+                row(231L, "KR", 14L, "1993-02-25", "1998-02-24", "김영삼", "민주자유당/신한국당/무소속", 1929L,
+                    2015L, 1825L),
+                row(232L, "KR", 15L, "1998-02-25", "2003-02-24", "김대중", "새정치국민회의/새천년민주당/무소속", 1924L,
+                    2009L, 1825L),
+                row(233L, "KR", 16L, "2003-02-25", "2008-02-24", "노무현", "새천년민주당/무소속/열린우리당/무소속",
+                    1946L, 2009L, 1825L),
+                row(236L, "KR", 19L, "2017-05-10", "2022-05-09", "문재인", "더불어민주당", 1953L, null,
+                    1825L),
+                row(218L, "KR", 1L, "1948-07-24", "1952-08-14", "이승만", "대한독립촉성국민회/자유당", 1875L,
+                    1965L, 1482L),
+                row(235L, "KR", 18L, "2013-02-25", "2017-03-10", "박근혜", "새누리당/자유한국당", 1952L, null,
+                    1474L),
                 row(219L, "KR", 2L, "1952-08-15", "1956-08-14", "이승만", "자유당", 1875L, 1965L, 1460L),
-                row(223L, "KR", 6L, "1967-07-01", "1971-06-30", "박정희", "민주공화당", 1917L, 1979L, 1460L),
+                row(223L, "KR", 6L, "1967-07-01", "1971-06-30", "박정희", "민주공화당", 1917L, 1979L,
+                    1460L),
                 row(220L, "KR", 3L, "1956-08-15", "1960-04-27", "이승만", "자유당", 1875L, 1965L, 1351L),
-                row(222L, "KR", 5L, "1963-12-17", "1967-06-30", "박정희", "민주공화당", 1917L, 1979L, 1291L),
+                row(222L, "KR", 5L, "1963-12-17", "1967-06-30", "박정희", "민주공화당", 1917L, 1979L,
+                    1291L),
                 row(237L, "KR", 20L, "2022-05-10", "2025-04-04", "윤석열", "국민의힘", 1960L, null, 1060L),
                 row(221L, "KR", 4L, "1960-08-12", "1962-03-22", "윤보선", "무소속", 1897L, 1990L, 587L),
                 row(224L, "KR", 7L, "1971-07-01", "1972-12-26", "박정희", "민주공화당", 1917L, 1979L, 544L),
                 row(226L, "KR", 9L, "1978-12-27", "1979-10-26", "박정희", "민주공화당", 1917L, 1979L, 303L),
                 row(227L, "KR", 10L, "1979-12-06", "1980-08-16", "최규하", "무소속", 1919L, 2006L, 254L),
-                row(228L, "KR", 11L, "1980-08-27", "1981-02-24", "전두환", "무소속/민주정의당", 1931L, 2021L, 181L)
+                row(228L, "KR", 11L, "1980-08-27", "1981-02-24", "전두환", "무소속/민주정의당", 1931L, 2021L,
+                    181L)
         );
 
-        // JPQL has no difference of two dates, nor today's date as text; julianday() and date('now') are
+        // JPQL has no difference of two dates, nor today's date as text; julianday() and date
+        // ('now') are
         // SQLite's own, and the Criteria API has neither
         @Test
         void nativeQuery() {
@@ -95,7 +114,8 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
             assertThat(rows).filteredOn(r -> r.get(4) != null).containsExactlyElementsOf(EXPECTED);
             assertThat(rows).filteredOn(r -> r.get(4) == null).singleElement().satisfies(r -> {
                 final var today = LocalDate.now(ZoneOffset.UTC);
-                assertThat(r.get(9)).isEqualTo(ChronoUnit.DAYS.between(LocalDate.parse((String) r.get(3)), today));
+                assertThat(r.get(9)).isEqualTo(
+                        ChronoUnit.DAYS.between(LocalDate.parse((String) r.get(3)), today));
             });
         }
     }
@@ -160,7 +180,8 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 row("US", "Donald Trump", 2L, "45, 47")
         );
 
-        // JPQL has no string aggregation; GROUP_CONCAT() is SQLite's own, and the Criteria API has none either
+        // JPQL has no string aggregation; GROUP_CONCAT() is SQLite's own, and the Criteria API
+        // has none either
         @Test
         void nativeQuery() {
             final var list = __Exercises_TestUtils.apply(em -> (List<?>) em.createNativeQuery(
@@ -204,7 +225,8 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                     )
                     .getResultList());
             assertThat(rows(list.stream()
-                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), r[1], r[2], r[3]})
+                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), r[1],
+                                            r[2], r[3]})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -216,7 +238,9 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 final var cq = cb.createQuery(Object[].class);
                 final var h = cq.from(Head.class);
                 final var o = h.join(Head_.office);
-                final var age = cb.diff(cb.substring(h.get(Head_.termStart), 1, 4).cast(Integer.class), h.get(Head_.born));
+                final var age =
+                        cb.diff(cb.substring(h.get(Head_.termStart), 1, 4).cast(Integer.class),
+                                h.get(Head_.born));
                 cq.select(cb.array(o, cb.min(age), cb.max(age), cb.round(cb.avg(age), 1)))
                         .groupBy(o)
                         .orderBy(cb.asc(o.get(Office_.country)));
@@ -224,7 +248,8 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                         .getResultList();
             });
             assertThat(rows(list.stream()
-                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), r[1], r[2], r[3]})
+                                    .map(r -> new Object[]{((Office) r[0]).getCountry(), r[1],
+                                            r[2], r[3]})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -276,7 +301,8 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 final var h = cq.from(Head.class);
                 final var terms = cb.count(h);
                 cq.select(cb.array(h.get(Head_.party), terms, cb.countDistinct(h.get(Head_.name))))
-                        .where(cb.equal(h.get(Head_.country), cb.parameter(String.class, "country")))
+                        .where(cb.equal(h.get(Head_.country),
+                                        cb.parameter(String.class, "country")))
                         .groupBy(h.get(Head_.party))
                         .orderBy(cb.desc(terms), cb.asc(h.get(Head_.party)));
                 return em.createQuery(cq)
@@ -348,7 +374,8 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 final var cq = cb.createQuery(Object[].class);
                 final var h = cq.from(Head.class);
                 final var lastTermEnd = cb.greatest(h.get(Head_.termEnd));
-                cq.select(cb.array(h.get(Head_.country), h.get(Head_.name), h.get(Head_.born), lastTermEnd))
+                cq.select(cb.array(h.get(Head_.country), h.get(Head_.name), h.get(Head_.born),
+                                   lastTermEnd))
                         .where(cb.isNull(h.get(Head_.died)))
                         .groupBy(h.get(Head_.country), h.get(Head_.name), h.get(Head_.born))
                         .having(cb.equal(cb.count(h), cb.count(h.get(Head_.termEnd))))
@@ -397,7 +424,8 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 row("2020s", 16L, "FR,GB,JP,KR,US")
         );
 
-        // JPQL has no string aggregation; GROUP_CONCAT(DISTINCT ...) is SQLite's own, and the Criteria API has
+        // JPQL has no string aggregation; GROUP_CONCAT(DISTINCT ...) is SQLite's own, and the
+        // Criteria API has
         // none either
         @Test
         void nativeQuery() {
@@ -448,7 +476,9 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                     .setParameter("n", 2L)
                     .getResultList());
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getTermStart(), h.getTermEnd()})
+                                    .map(h -> new Object[]{h.getOffice().getCountry(),
+                                            h.getNumber(), h.getName(), h.getTermStart(),
+                                            h.getTermEnd()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -472,7 +502,9 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                         .getResultList();
             });
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getTermStart(), h.getTermEnd()})
+                                    .map(h -> new Object[]{h.getOffice().getCountry(),
+                                            h.getNumber(), h.getName(), h.getTermStart(),
+                                            h.getTermEnd()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -526,8 +558,9 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
             assertThat(rows(list.stream()
                                     .map(r -> {
                                         final var h = (Head) r[0];
-                                        return new Object[]{h.getCountry(), r[1], h.getNumber(), h.getName(), h.getTermStart(),
-                                                            h.getTermEnd()};
+                                        return new Object[]{h.getOffice().getCountry(), r[1],
+                                                h.getNumber(), h.getName(), h.getTermStart(),
+                                                h.getTermEnd()};
                                     })
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
@@ -549,7 +582,8 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 later.select(cb.count(l))
                         .where(cb.equal(l.get(Head_.country), h.get(Head_.country)),
                                cb.greaterThan(l.get(Head_.termStart), h.get(Head_.termStart)));
-                cq.select(cb.array(h, cb.<String>selectCase().when(cb.lessThan(earlier, n), "first").otherwise("latest")))
+                cq.select(cb.array(h, cb.<String>selectCase().when(cb.lessThan(earlier, n), "first")
+                                .otherwise("latest")))
                         .groupBy(h)
                         .having(cb.or(cb.lessThan(earlier, n), cb.lessThan(later, n)))
                         .orderBy(cb.asc(h.get(Head_.country)), cb.asc(h.get(Head_.termStart)));
@@ -560,8 +594,9 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
             assertThat(rows(list.stream()
                                     .map(r -> {
                                         final var h = (Head) r[0];
-                                        return new Object[]{h.getCountry(), r[1], h.getNumber(), h.getName(), h.getTermStart(),
-                                                            h.getTermEnd()};
+                                        return new Object[]{h.getOffice().getCountry(), r[1],
+                                                h.getNumber(), h.getName(), h.getTermStart(),
+                                                h.getTermEnd()};
                                     })
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
@@ -600,7 +635,8 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                     )
                     .getResultList());
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getCountry(), h.getName(), h.getTermStart(), h.getTermEnd()})
+                                    .map(h -> new Object[]{h.getOffice().getCountry(),
+                                            h.getName(), h.getTermStart(), h.getTermEnd()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -623,7 +659,8 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                         .getResultList();
             });
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getCountry(), h.getName(), h.getTermStart(), h.getTermEnd()})
+                                    .map(h -> new Object[]{h.getOffice().getCountry(),
+                                            h.getName(), h.getTermStart(), h.getTermEnd()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -684,7 +721,8 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 final var h = cq.from(Head.class);
                 final var country = h.get(Head_.country);
                 final var name = h.get(Head_.name);
-                // the persons of the country who place before this one: more terms, or as many and an earlier first term
+                // the persons of the country who place before this one: more terms, or as many
+                // and an earlier first term
                 final var before = cq.subquery(Long.class);
                 final var o = before.from(Head.class);
                 final var oTerms = before.subquery(Long.class);
@@ -700,19 +738,23 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 final var hTerms = before.subquery(Long.class);
                 final var ht = hTerms.from(Head.class);
                 hTerms.select(cb.count(ht))
-                        .where(cb.equal(ht.get(Head_.country), country), cb.equal(ht.get(Head_.name), name));
+                        .where(cb.equal(ht.get(Head_.country), country),
+                               cb.equal(ht.get(Head_.name), name));
                 final var hFirst = before.subquery(String.class);
                 final var hf = hFirst.from(Head.class);
                 hFirst.select(cb.least(hf.get(Head_.termStart)))
-                        .where(cb.equal(hf.get(Head_.country), country), cb.equal(hf.get(Head_.name), name));
+                        .where(cb.equal(hf.get(Head_.country), country),
+                               cb.equal(hf.get(Head_.name), name));
                 before.select(cb.countDistinct(o.get(Head_.name)))
                         .where(cb.equal(o.get(Head_.country), country),
                                cb.or(cb.greaterThan(oTerms, hTerms),
-                                     cb.and(cb.equal(oTerms, hTerms), cb.lessThan(oFirst, hFirst))));
+                                     cb.and(cb.equal(oTerms, hTerms),
+                                            cb.lessThan(oFirst, hFirst))));
                 cq.select(cb.array(country, name, cb.count(h)))
                         .groupBy(country, name)
                         .having(cb.ge(cb.count(h), 2), cb.lt(before, 3))
-                        .orderBy(cb.asc(country), cb.desc(cb.count(h)), cb.asc(cb.least(h.get(Head_.termStart))));
+                        .orderBy(cb.asc(country), cb.desc(cb.count(h)),
+                                 cb.asc(cb.least(h.get(Head_.termStart))));
                 return em.createQuery(cq)
                         .getResultList();
             });
@@ -742,8 +784,10 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 row("US", "Democratic-Republican", 10.2d)
         );
 
-        // JPQL has no difference of two dates, nor window functions; julianday() is SQLite's own, and
-        // SUM() OVER and ROW_NUMBER() OVER (PARTITION BY ...) are SQL's; the Criteria API has none of them
+        // JPQL has no difference of two dates, nor window functions; julianday() is SQLite's
+        // own, and
+        // SUM() OVER and ROW_NUMBER() OVER (PARTITION BY ...) are SQL's; the Criteria API has
+        // none of them
         @Test
         void nativeQuery() {
             final var list = __Exercises_TestUtils.apply(em -> (List<?>) em.createNativeQuery(
@@ -786,7 +830,7 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                                     SELECT o, COUNT(h)
                                     FROM Head AS h
                                          JOIN h.office AS o
-                                    WHERE h.died = CAST(SUBSTRING(h.termEnd, 1, 4) AS INTEGER)
+                                    WHERE CAST(h.died AS INTEGER) = CAST(SUBSTRING(h.termEnd, 1, 4) AS INTEGER)
                                     GROUP BY o
                                     ORDER BY o.country ASC""",
                             Object[].class
@@ -806,7 +850,9 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 final var h = cq.from(Head.class);
                 final var o = h.join(Head_.office);
                 cq.select(cb.array(o, cb.count(h)))
-                        .where(cb.equal(h.get(Head_.died), cb.substring(h.get(Head_.termEnd), 1, 4).cast(Integer.class)))
+                        .where(cb.equal(h.get(Head_.died).cast(Integer.class),
+                                        cb.substring(h.get(Head_.termEnd).cast(String.class), 1, 4)
+                                                .cast(Integer.class)))
                         .groupBy(o)
                         .orderBy(cb.asc(o.get(Office_.country)));
                 return em.createQuery(cq)
@@ -833,7 +879,8 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 row("Saturday", 35L)
         );
 
-        // JPQL's EXTRACT has no day of the week, and term_start is text; strftime('%w', ...) is SQLite's own,
+        // JPQL's EXTRACT has no day of the week, and term_start is text; strftime('%w', ...) is
+        // SQLite's own,
         // and the Criteria API's extract has no day of the week either
         @Test
         void nativeQuery() {
@@ -884,7 +931,7 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                                            h.name,
                                            MAX(h.termEnd),
                                            h.died,
-                                           h.died - CAST(SUBSTRING(MAX(h.termEnd), 1, 4) AS INTEGER) AS yearsAfter
+                                           CAST(h.died AS INTEGER) - CAST(SUBSTRING(MAX(h.termEnd), 1, 4) AS INTEGER) AS yearsAfter
                                     FROM Head AS h
                                     WHERE h.died IS NOT NULL
                                     GROUP BY h.country, h.name, h.died
@@ -903,11 +950,14 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                 final var cq = cb.createQuery(Object[].class);
                 final var h = cq.from(Head.class);
                 final var lastTermEnd = cb.greatest(h.get(Head_.termEnd));
-                final var yearsAfter = cb.diff(h.get(Head_.died), cb.substring(lastTermEnd, 1, 4).cast(Integer.class));
-                cq.select(cb.array(h.get(Head_.country), h.get(Head_.name), lastTermEnd, h.get(Head_.died), yearsAfter))
+                final var yearsAfter = cb.diff(h.get(Head_.died).cast(Integer.class),
+                                               cb.substring(lastTermEnd.cast(String.class), 1, 4).cast(Integer.class));
+                cq.select(cb.array(h.get(Head_.country), h.get(Head_.name), lastTermEnd,
+                                   h.get(Head_.died), yearsAfter))
                         .where(cb.isNotNull(h.get(Head_.died)))
                         .groupBy(h.get(Head_.country), h.get(Head_.name), h.get(Head_.died))
-                        .orderBy(cb.desc(yearsAfter, Nulls.LAST), cb.asc(h.get(Head_.country)), cb.asc(h.get(Head_.name)));
+                        .orderBy(cb.desc(yearsAfter, Nulls.LAST), cb.asc(h.get(Head_.country)),
+                                 cb.asc(h.get(Head_.name)));
                 return em.createQuery(cq)
                         .setMaxResults(10)
                         .getResultList();

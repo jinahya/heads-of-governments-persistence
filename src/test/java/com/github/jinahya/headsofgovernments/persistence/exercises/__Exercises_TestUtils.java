@@ -1,4 +1,4 @@
-package com.github.jinahya.headsofgovernments.persistence;
+package com.github.jinahya.headsofgovernments.persistence.exercises;
 
 /*-
  * #%L
@@ -9,9 +9,9 @@ package com.github.jinahya.headsofgovernments.persistence;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,22 +20,30 @@ package com.github.jinahya.headsofgovernments.persistence;
  * #L%
  */
 
+import com.github.jinahya.headsofgovernments.persistence.PersistenceTestUtils;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * Helpers for the {@code *_Exercises_*_PersistenceTest} classes, which answer the exercises of {@code src/test/sql/exercises}.
+ * Helpers for the {@code *_Exercises_*_PersistenceTest} classes, which answer the exercises of
+ * {@code src/test/sql/exercises}.
  * <p>
- * A result is compared as rows of values, each row a list. A number is widened, an integral one to {@link Long} and
- * any other to {@link Double}, since what type a query gives back for a column depends on the query (JPQL types an
- * expression; a native query takes what the driver reports for the value).
+ * A result is compared as rows of values, each row a list. A number is widened, an integral one to
+ * {@link Long} and any other to {@link Double}, since what type a query gives back for a column
+ * depends on the query (JPQL types an expression; a native query takes what the driver reports for
+ * the value). A {@link LocalDate} is turned into its ISO-8601 text, the form the database stores it
+ * in and a native query gives it back as, and an {@link Enum} into its name, as
+ * {@link jakarta.persistence.EnumType#STRING} stores it. A {@link Year} is widened to {@link Long}
+ * as well, being an {@code INTEGER} in the database.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -46,8 +54,8 @@ import java.util.function.Function;
 final class __Exercises_TestUtils {
 
     /**
-     * Applies the specified function to an entity manager of the {@link PersistenceTestUtils#PERSISTENCE_UNIT_NAME}
-     * unit, and returns the result.
+     * Applies the specified function to an entity manager of the
+     * {@link PersistenceTestUtils#PERSISTENCE_UNIT_NAME} unit, and returns the result.
      *
      * @param function the function to apply.
      * @param <R>      the type of the result.
@@ -70,8 +78,8 @@ final class __Exercises_TestUtils {
     }
 
     /**
-     * Returns, and logs, the rows of the specified result list; an element which is an {@code Object[]} is a row of
-     * its elements, and any other element is a row of itself alone.
+     * Returns, and logs, the rows of the specified result list; an element which is an
+     * {@code Object[]} is a row of its elements, and any other element is a row of itself alone.
      *
      * @param results the result list of a query.
      * @return a list of rows of the {@code results}.
@@ -91,10 +99,14 @@ final class __Exercises_TestUtils {
             case Short s -> s.longValue();
             case Integer i -> i.longValue();
             case BigInteger i -> i.longValueExact();
-            // a native query reads SQLite's REAL as a Float, the type the driver reports for it; widened through its
+            // a native query reads SQLite's REAL as a Float, the type the driver reports for it;
+            // widened through its
             // shortest decimal form, 14.6f gives 14.6, not 14.600000381469727
             case Float f -> Double.valueOf(f.toString());
             case BigDecimal d -> d.doubleValue();
+            case LocalDate d -> d.toString();
+            case Year y -> (long) y.getValue();
+            case Enum<?> e -> e.name();
             case null, default -> value;
         };
     }

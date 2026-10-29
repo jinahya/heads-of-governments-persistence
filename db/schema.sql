@@ -34,7 +34,7 @@ CREATE TABLE office (
 ) WITHOUT ROWID;
 
 -- id is the rowid, so SQLite assigned it; the file was loaded by country then term_start, so it is 1..N in that
--- order. id is a surrogate; (country, term_start) is the business key, declared by idx_head_country_term_start.
+-- order. id is a surrogate; (country, term_start) identifies a term, but the schema declares no constraint on it.
 CREATE TABLE head (
     -- one term of a head of government
     id         INTEGER PRIMARY KEY,                          -- the rowid; assigned by the build, not stable
@@ -50,8 +50,14 @@ CREATE TABLE head (
     CHECK (died IS NULL OR died >= born)
 );
 
-CREATE UNIQUE INDEX idx_head_country_term_start ON head (country, term_start);
-
 CREATE INDEX idx_head_country_number ON head (country, number);
 
+CREATE INDEX idx_head_term_start ON head (term_start);
+
+CREATE INDEX idx_head_term_end ON head (term_end);
+
 CREATE INDEX idx_head_name ON head (name);
+
+CREATE INDEX idx_head_born ON head (born);
+
+CREATE INDEX idx_head_died ON head (died);

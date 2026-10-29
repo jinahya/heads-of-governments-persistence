@@ -30,7 +30,7 @@
 -- ------------------------------------------------------------------------ HOG_HEAD_I_01 The longest terms of a country
 -- For one country, each term with its length in days, longest first; the incumbent's term runs to today.
 SELECT *,
-       CAST(julianday(COALESCE(term_end, date ('now'))) - julianday(term_start) AS INTEGER) AS days
+       CAST(julianday(COALESCE(term_end, date('now'))) - julianday(term_start) AS INTEGER) AS days
 FROM head
 WHERE country = :country
 ORDER BY days DESC, term_start ASC
@@ -111,7 +111,8 @@ ORDER BY country ASC, term_start ASC
 SELECT *,
        CASE WHEN first_rn <= :n THEN 'first' ELSE 'latest' END AS which
 FROM (SELECT h.*,
-             ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start ASC)  AS first_rn, ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start DESC) AS latest_rn
+             ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start ASC)  AS first_rn,
+             ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start DESC) AS latest_rn
       FROM head AS h)
 WHERE first_rn <= :n
    OR latest_rn <= :n
@@ -135,7 +136,7 @@ ORDER BY country ASC, term_start ASC
 SELECT country, name, terms
 FROM (SELECT country,
              name,
-             COUNT(*) AS  terms,
+             COUNT(*)                                                                             AS terms,
              ROW_NUMBER() OVER (PARTITION BY country ORDER BY COUNT(*) DESC, MIN(term_start) ASC) AS place
       FROM head
       GROUP BY country, name
@@ -152,10 +153,11 @@ SELECT country, party, tenure_share
 FROM (SELECT country,
              party,
              ROUND(100.0 * SUM(julianday(term_end) - julianday(term_start))
-                       / SUM(SUM(julianday(term_end) - julianday(term_start))) OVER (PARTITION BY country),
-                   1) AS  tenure_share,
+                       / SUM(SUM(julianday(term_end) - julianday(term_start)))
+                             OVER (PARTITION BY country),
+                   1)                                                            AS tenure_share,
              ROW_NUMBER() OVER (PARTITION BY country
-                 ORDER BY SUM(julianday(term_end) - julianday(term_start)) DESC)             AS place
+                 ORDER BY SUM(julianday(term_end) - julianday(term_start)) DESC) AS place
       FROM head
       WHERE term_end IS NOT NULL
       GROUP BY country, party)

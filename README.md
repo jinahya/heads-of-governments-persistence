@@ -69,15 +69,15 @@ default) so far. Dependency convergence is enforced on every build; see `CLAUDE.
 
 ## The persistence unit
 
-`src/main/resources/META-INF/persistence.xml` declares one unit, `heads-of-governments`, over
+`src/test/resources/META-INF/persistence.xml` declares one unit, `heads-of-governments`, over
 
 ```
 jdbc:sqlite:db/heads_of_governments.sqlite3?open_mode=1
 ```
 
 `open_mode=1` is `SQLITE_OPEN_READONLY`; a write fails at the driver. The path is relative to the
-working directory, the project root under Maven and in the IDE. The descriptor sits in main
-resources, so the jar carries it, which is fine for a module nothing depends on.
+working directory, the project root under Maven and in the IDE. The descriptor sits in test
+resources, so the jar does not carry it.
 
 ## Exercises
 

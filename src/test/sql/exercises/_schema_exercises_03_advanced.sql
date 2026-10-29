@@ -32,10 +32,12 @@ SELECT country, head_title, name, terms, days
 FROM (SELECT g.country,
              g.head_title,
              h.name,
-             COUNT(*)                                                                                   AS terms,
-             CAST(SUM(julianday(COALESCE(h.term_end, date('now'))) - julianday(h.term_start)) AS INTEGER) AS days,
+             COUNT(*)                                        AS terms,
+             CAST(SUM(julianday(COALESCE(h.term_end, date('now'))) -
+                      julianday(h.term_start)) AS INTEGER)   AS days,
              RANK() OVER (PARTITION BY g.country
-                 ORDER BY SUM(julianday(COALESCE(h.term_end, date('now'))) - julianday(h.term_start)) DESC) AS place
+                 ORDER BY SUM(julianday(COALESCE(h.term_end, date('now'))) -
+                              julianday(h.term_start)) DESC) AS place
       FROM office g
                JOIN head h ON h.country = g.country
       GROUP BY g.country, g.head_title, h.name)

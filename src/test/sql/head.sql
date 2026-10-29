@@ -33,9 +33,12 @@
 --     CHECK (term_end IS NULL OR term_end >= term_start),
 --     CHECK (died IS NULL OR died >= born)
 -- )
--- CREATE UNIQUE INDEX idx_head_country_term_start ON head (country, term_start)
 -- CREATE INDEX idx_head_country_number ON head (country, number)
+-- CREATE INDEX idx_head_term_start ON head (term_start)
+-- CREATE INDEX idx_head_term_end ON head (term_end)
 -- CREATE INDEX idx_head_name ON head (name)
+-- CREATE INDEX idx_head_born ON head (born)
+-- CREATE INDEX idx_head_died ON head (died)
 --
 -- Run the file as a whole: sqlite3 db/heads_of_governments.sqlite3 '.read src/test/sql/head.sql'
 --
@@ -138,7 +141,7 @@ WHERE term_start NOT GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'
    OR date(term_start) IS NOT term_start
 ;
 
--- two terms of one country starting on the same day; the unique index idx_head_country_term_start refuses it.
+-- two terms of one country starting on the same day; the schema does not refuse it, the file was checked for it.
 -- no rows: (country, term_start) is distinct.
 SELECT country, term_start, COUNT(*) AS terms
 FROM head
@@ -208,7 +211,8 @@ SELECT country,
        SUM(gap = 1) AS next_day,
        SUM(gap > 1) AS vacancy
 FROM (SELECT country,
-             julianday(term_start) - julianday(LAG(term_end) OVER (PARTITION BY country ORDER BY term_start)) AS gap
+             julianday(term_start) -
+             julianday(LAG(term_end) OVER (PARTITION BY country ORDER BY term_start)) AS gap
       FROM head)
 WHERE gap IS NOT NULL
 GROUP BY country
@@ -238,7 +242,11 @@ ORDER BY country ASC
 
 -- a name with more than one term in a country: re-elected (FR, KR), a new 代 (JP), or returned after an absence
 -- (GB, US).
-SELECT country, name, COUNT(*) AS terms, MIN(term_start) AS first_term_start, MAX(term_start) AS last_term_start
+SELECT country,
+       name,
+       COUNT(*)        AS terms,
+       MIN(term_start) AS first_term_start,
+       MAX(term_start) AS last_term_start
 FROM head
 GROUP BY country, name
 HAVING COUNT(*) > 1

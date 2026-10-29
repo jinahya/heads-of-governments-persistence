@@ -38,7 +38,11 @@ CREATE TABLE head (
     CHECK (died IS NULL OR died >= born)
 );
 CREATE INDEX idx_head_country_number ON head (country, number);
+CREATE INDEX idx_head_term_start ON head (term_start);
+CREATE INDEX idx_head_term_end ON head (term_end);
 CREATE INDEX idx_head_name ON head (name);
+CREATE INDEX idx_head_born ON head (born);
+CREATE INDEX idx_head_died ON head (died);
 ```
 
 `office` has one row per country (`FR`, `GB`, `JP`, `KR`, `US`): what its head is called, and a
@@ -46,9 +50,13 @@ sentence saying how that country numbers them. `head` has one row per term of of
 country's own ordinal and is **not unique** -- a person re-elected or re-appointed keeps a number across
 several rows -- which is why `head` carries a surrogate `id`.
 
-Dates are ISO-8601 text and years are integers, exactly as SQLite stores them; the mappings follow
-that (`String termStart`, `Integer born`) rather than converting. `head_kind` is likewise bound as a
-`String`, with the nested `Office.HeadKind` enum kept beside it as the list of values.
+Dates are ISO-8601 text and years are integers, exactly as SQLite stores them. `termStart` and
+`termEnd` are `LocalDate`, through `@Convert(converter = Head.LocalDateConverter.class)`, a converter
+nested in `Head` and listed in the unit; `born` and `died` are `java.time.Year`, a basic type with no
+converter, and a query does arithmetic on one through a cast. Hibernate types a converted
+attribute by its column, so JPQL string functions (`SUBSTRING(h.termStart, 1, 4)`) still work on it
+and `EXTRACT` does not; the Criteria API reaches the text with `.cast(String.class)`. `head_kind` is
+mapped as the nested `Office.HeadKind` enum, with `@Enumerated(EnumType.STRING)`.
 
 When the file changes, dump its schema (`sqlite3 db/heads_of_governments.sqlite3 .schema`) and bring the
 entities back into line with it, then run the tests. The unit sets no
@@ -75,10 +83,9 @@ Conventions the two classes follow, and new members must keep:
   mappings say so explicitly rather than relying on the driver to refuse.
 - **An element is left out only when its default is the right value.** So there is no
   `unique = false`, `length = 255`, `cascade = {}`, `catalog`/`schema`, `targetEntity` (the field
-  type gives it), `referencedColumnName` (the referenced primary key), `@Entity` name (the class
-  name). Names are always written
-  out: `@Table(name = ...)` on both entities and `name` on every `@Column` and the `@JoinColumn`,
-  even where the column matches the field. A `NOT NULL` column carries `@Basic(optional = false)` and
+  type gives it), `referencedColumnName` (the referenced primary key). Names are always written
+  out: `@Entity(name = ...)` and `@Table(name = ...)` on both entities and `name` on every `@Column`
+  and the `@JoinColumn`, even where the name matches the class or the column the field. A `NOT NULL` column carries `@Basic(optional = false)` and
   `@Column(nullable = false)`, ids included, as do the `@ManyToOne`/`@JoinColumn` pair; a nullable column
   says `nullable = true` and `@Basic(optional = true)` explicitly. Every `@Basic`,
   `@ManyToOne` and `@OneToMany` names its `fetch` explicitly, default or not: `EAGER` on the basics
@@ -96,16 +103,17 @@ Conventions the two classes follow, and new members must keep:
 
 ### The persistence unit and the static metamodel
 
-`src/main/resources/META-INF/persistence.xml` declares the single unit, `test`,
+`src/test/resources/META-INF/persistence.xml` declares the single unit, `test`,
 listing both entities. It sets no `<exclude-unlisted-classes>`, `<shared-cache-mode>` or `<validation-mode>`:
-the classes directory holds only the two entities, so scanning finds the same list, and the defaults suit
-a read-only file with no validator on the classpath. Its JDBC URL is
+the unit's root, the test classes directory, holds no entity, so scanning adds nothing to the list, and the
+defaults suit a read-only file with no validator on the classpath. Its JDBC URL is
 relative to the working directory, which is the project root under Maven and in the IDE.
 
-The descriptor lives under **main**, not test, resources, so it is packaged into the jar. That would be wrong for a library -- Spring's `DefaultPersistenceUnitManager` reads
-`classpath*:META-INF/persistence.xml` from every jar -- but this module has no consumer, so it is
-accepted. Resource filtering is on for main resources, which is what resolves `${persistence.version}` and
-`${persistence.schemaLocation}` in it; the `<provider>` is written out, since Hibernate ORM is the only one.
+The descriptor lives under **test**, not main, resources, so the jar does not carry it:
+`heads-of-governments-spring-data` depends on the jar, and Spring's `DefaultPersistenceUnitManager` reads
+`classpath*:META-INF/persistence.xml` from every jar. Resource filtering is on for test resources, which is what
+resolves `${persistence.version}` and `${persistence.schemaLocation}` in it; the `<provider>` is written out, since
+Hibernate ORM is the only one.
 
 The generated `Office_` and `Head_`, from `hibernate-jpamodelgen`, are what persistence-context code uses for criteria paths;
 `mappedBy` and other annotation values stay string literals, since an annotation value must be a
@@ -204,10 +212,3 @@ Consequences:
   `<exclusions>` only when a dependency genuinely must not be on the classpath.
 - If a conflict cannot be resolved without a behavioural change, stop and report it rather than
   choosing a version unilaterally.
-
-## Branches
-
-`BRANCHES.md` lists the branches that each carry one small change on top of `develop`, for readers to
-switch to and compare. It holds the list, the naming rule and the rules; follow it. In short: one minimal
-change per branch, merge `develop` into every listed branch after each change to `develop` (never rebase),
-never merge a branch back, and run the tests on the branch after each merge.

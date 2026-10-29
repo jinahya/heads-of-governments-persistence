@@ -30,8 +30,7 @@
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
     <class>com.github.jinahya.headsofgovernments.persistence.Office</class>
     <class>com.github.jinahya.headsofgovernments.persistence.Head</class>
-    <class>com.github.jinahya.headsofgovernments.persistence.converter.LocalDateConverter</class>
-    <!-- <class>com.github.jinahya.headsofgovernments.persistence.converter.YearConverter</class> -->
+    <class>com.github.jinahya.headsofgovernments.persistence.Head$LocalDateConverter</class>
     <properties>
       <property name="jakarta.persistence.jdbc.driver" value="org.sqlite.JDBC"/>
       <property name="jakarta.persistence.jdbc.url"

@@ -9,9 +9,9 @@ package com.github.jinahya.headsofgovernments.persistence;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,6 @@ package com.github.jinahya.headsofgovernments.persistence;
  * #L%
  */
 
-import jakarta.persistence.EntityManager;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +28,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -45,6 +45,9 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 @Slf4j
 class OfficePersistenceTest {
 
+    static final List<String> COUNTRY_LIST = List.of("FR", "GB", "JP", "KR", "US");
+
+    // ---------------------------------------------------------------------------------------------
     @DisplayName("EntityManager#find(entityClass, primaryKey)")
     @Nested
     class FindTest {
@@ -154,56 +157,37 @@ class OfficePersistenceTest {
 
         @Test
         void __() {
-            final var random = PersistenceTestUtils.selectRandom(Office.class);
+            final var random = PersistenceTestUtils.selectRandomEntity(Office.class);
             assumeThat(random).isNotEmpty();
             final var found = random.get();
         }
     }
 
+    // ---------------------------------------------------------------------------------------------
+    @DisplayName("Office.selectAll")
+    @Nested
+    class SelectAllTest {
+
+        @Test
+        void __1() {
+        }
+    }
+
+    // ---------------------------------------------------------------------------------------------
     @DisplayName("SELECT e FROM Office AS e WHERE e.headKind = :headKind ORDER BY e.country ASC")
     @Nested
     class SelectAll_WhereHeadKindEqual_OrderByCountryAsc_Test {
 
-        private static void verify(final List<Office> list, final String headKind) {
+        private static void verify(final List<Office> list, final Office.HeadKind headKind) {
             assertThat(list)
                     .isNotEmpty()
-                    .allSatisfy(e -> assertThat(String.valueOf(e.getHeadKind())).isEqualTo(headKind))
+                    .allSatisfy(e -> assertThat(e.getHeadKind()).isEqualTo(headKind))
                     .isSortedAccordingTo(Comparator.comparing(Office::getCountry));
         }
 
-        /**
-         * Returns the value to bind for {@code headKind}: the name itself while the attribute is a {@code String}, the
-         * constant of that name once it is mapped as an enum.
-         */
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        private static Object headKind(final EntityManager em, final String name) {
-            final var type = em.getMetamodel().entity(Office.class).getAttribute(Office_.HEAD_KIND).getJavaType();
-            return type.isEnum() ? Enum.valueOf((Class) type, name) : name;
-        }
-
-        @ValueSource(strings = {
-                "PRESIDENT",
-                "PRIME_MINISTER"
-        })
+        @EnumSource(Office.HeadKind.class)
         @ParameterizedTest
-        void __NamedQuery(final String headKind) {
-            final var list = PersistenceTestUtils.applyEntityManager(em -> {
-                return em.createNamedQuery(
-                                "Office.selectAll_WhereHeadKindEqual_OrderByCountryAsc",
-                                Office.class
-                        )
-                        .setParameter("headKind", headKind(em, headKind))
-                        .getResultList();
-            });
-            verify(list, headKind);
-        }
-
-        @ValueSource(strings = {
-                "PRESIDENT",
-                "PRIME_MINISTER"
-        })
-        @ParameterizedTest
-        void __QueryLanguage(final String headKind) {
+        void __QueryLanguage(final Office.HeadKind headKind) {
             final var list = PersistenceTestUtils.applyEntityManager(em -> {
                 return em.createQuery(
                                 """
@@ -213,24 +197,21 @@ class OfficePersistenceTest {
                                         ORDER BY e.country ASC""",
                                 Office.class
                         )
-                        .setParameter("headKind", headKind(em, headKind))
+                        .setParameter("headKind", headKind)
                         .getResultList();
             });
             verify(list, headKind);
         }
 
-        @ValueSource(strings = {
-                "PRESIDENT",
-                "PRIME_MINISTER"
-        })
+        @EnumSource(Office.HeadKind.class)
         @ParameterizedTest
-        void __CriteriaApi(final String headKind) {
+        void __CriteriaApi(final Office.HeadKind headKind) {
             final var list = PersistenceTestUtils.applyEntityManager(em -> {
                 final var builder = em.getCriteriaBuilder();
                 final var query = builder.createQuery(Office.class);
                 final var root = query.from(Office.class);
                 query.select(root)
-                        .where(builder.equal(root.get(Office_.headKind), headKind(em, headKind)))
+                        .where(builder.equal(root.get(Office_.headKind), headKind))
                         .orderBy(builder.asc(root.get(Office_.country)));
                 return em.createQuery(query).getResultList();
             });
@@ -252,15 +233,6 @@ class OfficePersistenceTest {
                         r -> (Long) r[1]
                 ));
                 assertThat(counts).isEqualTo(HeadPersistenceTest.HEAD_COUNTS);
-            }
-
-            @Test
-            void __NamedQuery() {
-                final var list = PersistenceTestUtils.applyEntityManager(em -> {
-                    return em.createNamedQuery("Office.selectAllAndCountOfHeads_GroupByAll", Object[].class)
-                            .getResultList();
-                });
-                verify(list);
             }
 
             @Test
@@ -293,7 +265,9 @@ class OfficePersistenceTest {
             }
         }
 
-        @DisplayName("SELECT e, MIN(h.termStart), MAX(h.termStart) FROM Office AS e JOIN e.heads AS h GROUP BY e")
+        @DisplayName(
+                "SELECT e, MIN(h.termStart), MAX(h.termStart) FROM Office AS e JOIN e.heads AS h " +
+                "GROUP BY e")
         @Nested
         class MinMaxTermStartOfHeadsTest {
 
@@ -303,15 +277,6 @@ class OfficePersistenceTest {
                         r -> List.of(String.valueOf(r[1]), String.valueOf(r[2]))
                 ));
                 assertThat(ranges).isEqualTo(HeadPersistenceTest.HEAD_TERM_START_RANGES);
-            }
-
-            @Test
-            void __NamedQuery() {
-                final var list = PersistenceTestUtils.applyEntityManager(em -> {
-                    return em.createNamedQuery("Office.selectAllAndMinMaxTermStartOfHeads_GroupByAll", Object[].class)
-                            .getResultList();
-                });
-                verify(list);
             }
 
             @Test
@@ -337,7 +302,8 @@ class OfficePersistenceTest {
                     final var root = query.from(Office.class);
                     final var heads = root.join(Office_.heads);
                     final var termStart = heads.get(Head_.termStart);
-                    query.select(builder.array(root, builder.least(termStart), builder.greatest(termStart)))
+                    query.select(builder.array(root, builder.least(termStart),
+                                               builder.greatest(termStart)))
                             .groupBy(root);
                     return em.createQuery(query).getResultList();
                 });

@@ -1,4 +1,4 @@
-package com.github.jinahya.headsofgovernments.persistence;
+package com.github.jinahya.headsofgovernments.persistence.exercises;
 
 /*-
  * #%L
@@ -9,9 +9,9 @@ package com.github.jinahya.headsofgovernments.persistence;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,8 @@ package com.github.jinahya.headsofgovernments.persistence;
  * #L%
  */
 
+import com.github.jinahya.headsofgovernments.persistence.Office;
+import com.github.jinahya.headsofgovernments.persistence.Office_;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,14 +29,15 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.github.jinahya.headsofgovernments.persistence.__Exercises_TestUtils.row;
-import static com.github.jinahya.headsofgovernments.persistence.__Exercises_TestUtils.rows;
+import static com.github.jinahya.headsofgovernments.persistence.exercises.__Exercises_TestUtils.row;
+import static com.github.jinahya.headsofgovernments.persistence.exercises.__Exercises_TestUtils.rows;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Answers the exercises of {@code src/test/sql/exercises/office_exercises_03_advanced.sql}, against {@code
- * db/heads_of_governments.sqlite3}; a nested class per exercise, which answers it with JPQL and with the Criteria
- * API, or with a native query where neither can, and checks that it gives what the SQL of the file gives.
+ * Answers the exercises of {@code src/test/sql/exercises/office_exercises_03_advanced.sql}, against
+ * {@code db/heads_of_governments.sqlite3}; a nested class per exercise, which answers it with JPQL
+ * and with the Criteria API, or with a native query where neither can, and checks that it gives
+ * what the SQL of the file gives.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -89,10 +92,14 @@ class Office_Exercises_03_Advanced_PersistenceTest {
                 cq.select(cb.array(
                                 o,
                                 cb.<String>selectCase()
-                                        .when(cb.and(cb.gt(comma, 0), cb.or(cb.equal(semicolon, 0), cb.lessThan(comma, semicolon))),
-                                              cb.substring(numbering, cb.literal(1), cb.diff(comma, 1)))
+                                        .when(cb.and(cb.gt(comma, 0), cb.or(cb.equal(semicolon, 0),
+                                                                            cb.lessThan(comma,
+                                                                                        semicolon))),
+                                              cb.substring(numbering, cb.literal(1),
+                                                           cb.diff(comma, 1)))
                                         .when(cb.gt(semicolon, 0),
-                                              cb.substring(numbering, cb.literal(1), cb.diff(semicolon, 1)))
+                                              cb.substring(numbering, cb.literal(1),
+                                                           cb.diff(semicolon, 1)))
                                         .otherwise(numbering)))
                         .orderBy(cb.asc(o.get(Office_.country)));
                 return em.createQuery(cq)

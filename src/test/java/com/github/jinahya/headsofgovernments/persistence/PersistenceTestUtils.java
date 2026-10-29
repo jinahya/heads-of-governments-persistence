@@ -9,9 +9,9 @@ package com.github.jinahya.headsofgovernments.persistence;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,24 +31,26 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
 @Slf4j
-final class PersistenceTestUtils {
+public final class PersistenceTestUtils {
 
     /**
      * The name of the persistence unit declared in {@code META-INF/persistence.xml}.
      */
-    static final String PERSISTENCE_UNIT_NAME = "test";
+    public static final String PERSISTENCE_UNIT_NAME = "test";
 
     // ---------------------------------------------------------------------------------------------
 
     /**
-     * Applies a newly created entity manager factory, for the {@link #PERSISTENCE_UNIT_NAME} unit, to the specified
-     * function, and returns the result. The factory is closed after the function returns.
+     * Applies a newly created entity manager factory, for the {@link #PERSISTENCE_UNIT_NAME} unit,
+     * to the specified function, and returns the result. The factory is closed after the function
+     * returns.
      *
      * @param function the function to be applied with the entity manager factory.
      * @param <R>      result type parameter
      * @return the result of the {@code function}.
      */
-    static <R> R applyEntityManagerFactory(final Function<? super EntityManagerFactory, ? extends R> function) {
+    public static <R> R applyEntityManagerFactory(
+            final Function<? super EntityManagerFactory, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
         try (var factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME)) {
             return function.apply(factory);
@@ -56,15 +58,17 @@ final class PersistenceTestUtils {
     }
 
     /**
-     * Applies an entity manager, created from a newly created entity manager factory, to the specified function, and
-     * returns the result. Both the entity manager and its factory are closed after the function returns.
+     * Applies an entity manager, created from a newly created entity manager factory, to the
+     * specified function, and returns the result. Both the entity manager and its factory are
+     * closed after the function returns.
      *
      * @param function the function to be applied with the entity manager.
      * @param <R>      result type parameter
      * @return the result of the {@code function}.
      * @see #applyEntityManagerFactory(Function)
      */
-    static <R> R applyEntityManager(final Function<? super EntityManager, ? extends R> function) {
+    public static <R> R applyEntityManager(
+            final Function<? super EntityManager, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
         return applyEntityManagerFactory(factory -> {
             try (var manager = factory.createEntityManager()) {
@@ -75,7 +79,8 @@ final class PersistenceTestUtils {
 
     // ---------------------------------------------------------------------------------------------
     @Deprecated(forRemoval = true)
-    private static String getEntityName(final EntityManager entityManager, final Class<?> entityClass) {
+    private static String getEntityName(final EntityManager entityManager,
+                                        final Class<?> entityClass) {
         Objects.requireNonNull(entityClass, "entityClass is null");
         return entityManager.getMetamodel().entity(entityClass).getName();
     }
@@ -86,7 +91,8 @@ final class PersistenceTestUtils {
     }
 
     // ---------------------------------------------------------------------------------------------
-    private static long selectCount(final EntityManager entityManager, final Class<?> entityClass) {
+    private static long selectEntityCount(final EntityManager entityManager,
+                                          final Class<?> entityClass) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         Objects.requireNonNull(entityClass, "entityClass is null");
         final var builder = entityManager.getCriteriaBuilder();
@@ -96,16 +102,16 @@ final class PersistenceTestUtils {
         return entityManager.createQuery(query).getSingleResult();
     }
 
-    static long selectCount(final Class<?> entityClass) {
+    static long selectEntityCount(final Class<?> entityClass) {
         Objects.requireNonNull(entityClass, "entityClass is null");
-        return applyEntityManager(em -> selectCount(em, entityClass));
+        return applyEntityManager(em -> selectEntityCount(em, entityClass));
     }
 
     // ---------------------------------------------------------------------------------------------
-    static <T> Optional<T> selectRandom(final Class<T> entityClass) {
+    static <T> Optional<T> selectRandomEntity(final Class<T> entityClass) {
         Objects.requireNonNull(entityClass, "entityClass is null");
         return applyEntityManager(em -> {
-            final var count = selectCount(em, entityClass);
+            final var count = selectEntityCount(em, entityClass);
             if (count == 0L) {
                 return Optional.empty();
             }

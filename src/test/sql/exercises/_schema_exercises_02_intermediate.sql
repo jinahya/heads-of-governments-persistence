@@ -29,9 +29,10 @@
 -- By the kind of head: how many terms, how many different persons, and the average length of a term in days, an open
 -- term counted to today.
 SELECT g.head_kind,
-       COUNT(*)                                                                                       AS terms,
-       COUNT(DISTINCT g.country || ' ' || h.name)                                                     AS persons,
-       CAST(AVG(julianday(COALESCE(h.term_end, date('now'))) - julianday(h.term_start)) AS INTEGER)   AS average_days
+       COUNT(*)                                      AS terms,
+       COUNT(DISTINCT g.country || ' ' || h.name)    AS persons,
+       CAST(AVG(julianday(COALESCE(h.term_end, date('now'))) -
+                julianday(h.term_start)) AS INTEGER) AS average_days
 FROM office g
          JOIN head h ON h.country = g.country
 GROUP BY g.head_kind
@@ -56,10 +57,10 @@ ORDER BY g.country ASC
 -- ------------------------------------------------------------------------------- HOG_SCHEMA_I_03 The span of each list
 -- Per office, the first term's start, the latest term's start and the years between them, with the head's title.
 SELECT g.*,
-       MIN(h.term_start)                                         AS first_term_start,
-       MAX(h.term_start)                                         AS latest_term_start,
+       MIN(h.term_start)                                      AS first_term_start,
+       MAX(h.term_start)                                      AS latest_term_start,
        CAST(SUBSTR(MAX(h.term_start), 1, 4) AS INTEGER)
-           - CAST(SUBSTR(MIN(h.term_start), 1, 4) AS INTEGER)    AS years
+           - CAST(SUBSTR(MIN(h.term_start), 1, 4) AS INTEGER) AS years
 FROM office g
          JOIN head h ON h.country = g.country
 GROUP BY g.country

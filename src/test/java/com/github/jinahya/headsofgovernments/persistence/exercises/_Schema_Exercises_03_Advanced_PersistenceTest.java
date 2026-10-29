@@ -1,4 +1,4 @@
-package com.github.jinahya.headsofgovernments.persistence;
+package com.github.jinahya.headsofgovernments.persistence.exercises;
 
 /*-
  * #%L
@@ -9,9 +9,9 @@ package com.github.jinahya.headsofgovernments.persistence;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,22 +20,28 @@ package com.github.jinahya.headsofgovernments.persistence;
  * #L%
  */
 
+import com.github.jinahya.headsofgovernments.persistence.Head;
+import com.github.jinahya.headsofgovernments.persistence.Head_;
+import com.github.jinahya.headsofgovernments.persistence.Office;
+import com.github.jinahya.headsofgovernments.persistence.Office_;
 import jakarta.persistence.criteria.JoinType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.List;
 
-import static com.github.jinahya.headsofgovernments.persistence.__Exercises_TestUtils.row;
-import static com.github.jinahya.headsofgovernments.persistence.__Exercises_TestUtils.rows;
+import static com.github.jinahya.headsofgovernments.persistence.exercises.__Exercises_TestUtils.row;
+import static com.github.jinahya.headsofgovernments.persistence.exercises.__Exercises_TestUtils.rows;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Answers the exercises of {@code src/test/sql/exercises/_schema_exercises_03_advanced.sql}, against {@code
- * db/heads_of_governments.sqlite3}; a nested class per exercise, which answers it with JPQL and with the Criteria
- * API, or with a native query where neither can, and checks that it gives what the SQL of the file gives.
+ * Answers the exercises of {@code src/test/sql/exercises/_schema_exercises_03_advanced.sql},
+ * against {@code db/heads_of_governments.sqlite3}; a nested class per exercise, which answers it
+ * with JPQL and with the Criteria API, or with a native query where neither can, and checks that it
+ * gives what the SQL of the file gives.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -47,8 +53,8 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
     class HOG_SCHEMA_A_01_Test {
 
         /**
-         * Each place is held by a completed term or terms, so what date('now') adds to an open term does not
-         * move it.
+         * Each place is held by a completed term or terms, so what date('now') adds to an open term
+         * does not move it.
          */
         private static final List<List<Object>> EXPECTED = List.of(
                 row("FR", "Président de la République", "François Mitterrand", 2L, 5109L),
@@ -58,7 +64,8 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                 row("US", "President", "Franklin D. Roosevelt", 1L, 4422L)
         );
 
-        // JPQL has no difference of two dates, nor window functions; julianday() and date('now') are SQLite's
+        // JPQL has no difference of two dates, nor window functions; julianday() and date('now')
+        // are SQLite's
         // own and RANK() OVER (PARTITION BY ...) is SQL's, and the Criteria API has none of them
         @Test
         void nativeQuery() {
@@ -101,18 +108,20 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                             """
                                     SELECT g, COALESCE(h.name, '(vacant)'), h
                                     FROM Office AS g
-                                         LEFT JOIN g.heads AS h ON h.termStart <= :date AND (h.termEnd IS NULL OR h.termEnd >= :date)
+                                         LEFT JOIN g.heads AS h ON h.termStart <= :dateText AND (h.termEnd IS NULL OR h.termEnd >= :date)
                                     ORDER BY g.country ASC""",
                             Object[].class
                     )
-                    .setParameter("date", "1945-01-01")
+                    .setParameter("date", LocalDate.of(1945, 1, 1))
+                    .setParameter("dateText", "1945-01-01")
                     .getResultList());
             assertThat(rows(list.stream()
                                     .map(r -> {
                                         final var g = (Office) r[0];
                                         final var h = (Head) r[2];
-                                        return new Object[]{g.getCountry(), g.getHeadTitle(), r[1], h == null ? null : h.getTermStart(),
-                                                            h == null ? null : h.getTermEnd()};
+                                        return new Object[]{g.getCountry(), g.getHeadTitle(), r[1],
+                                                h == null ? null : h.getTermStart(),
+                                                h == null ? null : h.getTermEnd()};
                                     })
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
@@ -125,21 +134,25 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                 final var cq = cb.createQuery(Object[].class);
                 final var g = cq.from(Office.class);
                 final var h = g.join(Office_.heads, JoinType.LEFT);
-                final var date = cb.parameter(String.class, "date");
-                h.on(cb.lessThanOrEqualTo(h.get(Head_.termStart), date),
-                     cb.or(cb.isNull(h.get(Head_.termEnd)), cb.greaterThanOrEqualTo(h.get(Head_.termEnd), date)));
+                final var date = cb.parameter(LocalDate.class, "date");
+                final var dateText = cb.parameter(String.class, "dateText");
+                h.on(cb.lessThanOrEqualTo(h.get(Head_.termStart), dateText),
+                     cb.or(cb.isNull(h.get(Head_.termEnd)),
+                           cb.greaterThanOrEqualTo(h.get(Head_.termEnd), date)));
                 cq.select(cb.array(g, cb.coalesce(h.get(Head_.name), "(vacant)"), h))
                         .orderBy(cb.asc(g.get(Office_.country)));
                 return em.createQuery(cq)
-                        .setParameter("date", "1945-01-01")
+                        .setParameter("date", LocalDate.of(1945, 1, 1))
+                        .setParameter("dateText", "1945-01-01")
                         .getResultList();
             });
             assertThat(rows(list.stream()
                                     .map(r -> {
                                         final var g = (Office) r[0];
                                         final var h = (Head) r[2];
-                                        return new Object[]{g.getCountry(), g.getHeadTitle(), r[1], h == null ? null : h.getTermStart(),
-                                                            h == null ? null : h.getTermEnd()};
+                                        return new Object[]{g.getCountry(), g.getHeadTitle(), r[1],
+                                                h == null ? null : h.getTermStart(),
+                                                h == null ? null : h.getTermEnd()};
                                     })
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
@@ -155,19 +168,23 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                 row("FR", "Emmanuel Macron", "2022-05-14", "JP", "内閣総理大臣", "岸田文雄"),
                 row("FR", "Emmanuel Macron", "2022-05-14", "KR", "대통령", "윤석열"),
                 row("FR", "Emmanuel Macron", "2022-05-14", "US", "President", "Joe Biden"),
-                row("GB", "Andy Burnham", "2026-07-20", "FR", "Président de la République", "Emmanuel Macron"),
+                row("GB", "Andy Burnham", "2026-07-20", "FR", "Président de la République",
+                    "Emmanuel Macron"),
                 row("GB", "Andy Burnham", "2026-07-20", "JP", "内閣総理大臣", "高市早苗"),
                 row("GB", "Andy Burnham", "2026-07-20", "KR", "대통령", "이재명"),
                 row("GB", "Andy Burnham", "2026-07-20", "US", "President", "Donald Trump"),
-                row("JP", "高市早苗", "2026-02-18", "FR", "Président de la République", "Emmanuel Macron"),
+                row("JP", "高市早苗", "2026-02-18", "FR", "Président de la République",
+                    "Emmanuel Macron"),
                 row("JP", "高市早苗", "2026-02-18", "GB", "Prime Minister", "Keir Starmer"),
                 row("JP", "高市早苗", "2026-02-18", "KR", "대통령", "이재명"),
                 row("JP", "高市早苗", "2026-02-18", "US", "President", "Donald Trump"),
-                row("KR", "이재명", "2025-06-04", "FR", "Président de la République", "Emmanuel Macron"),
+                row("KR", "이재명", "2025-06-04", "FR", "Président de la République",
+                    "Emmanuel Macron"),
                 row("KR", "이재명", "2025-06-04", "GB", "Prime Minister", "Keir Starmer"),
                 row("KR", "이재명", "2025-06-04", "JP", "内閣総理大臣", "石破茂"),
                 row("KR", "이재명", "2025-06-04", "US", "President", "Donald Trump"),
-                row("US", "Donald Trump", "2025-01-20", "FR", "Président de la République", "Emmanuel Macron"),
+                row("US", "Donald Trump", "2025-01-20", "FR", "Président de la République",
+                    "Emmanuel Macron"),
                 row("US", "Donald Trump", "2025-01-20", "GB", "Prime Minister", "Keir Starmer"),
                 row("US", "Donald Trump", "2025-01-20", "JP", "内閣総理大臣", "石破茂"),
                 row("US", "Donald Trump", "2025-01-20", "KR", "대통령", "윤석열")
@@ -193,8 +210,10 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                                         final var i = (Head) r[0];
                                         final var o = (Head) r[1];
                                         final var g = (Office) r[2];
-                                        return new Object[]{i.getCountry(), i.getName(), i.getTermStart(), o.getCountry(),
-                                                            g.getHeadTitle(), o.getName()};
+                                        return new Object[]{i.getOffice().getCountry(),
+                                                i.getName(), i.getTermStart(),
+                                                o.getOffice().getCountry(),
+                                                g.getHeadTitle(), o.getName()};
                                     })
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
@@ -209,7 +228,8 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                 final var o = i.join(Head.class);
                 o.on(cb.notEqual(o.get(Head_.country), i.get(Head_.country)),
                      cb.lessThanOrEqualTo(o.get(Head_.termStart), i.get(Head_.termStart)),
-                     cb.or(cb.isNull(o.get(Head_.termEnd)), cb.greaterThanOrEqualTo(o.get(Head_.termEnd), i.get(Head_.termStart))));
+                     cb.or(cb.isNull(o.get(Head_.termEnd)),
+                           cb.greaterThanOrEqualTo(o.get(Head_.termEnd).as(String.class), i.get(Head_.termStart))));
                 final var g = o.join(Head_.office);
                 cq.select(cb.array(i, o, g))
                         .where(cb.isNull(i.get(Head_.termEnd)))
@@ -222,8 +242,10 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                                         final var i = (Head) r[0];
                                         final var o = (Head) r[1];
                                         final var g = (Office) r[2];
-                                        return new Object[]{i.getCountry(), i.getName(), i.getTermStart(), o.getCountry(),
-                                                            g.getHeadTitle(), o.getName()};
+                                        return new Object[]{i.getOffice().getCountry(),
+                                                i.getName(), i.getTermStart(),
+                                                o.getOffice().getCountry(),
+                                                g.getHeadTitle(), o.getName()};
                                     })
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
@@ -235,7 +257,8 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
     class HOG_SCHEMA_A_04_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
-                row("FR", "Président de la République", "Valéry Giscard d'Estaing", 1926L, 2020L, 94L),
+                row("FR", "Président de la République", "Valéry Giscard d'Estaing", 1926L, 2020L,
+                    94L),
                 row("GB", "Prime Minister", "James Callaghan", 1912L, 2005L, 93L),
                 row("JP", "内閣総理大臣", "東久邇宮稔彦王", 1887L, 1990L, 103L),
                 row("KR", "대통령", "윤보선", 1897L, 1990L, 93L),
@@ -247,11 +270,11 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT DISTINCT g.country, g.headTitle, h.name, h.born, h.died, h.died - h.born
+                                    SELECT DISTINCT g.country, g.headTitle, h.name, h.born, h.died, CAST(h.died AS INTEGER) - h.born
                                     FROM Office AS g
                                          JOIN g.heads AS h
                                     WHERE h.died IS NOT NULL
-                                      AND h.died - h.born = (SELECT MAX(s.died - s.born)
+                                      AND CAST(h.died AS INTEGER) - h.born = (SELECT MAX(CAST(s.died AS INTEGER) - s.born)
                                                              FROM Head AS s
                                                              WHERE s.country = g.country
                                                                AND s.died IS NOT NULL)
@@ -269,12 +292,14 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                 final var cq = cb.createQuery(Object[].class);
                 final var g = cq.from(Office.class);
                 final var h = g.join(Office_.heads);
-                final var age = cb.diff(h.get(Head_.died), h.get(Head_.born));
+                final var age = cb.diff(h.get(Head_.died).cast(Integer.class), h.get(Head_.born));
                 final var oldest = cq.subquery(Integer.class);
                 final var s = oldest.from(Head.class);
-                oldest.select(cb.max(cb.diff(s.get(Head_.died), s.get(Head_.born))))
-                        .where(cb.equal(s.get(Head_.country), g.get(Office_.country)), cb.isNotNull(s.get(Head_.died)));
-                cq.select(cb.array(g.get(Office_.country), g.get(Office_.headTitle), h.get(Head_.name), h.get(Head_.born),
+                oldest.select(cb.max(cb.diff(s.get(Head_.died).cast(Integer.class), s.get(Head_.born))))
+                        .where(cb.equal(s.get(Head_.country), g.get(Office_.country)),
+                               cb.isNotNull(s.get(Head_.died)));
+                cq.select(cb.array(g.get(Office_.country), g.get(Office_.headTitle),
+                                   h.get(Head_.name), h.get(Head_.born),
                                    h.get(Head_.died), age))
                         .distinct(true)
                         .where(cb.isNotNull(h.get(Head_.died)), cb.equal(age, oldest))
@@ -325,7 +350,9 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
             assertThat(rows(list.stream()
                                     .map(r -> {
                                         final var p = (Head) r[0];
-                                        return new Object[]{p.getCountry(), p.getName(), p.getTermStart(), p.getTermEnd(), r[1]};
+                                        return new Object[]{p.getOffice().getCountry(),
+                                                p.getName(), p.getTermStart(), p.getTermEnd(),
+                                                r[1]};
                                     })
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
@@ -339,16 +366,21 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                 final var p = cq.from(Head.class);
                 final var pg = p.join(Head_.office);
                 final var m = p.join(Head.class);
-                m.on(cb.lessThanOrEqualTo(m.get(Head_.termStart), cb.coalesce(p.get(Head_.termEnd), "9999-12-31")),
-                     cb.greaterThanOrEqualTo(cb.coalesce(m.get(Head_.termEnd), "9999-12-31"), p.get(Head_.termStart)));
+                m.on(cb.lessThanOrEqualTo(m.get(Head_.termStart),
+                                          cb.coalesce(p.get(Head_.termEnd).as(String.class), "9999-12-31")),
+                     cb.greaterThanOrEqualTo(cb.coalesce(m.get(Head_.termEnd).as(String.class), "9999-12-31"),
+                                             p.get(Head_.termStart)));
                 final var mg = m.join(Head_.office);
                 final var primeMinisters = cb.countDistinct(
-                        cb.concat(List.of(m.get(Head_.country), cb.literal(" "), m.get(Head_.name))));
+                        cb.concat(
+                                List.of(m.get(Head_.country), cb.literal(" "), m.get(Head_.name))));
                 cq.select(cb.array(p, primeMinisters))
                         .where(cb.equal(pg.get(Office_.headKind), Office.HeadKind.PRESIDENT.name()),
-                               cb.equal(mg.get(Office_.headKind), Office.HeadKind.PRIME_MINISTER.name()))
+                               cb.equal(mg.get(Office_.headKind),
+                                        Office.HeadKind.PRIME_MINISTER.name()))
                         .groupBy(p)
-                        .orderBy(cb.desc(primeMinisters), cb.asc(p.get(Head_.termStart)), cb.asc(p.get(Head_.country)));
+                        .orderBy(cb.desc(primeMinisters), cb.asc(p.get(Head_.termStart)),
+                                 cb.asc(p.get(Head_.country)));
                 return em.createQuery(cq)
                         .setMaxResults(10)
                         .getResultList();
@@ -356,7 +388,9 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
             assertThat(rows(list.stream()
                                     .map(r -> {
                                         final var p = (Head) r[0];
-                                        return new Object[]{p.getCountry(), p.getName(), p.getTermStart(), p.getTermEnd(), r[1]};
+                                        return new Object[]{p.getOffice().getCountry(),
+                                                p.getName(), p.getTermStart(), p.getTermEnd(),
+                                                r[1]};
                                     })
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
@@ -386,8 +420,10 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                 row("US", "President", 21L, 4L, 45L)
         );
 
-        // JPQL has no WITH, no subquery in the FROM clause and no window functions; the running total is
-        // SUM() OVER (PARTITION BY ... ORDER BY ...), which is SQL's, and the Criteria API has none of them
+        // JPQL has no WITH, no subquery in the FROM clause and no window functions; the running
+        // total is
+        // SUM() OVER (PARTITION BY ... ORDER BY ...), which is SQL's, and the Criteria API has
+        // none of them
         @Test
         void nativeQuery() {
             final var list = __Exercises_TestUtils.apply(em -> (List<?>) em.createNativeQuery(

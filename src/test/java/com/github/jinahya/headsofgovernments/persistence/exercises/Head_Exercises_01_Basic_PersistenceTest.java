@@ -1,4 +1,4 @@
-package com.github.jinahya.headsofgovernments.persistence;
+package com.github.jinahya.headsofgovernments.persistence.exercises;
 
 /*-
  * #%L
@@ -9,9 +9,9 @@ package com.github.jinahya.headsofgovernments.persistence;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,21 +20,25 @@ package com.github.jinahya.headsofgovernments.persistence;
  * #L%
  */
 
+import com.github.jinahya.headsofgovernments.persistence.Head;
+import com.github.jinahya.headsofgovernments.persistence.Head_;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.List;
 
-import static com.github.jinahya.headsofgovernments.persistence.__Exercises_TestUtils.row;
-import static com.github.jinahya.headsofgovernments.persistence.__Exercises_TestUtils.rows;
+import static com.github.jinahya.headsofgovernments.persistence.exercises.__Exercises_TestUtils.row;
+import static com.github.jinahya.headsofgovernments.persistence.exercises.__Exercises_TestUtils.rows;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Answers the exercises of {@code src/test/sql/exercises/head_exercises_01_basic.sql}, against {@code
- * db/heads_of_governments.sqlite3}; a nested class per exercise, which answers it with JPQL and with the Criteria
- * API, or with a native query where neither can, and checks that it gives what the SQL of the file gives.
+ * Answers the exercises of {@code src/test/sql/exercises/head_exercises_01_basic.sql}, against
+ * {@code db/heads_of_governments.sqlite3}; a nested class per exercise, which answers it with JPQL
+ * and with the Criteria API, or with a native query where neither can, and checks that it gives
+ * what the SQL of the file gives.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -59,16 +63,19 @@ class Head_Exercises_01_Basic_PersistenceTest {
                             """
                                     SELECT h
                                     FROM Head AS h
-                                    WHERE h.termStart <= :date
+                                    WHERE h.termStart <= :dateText
                                       AND (h.termEnd IS NULL OR h.termEnd >= :date)
                                     ORDER BY h.country ASC""",
                             Head.class
                     )
-                    .setParameter("date", "1960-01-01")
+                    .setParameter("date", LocalDate.of(1960, 1, 1))
+                    .setParameter("dateText", "1960-01-01")
                     .getResultList());
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getParty(), h.getTermStart(),
-                                                           h.getTermEnd()})
+                                    .map(h -> new Object[]{h.getOffice().getCountry(),
+                                            h.getNumber(), h.getName(), h.getParty(),
+                                            h.getTermStart(),
+                                            h.getTermEnd()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -79,18 +86,23 @@ class Head_Exercises_01_Basic_PersistenceTest {
                 final var cb = em.getCriteriaBuilder();
                 final var cq = cb.createQuery(Head.class);
                 final var h = cq.from(Head.class);
-                final var date = cb.parameter(String.class, "date");
+                final var date = cb.parameter(LocalDate.class, "date");
+                final var dateText = cb.parameter(String.class, "dateText");
                 cq.select(h)
-                        .where(cb.lessThanOrEqualTo(h.get(Head_.termStart), date),
-                               cb.or(cb.isNull(h.get(Head_.termEnd)), cb.greaterThanOrEqualTo(h.get(Head_.termEnd), date)))
+                        .where(cb.lessThanOrEqualTo(h.get(Head_.termStart), dateText),
+                               cb.or(cb.isNull(h.get(Head_.termEnd)),
+                                     cb.greaterThanOrEqualTo(h.get(Head_.termEnd), date)))
                         .orderBy(cb.asc(h.get(Head_.country)));
                 return em.createQuery(cq)
-                        .setParameter("date", "1960-01-01")
+                        .setParameter("date", LocalDate.of(1960, 1, 1))
+                        .setParameter("dateText", "1960-01-01")
                         .getResultList();
             });
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getParty(), h.getTermStart(),
-                                                           h.getTermEnd()})
+                                    .map(h -> new Object[]{h.getOffice().getCountry(),
+                                            h.getNumber(), h.getName(), h.getParty(),
+                                            h.getTermStart(),
+                                            h.getTermEnd()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -101,7 +113,8 @@ class Head_Exercises_01_Basic_PersistenceTest {
     class HOG_HEAD_B_02_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
-                row(218L, "KR", 1L, "1948-07-24", "1952-08-14", "이승만", "대한독립촉성국민회/자유당", 1875L, 1965L),
+                row(218L, "KR", 1L, "1948-07-24", "1952-08-14", "이승만", "대한독립촉성국민회/자유당", 1875L,
+                    1965L),
                 row(219L, "KR", 2L, "1952-08-15", "1956-08-14", "이승만", "자유당", 1875L, 1965L),
                 row(220L, "KR", 3L, "1956-08-15", "1960-04-27", "이승만", "자유당", 1875L, 1965L),
                 row(221L, "KR", 4L, "1960-08-12", "1962-03-22", "윤보선", "무소속", 1897L, 1990L),
@@ -113,10 +126,14 @@ class Head_Exercises_01_Basic_PersistenceTest {
                 row(227L, "KR", 10L, "1979-12-06", "1980-08-16", "최규하", "무소속", 1919L, 2006L),
                 row(228L, "KR", 11L, "1980-08-27", "1981-02-24", "전두환", "무소속/민주정의당", 1931L, 2021L),
                 row(229L, "KR", 12L, "1981-02-25", "1988-02-24", "전두환", "민주정의당", 1931L, 2021L),
-                row(230L, "KR", 13L, "1988-02-25", "1993-02-24", "노태우", "민주정의당/민주자유당/무소속", 1932L, 2021L),
-                row(231L, "KR", 14L, "1993-02-25", "1998-02-24", "김영삼", "민주자유당/신한국당/무소속", 1929L, 2015L),
-                row(232L, "KR", 15L, "1998-02-25", "2003-02-24", "김대중", "새정치국민회의/새천년민주당/무소속", 1924L, 2009L),
-                row(233L, "KR", 16L, "2003-02-25", "2008-02-24", "노무현", "새천년민주당/무소속/열린우리당/무소속", 1946L, 2009L),
+                row(230L, "KR", 13L, "1988-02-25", "1993-02-24", "노태우", "민주정의당/민주자유당/무소속", 1932L,
+                    2021L),
+                row(231L, "KR", 14L, "1993-02-25", "1998-02-24", "김영삼", "민주자유당/신한국당/무소속", 1929L,
+                    2015L),
+                row(232L, "KR", 15L, "1998-02-25", "2003-02-24", "김대중", "새정치국민회의/새천년민주당/무소속", 1924L,
+                    2009L),
+                row(233L, "KR", 16L, "2003-02-25", "2008-02-24", "노무현", "새천년민주당/무소속/열린우리당/무소속",
+                    1946L, 2009L),
                 row(234L, "KR", 17L, "2008-02-25", "2013-02-24", "이명박", "한나라당/새누리당", 1941L, null),
                 row(235L, "KR", 18L, "2013-02-25", "2017-03-10", "박근혜", "새누리당/자유한국당", 1952L, null),
                 row(236L, "KR", 19L, "2017-05-10", "2022-05-09", "문재인", "더불어민주당", 1953L, null),
@@ -137,9 +154,10 @@ class Head_Exercises_01_Basic_PersistenceTest {
                     .setParameter("country", "KR")
                     .getResultList());
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getId(), h.getCountry(), h.getNumber(), h.getTermStart(),
-                                                           h.getTermEnd(), h.getName(), h.getParty(), h.getBorn(),
-                                                           h.getDied()})
+                                    .map(h -> new Object[]{h.getId(), h.getOffice().getCountry(),
+                                            h.getNumber(), h.getTermStart(),
+                                            h.getTermEnd(), h.getName(), h.getParty(), h.getBorn(),
+                                            h.getDied()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -151,16 +169,18 @@ class Head_Exercises_01_Basic_PersistenceTest {
                 final var cq = cb.createQuery(Head.class);
                 final var h = cq.from(Head.class);
                 cq.select(h)
-                        .where(cb.equal(h.get(Head_.country), cb.parameter(String.class, "country")))
+                        .where(cb.equal(h.get(Head_.country),
+                                        cb.parameter(String.class, "country")))
                         .orderBy(cb.asc(h.get(Head_.termStart)));
                 return em.createQuery(cq)
                         .setParameter("country", "KR")
                         .getResultList();
             });
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getId(), h.getCountry(), h.getNumber(), h.getTermStart(),
-                                                           h.getTermEnd(), h.getName(), h.getParty(), h.getBorn(),
-                                                           h.getDied()})
+                                    .map(h -> new Object[]{h.getId(), h.getOffice().getCountry(),
+                                            h.getNumber(), h.getTermStart(),
+                                            h.getTermEnd(), h.getName(), h.getParty(), h.getBorn(),
+                                            h.getDied()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -190,7 +210,9 @@ class Head_Exercises_01_Basic_PersistenceTest {
                     )
                     .getResultList());
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getParty(), h.getTermStart()})
+                                    .map(h -> new Object[]{h.getOffice().getCountry(),
+                                            h.getNumber(), h.getName(), h.getParty(),
+                                            h.getTermStart()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -208,7 +230,9 @@ class Head_Exercises_01_Basic_PersistenceTest {
                         .getResultList();
             });
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getParty(), h.getTermStart()})
+                                    .map(h -> new Object[]{h.getOffice().getCountry(),
+                                            h.getNumber(), h.getName(), h.getParty(),
+                                            h.getTermStart()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -236,7 +260,9 @@ class Head_Exercises_01_Basic_PersistenceTest {
                     .setParameter("name", "churchill")
                     .getResultList());
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getTermStart(), h.getTermEnd()})
+                                    .map(h -> new Object[]{h.getOffice().getCountry(),
+                                            h.getNumber(), h.getName(), h.getTermStart(),
+                                            h.getTermEnd()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -249,14 +275,18 @@ class Head_Exercises_01_Basic_PersistenceTest {
                 final var h = cq.from(Head.class);
                 cq.select(h)
                         .where(cb.like(h.get(Head_.name),
-                                       cb.concat(List.of(cb.literal("%"), cb.parameter(String.class, "name"), cb.literal("%")))))
+                                       cb.concat(List.of(cb.literal("%"),
+                                                         cb.parameter(String.class, "name"),
+                                                         cb.literal("%")))))
                         .orderBy(cb.asc(h.get(Head_.country)), cb.asc(h.get(Head_.termStart)));
                 return em.createQuery(cq)
                         .setParameter("name", "churchill")
                         .getResultList();
             });
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getCountry(), h.getNumber(), h.getName(), h.getTermStart(), h.getTermEnd()})
+                                    .map(h -> new Object[]{h.getOffice().getCountry(),
+                                            h.getNumber(), h.getName(), h.getTermStart(),
+                                            h.getTermEnd()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -287,7 +317,8 @@ class Head_Exercises_01_Basic_PersistenceTest {
                     .setParameter("year", "1945")
                     .getResultList());
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getTermStart(), h.getCountry(), h.getNumber(), h.getName()})
+                                    .map(h -> new Object[]{h.getTermStart(),
+                                            h.getOffice().getCountry(), h.getNumber(), h.getName()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -300,14 +331,16 @@ class Head_Exercises_01_Basic_PersistenceTest {
                 final var h = cq.from(Head.class);
                 final var year = cb.parameter(String.class, "year");
                 cq.select(h)
-                        .where(cb.between(h.get(Head_.termStart), cb.concat(year, "-01-01"), cb.concat(year, "-12-31")))
+                        .where(cb.between(h.get(Head_.termStart),
+                                          cb.concat(year, "-01-01"), cb.concat(year, "-12-31")))
                         .orderBy(cb.asc(h.get(Head_.termStart)), cb.asc(h.get(Head_.country)));
                 return em.createQuery(cq)
                         .setParameter("year", "1945")
                         .getResultList();
             });
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getTermStart(), h.getCountry(), h.getNumber(), h.getName()})
+                                    .map(h -> new Object[]{h.getTermStart(),
+                                            h.getOffice().getCountry(), h.getNumber(), h.getName()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -355,7 +388,8 @@ class Head_Exercises_01_Basic_PersistenceTest {
                 cq.select(cb.array(h.get(Head_.country), h.get(Head_.name), h.get(Head_.born)))
                         .distinct(true)
                         .where(cb.isNull(h.get(Head_.died)))
-                        .orderBy(cb.asc(h.get(Head_.born)), cb.asc(h.get(Head_.country)), cb.asc(h.get(Head_.name)));
+                        .orderBy(cb.asc(h.get(Head_.born)), cb.asc(h.get(Head_.country)),
+                                 cb.asc(h.get(Head_.name)));
                 return em.createQuery(cq)
                         .setMaxResults(10)
                         .getResultList();
@@ -393,7 +427,9 @@ class Head_Exercises_01_Basic_PersistenceTest {
                     )
                     .getResultList());
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getTermStart(), h.getCountry(), h.getNumber(), h.getName(), h.getParty()})
+                                    .map(h -> new Object[]{h.getTermStart(),
+                                            h.getOffice().getCountry(), h.getNumber(),
+                                            h.getName(), h.getParty()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -411,7 +447,9 @@ class Head_Exercises_01_Basic_PersistenceTest {
                         .getResultList();
             });
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getTermStart(), h.getCountry(), h.getNumber(), h.getName(), h.getParty()})
+                                    .map(h -> new Object[]{h.getTermStart(),
+                                            h.getOffice().getCountry(), h.getNumber(),
+                                            h.getName(), h.getParty()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -440,9 +478,9 @@ class Head_Exercises_01_Basic_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT DISTINCT h.country, h.name, h.born, h.died, h.died - h.born AS age
+                                    SELECT DISTINCT h.country, h.name, h.born, h.died, CAST(h.died AS INTEGER) - h.born AS age
                                     FROM Head AS h
-                                    WHERE h.died - h.born >= 93
+                                    WHERE CAST(h.died AS INTEGER) - h.born >= 93
                                     ORDER BY age DESC, h.country ASC, h.name ASC""",
                             Object[].class
                     )
@@ -456,11 +494,13 @@ class Head_Exercises_01_Basic_PersistenceTest {
                 final var cb = em.getCriteriaBuilder();
                 final var cq = cb.createQuery(Object[].class);
                 final var h = cq.from(Head.class);
-                final var age = cb.diff(h.get(Head_.died), h.get(Head_.born));
-                cq.select(cb.array(h.get(Head_.country), h.get(Head_.name), h.get(Head_.born), h.get(Head_.died), age))
+                final var age = cb.diff(h.get(Head_.died).cast(Integer.class), h.get(Head_.born));
+                cq.select(cb.array(h.get(Head_.country), h.get(Head_.name), h.get(Head_.born),
+                                   h.get(Head_.died), age))
                         .distinct(true)
                         .where(cb.ge(age, 93))
-                        .orderBy(cb.desc(age), cb.asc(h.get(Head_.country)), cb.asc(h.get(Head_.name)));
+                        .orderBy(cb.desc(age), cb.asc(h.get(Head_.country)),
+                                 cb.asc(h.get(Head_.name)));
                 return em.createQuery(cq)
                         .getResultList();
             });

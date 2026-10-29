@@ -33,7 +33,8 @@
 SELECT *,
        CAST(julianday(term_start) - julianday(previous_term_end) AS INTEGER) - 1 AS days_vacant
 FROM (SELECT h.*,
-             LAG(name) OVER (PARTITION BY country ORDER BY term_start)     AS previous_name, LAG(term_end) OVER (PARTITION BY country ORDER BY term_start) AS previous_term_end
+             LAG(name) OVER (PARTITION BY country ORDER BY term_start)     AS previous_name,
+             LAG(term_end) OVER (PARTITION BY country ORDER BY term_start) AS previous_term_end
       FROM head AS h)
 WHERE julianday(term_start) - julianday(previous_term_end) > 1
 ORDER BY country ASC, term_start ASC
@@ -46,10 +47,12 @@ ORDER BY country ASC, term_start ASC
 SELECT country, name, terms, days
 FROM (SELECT country,
              name,
-             COUNT(*)                                                                                  AS terms,
-             CAST(SUM(julianday(COALESCE(term_end, date ('now'))) - julianday(term_start)) AS INTEGER) AS days,
-             RANK()                                                                                       OVER (PARTITION BY country
-                 ORDER BY SUM(julianday(COALESCE(term_end, date('now'))) - julianday(term_start)) DESC) AS place
+             COUNT(*)                                      AS terms,
+             CAST(SUM(julianday(COALESCE(term_end, date('now'))) -
+                      julianday(term_start)) AS INTEGER)   AS days,
+             RANK() OVER (PARTITION BY country
+                 ORDER BY SUM(julianday(COALESCE(term_end, date('now'))) -
+                              julianday(term_start)) DESC) AS place
       FROM head
       GROUP BY country, name)
 WHERE place = 1
@@ -64,13 +67,14 @@ WITH ordered AS (SELECT country,
                         party,
                         term_start,
                         term_end,
-                        ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start)        AS seq, ROW_NUMBER() OVER (PARTITION BY country, party ORDER BY term_start) AS seq_in_party
+                        ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start)        AS seq,
+                        ROW_NUMBER() OVER (PARTITION BY country, party ORDER BY term_start) AS seq_in_party
                  FROM head),
      runs AS (SELECT country,
                      party,
-                     COUNT(*)                              AS terms,
-                     MIN(term_start)                       AS since,
-                     MAX(COALESCE(term_end, date ('now'))) AS until
+                     COUNT(*)                             AS terms,
+                     MIN(term_start)                      AS since,
+                     MAX(COALESCE(term_end, date('now'))) AS until
               FROM ordered
               GROUP BY country, party, seq - seq_in_party),
      placed AS (SELECT *, RANK() OVER (PARTITION BY country ORDER BY terms DESC, since ASC) AS place
@@ -111,7 +115,8 @@ ORDER BY country ASC, term_start ASC, position ASC
 -- country; the incumbent has no successor.
 SELECT *
 FROM (SELECT h.*,
-             LAG(name) OVER (PARTITION BY country ORDER BY term_start)  AS predecessor, LEAD(name) OVER (PARTITION BY country ORDER BY term_start) AS successor
+             LAG(name) OVER (PARTITION BY country ORDER BY term_start)  AS predecessor,
+             LEAD(name) OVER (PARTITION BY country ORDER BY term_start) AS successor
       FROM head AS h)
 WHERE name = :name
 ORDER BY country ASC, term_start ASC

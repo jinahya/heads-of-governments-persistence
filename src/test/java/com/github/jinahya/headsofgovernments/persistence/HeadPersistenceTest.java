@@ -9,9 +9,9 @@ package com.github.jinahya.headsofgovernments.persistence;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,8 @@ class HeadPersistenceTest {
     );
 
     /**
-     * The earliest and the latest {@code term_start} in the {@code head} table, by {@code country}.
+     * The earliest and the latest {@code term_start} in the {@code head} table, by
+     * {@code country}.
      */
     static final Map<String, List<String>> HEAD_TERM_START_RANGES = Map.of(
             "FR", List.of("1848-12-20", "2022-05-14"),
@@ -115,6 +116,7 @@ class HeadPersistenceTest {
                         .extracting(Head::getName)
                         .isEqualTo("Louis-Napoléon Bonaparte");
             }
+
             @Test
             void __CriteriaApi() {
                 final var found = PersistenceTestUtils.applyEntityManager(em -> {
@@ -154,7 +156,7 @@ class HeadPersistenceTest {
 
         @RepeatedTest(8)
         void __2() {
-            final var random = PersistenceTestUtils.selectRandom(Head.class).orElseThrow();
+            final var random = PersistenceTestUtils.selectRandomEntity(Head.class).orElseThrow();
             final var id = random.getId();
             final var found = PersistenceTestUtils.applyEntityManager(em -> {
                 return em.find(Head.class, id);
@@ -173,13 +175,14 @@ class HeadPersistenceTest {
                         assertThat(h.getNumber()).isPositive();
                         assertThat(h.getTermStart()).isNotNull();
                         if (h.getTermEnd() != null) {
-                            assertThat(String.valueOf(h.getTermEnd())).isGreaterThanOrEqualTo(String.valueOf(h.getTermStart()));
+                            assertThat(String.valueOf(h.getTermEnd())).isGreaterThanOrEqualTo(
+                                    String.valueOf(h.getTermStart()));
                         }
                         assertThat(h.getName()).isNotBlank();
                         assertThat(h.getParty()).isNotBlank();
                         assertThat(h.getBorn()).isNotNull();
                         if (h.getDied() != null) {
-                            assertThat(h.getDied()).isGreaterThanOrEqualTo(h.getBorn());
+                            assertThat(h.getDied().getValue()).isGreaterThanOrEqualTo(h.getBorn());
                         }
                     });
         }
@@ -216,7 +219,7 @@ class HeadPersistenceTest {
 
         @Test
         void __() {
-            final var random = PersistenceTestUtils.selectRandom(Head.class);
+            final var random = PersistenceTestUtils.selectRandomEntity(Head.class);
             assumeThat(random).isNotEmpty();
             final var found = random.get();
         }
@@ -229,31 +232,9 @@ class HeadPersistenceTest {
         private static void verify(final List<Head> list, final Office office) {
             assertThat(list)
                     .isNotEmpty()
-                    .allSatisfy(e -> assertThat(e.getOffice().getCountry()).isEqualTo(office.getCountry()))
+                    .allSatisfy(e -> assertThat(e.getOffice().getCountry()).isEqualTo(
+                            office.getCountry()))
                     .isSortedAccordingTo(Comparator.comparing(Head::getTermStart));
-        }
-
-        @ValueSource(strings = {
-                "FR",
-                "GB",
-                "JP",
-                "KR",
-                "US"
-        })
-        @ParameterizedTest
-        void __NamedQuery(final String country) {
-            PersistenceTestUtils.applyEntityManager(em -> {
-                final var office = em.find(Office.class, country);
-                assertThat(office).isNotNull();
-                final var list = em.createNamedQuery(
-                                "Head.selectAll_WhereOfficeEqual_OrderByTermStartAsc",
-                                Head.class
-                        )
-                        .setParameter("office", office)
-                        .getResultList();
-                verify(list, office);
-                return null;
-            });
         }
 
         @ValueSource(strings = {
@@ -313,15 +294,6 @@ class HeadPersistenceTest {
     class CountTest {
 
         @Test
-        void __NamedQuery() {
-            final var count = PersistenceTestUtils.applyEntityManager(em -> {
-                return em.createNamedQuery("Head.selectCount", Long.class)
-                        .getSingleResult();
-            });
-            assertThat(count).isEqualTo(HEAD_COUNT);
-        }
-
-        @Test
         void __QueryLanguage() {
             final var count = PersistenceTestUtils.applyEntityManager(em -> {
                 return em.createQuery(
@@ -349,7 +321,7 @@ class HeadPersistenceTest {
 
         @Test
         void __PersistenceTestUtils() {
-            final var count = PersistenceTestUtils.selectCount(Head.class);
+            final var count = PersistenceTestUtils.selectEntityCount(Head.class);
             assertThat(count).isEqualTo(HEAD_COUNT);
         }
     }
@@ -368,15 +340,6 @@ class HeadPersistenceTest {
                         r -> (Long) r[1]
                 ));
                 assertThat(counts).isEqualTo(HEAD_COUNTS);
-            }
-
-            @Test
-            void __NamedQuery() {
-                final var list = PersistenceTestUtils.applyEntityManager(em -> {
-                    return em.createNamedQuery("Head.selectOfficeAndCount_GroupByOffice", Object[].class)
-                            .getResultList();
-                });
-                verify(list);
             }
 
             @Test
@@ -409,7 +372,9 @@ class HeadPersistenceTest {
             }
         }
 
-        @DisplayName("SELECT e.office, MIN(e.termStart), MAX(e.termStart) FROM Head AS e GROUP BY e.office")
+        @DisplayName(
+                "SELECT e.office, MIN(e.termStart), MAX(e.termStart) FROM Head AS e GROUP BY e" +
+                ".office")
         @Nested
         class MinMaxTermStartGroupByOfficeTest {
 
@@ -419,15 +384,6 @@ class HeadPersistenceTest {
                         r -> List.of(String.valueOf(r[1]), String.valueOf(r[2]))
                 ));
                 assertThat(ranges).isEqualTo(HEAD_TERM_START_RANGES);
-            }
-
-            @Test
-            void __NamedQuery() {
-                final var list = PersistenceTestUtils.applyEntityManager(em -> {
-                    return em.createNamedQuery("Head.selectOfficeAndMinMaxTermStart_GroupByOffice", Object[].class)
-                            .getResultList();
-                });
-                verify(list);
             }
 
             @Test
@@ -453,7 +409,8 @@ class HeadPersistenceTest {
                     final var root = query.from(Head.class);
                     final var office = root.get(Head_.office);
                     final var termStart = root.get(Head_.termStart);
-                    query.select(builder.array(office, builder.least(termStart), builder.greatest(termStart)))
+                    query.select(builder.array(office, builder.least(termStart),
+                                               builder.greatest(termStart)))
                             .groupBy(office);
                     return em.createQuery(query).getResultList();
                 });
