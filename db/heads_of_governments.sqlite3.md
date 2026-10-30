@@ -67,9 +67,9 @@ erDiagram
 The crow's foot is what the schema declares: a head belongs to exactly one office, and nothing stops
 an office from having no head. The generator asserts the rest after the inserts -- every office has
 at least one term, exactly one with `term_end IS NULL`, and no `(country, term_start)` repeats -- so
-the file as built is stricter than the diagram. The same as images, drawn from the DDL by the build
-and not by hand: [both tables](../docs/erd/all.svg), [office alone](../docs/erd/office.svg),
-[head alone](../docs/erd/head.svg).
+the file as built is stricter than the diagram. The same as images, generated from the DDL's keys by the
+`erd` skill and not drawn by hand: [both tables](../docs/erd/__heads_of_governments.svg),
+[office alone](../docs/erd/office.svg), [head alone](../docs/erd/head.svg).
 
 ## `office`
 

@@ -1,0 +1,14 @@
+# The logical model of src/main/resources/heads_of_governments.sqlite3, from db/schema.sql: each table's keys. Two
+# tables make no groups.
+schema = "heads_of_governments"
+title = "heads_of_governments"
+output = "docs/erd"
+
+[table.office]
+pk = ["country"]
+
+[table.head]
+pk = ["id"]
+[[table.head.fk]]
+columns = ["country"]
+references = "office"
