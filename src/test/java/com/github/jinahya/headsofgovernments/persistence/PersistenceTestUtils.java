@@ -108,25 +108,30 @@ public final class PersistenceTestUtils {
     }
 
     // ---------------------------------------------------------------------------------------------
+    static <T> Optional<T> selectRandomEntity(final EntityManager entityManager,
+                                              final Class<T> entityClass) {
+        Objects.requireNonNull(entityManager, "entityManager is null");
+        Objects.requireNonNull(entityClass, "entityClass is null");
+        final var count = selectEntityCount(entityManager, entityClass);
+        if (count == 0L) {
+            return Optional.empty();
+        }
+        final var offset = Math.toIntExact(ThreadLocalRandom.current().nextLong(count));
+        final var builder = entityManager.getCriteriaBuilder();
+        final var criteria = builder.createQuery(entityClass);
+        final var root = criteria.from(entityClass); // FROM {entityName} AS e
+        criteria.select(root);                       // SELECT e
+        final var query = entityManager.createQuery(criteria);
+        return query
+                .setFirstResult(offset)             // LIMIT {offset},
+                .setMaxResults(1)                   // 1
+                .getResultStream()
+                .findFirst();
+    }
+
     static <T> Optional<T> selectRandomEntity(final Class<T> entityClass) {
         Objects.requireNonNull(entityClass, "entityClass is null");
-        return applyEntityManager(em -> {
-            final var count = selectEntityCount(em, entityClass);
-            if (count == 0L) {
-                return Optional.empty();
-            }
-            final var offset = (int) ThreadLocalRandom.current().nextLong(count);
-            final var builder = em.getCriteriaBuilder();
-            final var criteria = builder.createQuery(entityClass);
-            final var root = criteria.from(entityClass); // FROM {entityName} AS e
-            criteria.select(root);                       // SELECT e
-            final var query = em.createQuery(criteria);
-            return query
-                    .setFirstResult(offset)             // LIMIT {offset},
-                    .setMaxResults(1)                   // 1
-                    .getResultStream()
-                    .findFirst();
-        });
+        return applyEntityManager(em -> selectRandomEntity(em, entityClass));
     }
 
     // ---------------------------------------------------------------------------------------------

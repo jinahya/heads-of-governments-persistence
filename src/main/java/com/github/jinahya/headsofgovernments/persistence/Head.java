@@ -22,6 +22,7 @@ package com.github.jinahya.headsofgovernments.persistence;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Basic;
+import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Converter;
@@ -91,7 +92,12 @@ import java.util.Optional;
                     WHERE e.office = :office
                     ORDER BY e.number ASC""")
 @Entity(name = "Head")
-@Table(name = "head")
+@Table(name = "head",
+       check = {
+               @CheckConstraint(constraint = "term_end IS NULL OR term_end >= term_start"),
+               @CheckConstraint(constraint = "died IS NULL OR died >= born")
+       }
+)
 @Getter
 @Slf4j
 public class Head {
@@ -224,9 +230,10 @@ public class Head {
     @Getter(AccessLevel.PACKAGE)
     private String country;
 
-    @jakarta.persistence.ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @jakarta.persistence.JoinColumn(name = "country", nullable = false, insertable = false,
-                                    updatable = false)
+    @jakarta.persistence.ManyToOne(targetEntity = Office.class, fetch = FetchType.EAGER,
+                                   optional = false)
+    @jakarta.persistence.JoinColumn(name = "country", referencedColumnName = "country",
+                                    nullable = false, insertable = false, updatable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Office office;
