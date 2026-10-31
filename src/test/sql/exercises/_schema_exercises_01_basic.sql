@@ -34,16 +34,6 @@ ORDER BY g.country ASC
 ;
 
 
--- ----------------------------------------------------- HOG_SCHEMA_B_02 A country's list, with the rule for its numbers
--- A reader asks for one country's list and should see, with it, what number counts there.
-SELECT g.*, h.*
-FROM office g
-         JOIN head h ON h.country = g.country
-WHERE g.country = :country
-ORDER BY h.term_start ASC
-;
-
-
 -- ------------------------------------------------------------------------------------ HOG_SCHEMA_B_03 Terms per office
 -- Each office with the kind of head it has and how many terms the list holds.
 SELECT g.*, COUNT(h.id) AS terms
@@ -51,16 +41,6 @@ FROM office g
          LEFT JOIN head h ON h.country = g.country
 GROUP BY g.country
 ORDER BY g.country ASC
-;
-
-
--- ----------------------------------------------------------------------- HOG_SCHEMA_B_04 The first head of each office
--- Each office's head numbered 1, with the title of the office, the oldest list first.
-SELECT g.*, h.*
-FROM office g
-         JOIN head h ON h.country = g.country
-WHERE h.number = 1
-ORDER BY h.term_start ASC
 ;
 
 

@@ -165,3 +165,19 @@ GROUP BY country, name
 HAVING COUNT(*) >= 3
 ORDER BY stints DESC, country ASC, MIN(term_start) ASC
 ;
+
+
+-- ------------------------------------------------------------- HOG_HEAD_A_08 Living heads who outlived their successor
+-- The terms of heads still living whose immediate successor, someone else, has died, with the successor and the year of
+-- their death, by country, then by the term. died is NULL for the living, so the test is IS NULL on the head and IS NOT
+-- NULL on the successor; comparing the two years would give NULL, and no row, for exactly these heads.
+SELECT country, number, name, term_start, term_end, successor, successor_died
+FROM (SELECT h.*,
+             LEAD(name) OVER (PARTITION BY country ORDER BY term_start) AS successor,
+             LEAD(died) OVER (PARTITION BY country ORDER BY term_start) AS successor_died
+      FROM head AS h)
+WHERE died IS NULL
+  AND successor <> name
+  AND successor_died IS NOT NULL
+ORDER BY country ASC, term_start ASC
+;

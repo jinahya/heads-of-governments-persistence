@@ -22,6 +22,7 @@ package com.github.jinahya.headsofgovernments.persistence.exercises;
 
 import com.github.jinahya.headsofgovernments.persistence.Head;
 import com.github.jinahya.headsofgovernments.persistence.Head_;
+import jakarta.persistence.criteria.Nulls;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -398,63 +399,6 @@ class Head_Exercises_01_Basic_PersistenceTest {
         }
     }
 
-    @DisplayName("HOG_HEAD_B_07: Terms begun during the Second World War")
-    @Nested
-    class HOG_HEAD_B_07_Test {
-
-        private static final List<List<Object>> EXPECTED = List.of(
-                row("1940-01-16", "JP", 37L, "米内光政", "無所属"),
-                row("1940-05-10", "GB", 41L, "Winston Churchill", "Conservative"),
-                row("1940-07-22", "JP", 38L, "近衛文麿", "大政翼賛会"),
-                row("1941-07-18", "JP", 39L, "近衛文麿", "大政翼賛会"),
-                row("1941-10-18", "JP", 40L, "東條英機", "大政翼賛会"),
-                row("1944-07-22", "JP", 41L, "小磯國昭", "大政翼賛会"),
-                row("1945-04-07", "JP", 42L, "鈴木貫太郎", "大政翼賛会"),
-                row("1945-04-12", "US", 33L, "Harry S. Truman", "Democratic"),
-                row("1945-07-26", "GB", 42L, "Clement Attlee", "Labour"),
-                row("1945-08-17", "JP", 43L, "東久邇宮稔彦王", "無所属")
-        );
-
-        @Test
-        void __QueryLanguage() {
-            final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
-                            """
-                                    SELECT h
-                                    FROM Head AS h
-                                    WHERE h.termStart BETWEEN '1939-09-01' AND '1945-09-02'
-                                    ORDER BY h.termStart ASC, h.country ASC""",
-                            Head.class
-                    )
-                    .getResultList());
-            assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getTermStart(),
-                                            h.getOffice().getCountry(), h.getNumber(),
-                                            h.getName(), h.getParty()})
-                                    .toList()))
-                    .containsExactlyElementsOf(EXPECTED);
-        }
-
-        @Test
-        void __CriteriaApi() {
-            final var list = __Exercises_TestUtils.apply(em -> {
-                final var cb = em.getCriteriaBuilder();
-                final var cq = cb.createQuery(Head.class);
-                final var h = cq.from(Head.class);
-                cq.select(h)
-                        .where(cb.between(h.get(Head_.termStart), "1939-09-01", "1945-09-02"))
-                        .orderBy(cb.asc(h.get(Head_.termStart)), cb.asc(h.get(Head_.country)));
-                return em.createQuery(cq)
-                        .getResultList();
-            });
-            assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getTermStart(),
-                                            h.getOffice().getCountry(), h.getNumber(),
-                                            h.getName(), h.getParty()})
-                                    .toList()))
-                    .containsExactlyElementsOf(EXPECTED);
-        }
-    }
-
     @DisplayName("HOG_HEAD_B_08: Heads who lived past ninety-two")
     @Nested
     class HOG_HEAD_B_08_Test {
@@ -501,6 +445,178 @@ class Head_Exercises_01_Basic_PersistenceTest {
                         .where(cb.ge(age, 93))
                         .orderBy(cb.desc(age), cb.asc(h.get(Head_.country)),
                                  cb.asc(h.get(Head_.name)));
+                return em.createQuery(cq)
+                        .getResultList();
+            });
+            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+        }
+    }
+
+    @DisplayName("HOG_HEAD_B_09: The ten latest terms")
+    @Nested
+    class HOG_HEAD_B_09_Test {
+
+        private static final List<List<Object>> EXPECTED = List.of(
+                row("GB", 59L, "Andy Burnham", "2026-07-20", null),
+                row("JP", 105L, "高市早苗", "2026-02-18", null),
+                row("JP", 104L, "高市早苗", "2025-10-21", "2026-02-18"),
+                row("KR", 21L, "이재명", "2025-06-04", null),
+                row("US", 47L, "Donald Trump", "2025-01-20", null),
+                row("JP", 103L, "石破茂", "2024-11-11", "2025-10-21"),
+                row("JP", 102L, "石破茂", "2024-10-01", "2024-11-11"),
+                row("GB", 58L, "Keir Starmer", "2024-07-05", "2026-07-20"),
+                row("GB", 57L, "Rishi Sunak", "2022-10-25", "2024-07-05"),
+                row("GB", 56L, "Liz Truss", "2022-09-06", "2022-10-25")
+        );
+
+        @Test
+        void __QueryLanguage() {
+            final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
+                            """
+                                    SELECT h
+                                    FROM Head AS h
+                                    ORDER BY h.termStart DESC, h.country ASC""",
+                            Head.class
+                    )
+                    .setMaxResults(10)
+                    .getResultList());
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getOffice().getCountry(),
+                                            h.getNumber(), h.getName(), h.getTermStart(),
+                                            h.getTermEnd()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
+        }
+
+        @Test
+        void __CriteriaApi() {
+            final var list = __Exercises_TestUtils.apply(em -> {
+                final var cb = em.getCriteriaBuilder();
+                final var cq = cb.createQuery(Head.class);
+                final var h = cq.from(Head.class);
+                cq.select(h)
+                        .orderBy(cb.desc(h.get(Head_.termStart)), cb.asc(h.get(Head_.country)));
+                return em.createQuery(cq)
+                        .setMaxResults(10)
+                        .getResultList();
+            });
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getOffice().getCountry(),
+                                            h.getNumber(), h.getName(), h.getTermStart(),
+                                            h.getTermEnd()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
+        }
+    }
+
+    @DisplayName("HOG_HEAD_B_10: A country's list, ten terms a page")
+    @Nested
+    class HOG_HEAD_B_10_Test {
+
+        private static final List<List<Object>> EXPECTED = List.of(
+                row(228L, 11L, "전두환", "1980-08-27"),
+                row(229L, 12L, "전두환", "1981-02-25"),
+                row(230L, 13L, "노태우", "1988-02-25"),
+                row(231L, 14L, "김영삼", "1993-02-25"),
+                row(232L, 15L, "김대중", "1998-02-25"),
+                row(233L, 16L, "노무현", "2003-02-25"),
+                row(234L, 17L, "이명박", "2008-02-25"),
+                row(235L, 18L, "박근혜", "2013-02-25"),
+                row(236L, 19L, "문재인", "2017-05-10"),
+                row(237L, 20L, "윤석열", "2022-05-10")
+        );
+
+        @Test
+        void __QueryLanguage() {
+            final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
+                            """
+                                    SELECT h
+                                    FROM Head AS h
+                                    WHERE h.country = :country
+                                    ORDER BY h.termStart ASC""",
+                            Head.class
+                    )
+                    .setParameter("country", "KR")
+                    .setFirstResult(10)
+                    .setMaxResults(10)
+                    .getResultList());
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getId(), h.getNumber(), h.getName(),
+                                            h.getTermStart()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
+        }
+
+        @Test
+        void __CriteriaApi() {
+            final var list = __Exercises_TestUtils.apply(em -> {
+                final var cb = em.getCriteriaBuilder();
+                final var cq = cb.createQuery(Head.class);
+                final var h = cq.from(Head.class);
+                cq.select(h)
+                        .where(cb.equal(h.get(Head_.country),
+                                        cb.parameter(String.class, "country")))
+                        .orderBy(cb.asc(h.get(Head_.termStart)));
+                return em.createQuery(cq)
+                        .setParameter("country", "KR")
+                        .setFirstResult(10)
+                        .setMaxResults(10)
+                        .getResultList();
+            });
+            assertThat(rows(list.stream()
+                                    .map(h -> new Object[]{h.getId(), h.getNumber(), h.getName(),
+                                            h.getTermStart()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
+        }
+    }
+
+    @DisplayName("HOG_HEAD_B_11: Heads born in the 1940s, the living first")
+    @Nested
+    class HOG_HEAD_B_11_Test {
+
+        private static final List<List<Object>> EXPECTED = List.of(
+                row("JP", "麻生太郎", 1940L, null),
+                row("KR", "이명박", 1941L, null),
+                row("JP", "小泉純一郎", 1942L, null),
+                row("US", "Joe Biden", 1942L, null),
+                row("GB", "John Major", 1943L, null),
+                row("JP", "菅直人", 1946L, null),
+                row("US", "Bill Clinton", 1946L, null),
+                row("US", "Donald Trump", 1946L, null),
+                row("US", "George W. Bush", 1946L, null),
+                row("JP", "鳩山由紀夫", 1947L, null),
+                row("JP", "菅義偉", 1948L, null),
+                row("KR", "노무현", 1946L, 2009L)
+        );
+
+        // selects no entity: a row is a person, DISTINCT over the terms of one, not a head
+        @Test
+        void __QueryLanguage() {
+            final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
+                            """
+                                    SELECT DISTINCT h.country, h.name, h.born, h.died
+                                    FROM Head AS h
+                                    WHERE h.born BETWEEN 1940 AND 1949
+                                    ORDER BY h.died DESC NULLS FIRST, h.born ASC, h.country ASC, h.name ASC""",
+                            Object[].class
+                    )
+                    .getResultList());
+            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+        }
+
+        @Test
+        void __CriteriaApi() {
+            final var list = __Exercises_TestUtils.apply(em -> {
+                final var cb = em.getCriteriaBuilder();
+                final var cq = cb.createQuery(Object[].class);
+                final var h = cq.from(Head.class);
+                cq.select(cb.array(h.get(Head_.country), h.get(Head_.name), h.get(Head_.born),
+                                   h.get(Head_.died)))
+                        .distinct(true)
+                        .where(cb.between(h.get(Head_.born), 1940, 1949))
+                        .orderBy(cb.desc(h.get(Head_.died), Nulls.FIRST), cb.asc(h.get(Head_.born)),
+                                 cb.asc(h.get(Head_.country)), cb.asc(h.get(Head_.name)));
                 return em.createQuery(cq)
                         .getResultList();
             });

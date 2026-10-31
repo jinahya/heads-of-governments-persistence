@@ -191,4 +191,51 @@ class Office_Exercises_01_Basic_PersistenceTest {
                     .containsExactlyElementsOf(EXPECTED);
         }
     }
+
+    @DisplayName("HOG_OFFICE_B_04: The offices headed by a prime minister")
+    @Nested
+    class HOG_OFFICE_B_04_Test {
+
+        private static final List<List<Object>> EXPECTED = List.of(
+                row("GB", "PRIME_MINISTER", "Prime Minister"),
+                row("JP", "PRIME_MINISTER", "内閣総理大臣")
+        );
+
+        @Test
+        void __QueryLanguage() {
+            final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
+                            """
+                                    SELECT o
+                                    FROM Office AS o
+                                    WHERE o.headKind = com.github.jinahya.headsofgovernments.persistence.Office.HeadKind.PRIME_MINISTER
+                                    ORDER BY o.country ASC""",
+                            Office.class
+                    )
+                    .getResultList());
+            assertThat(rows(list.stream()
+                                    .map(o -> new Object[]{o.getCountry(), o.getHeadKind(),
+                                            o.getHeadTitle()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
+        }
+
+        @Test
+        void __CriteriaApi() {
+            final var list = __Exercises_TestUtils.apply(em -> {
+                final var cb = em.getCriteriaBuilder();
+                final var cq = cb.createQuery(Office.class);
+                final var o = cq.from(Office.class);
+                cq.select(o)
+                        .where(cb.equal(o.get(Office_.headKind), Office.HeadKind.PRIME_MINISTER))
+                        .orderBy(cb.asc(o.get(Office_.country)));
+                return em.createQuery(cq)
+                        .getResultList();
+            });
+            assertThat(rows(list.stream()
+                                    .map(o -> new Object[]{o.getCountry(), o.getHeadKind(),
+                                            o.getHeadTitle()})
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
+        }
+    }
 }

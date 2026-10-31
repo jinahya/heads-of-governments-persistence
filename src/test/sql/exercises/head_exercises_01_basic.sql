@@ -85,16 +85,6 @@ LIMIT 10
 ;
 
 
--- --------------------------------------------------------------- HOG_HEAD_B_07 Terms begun during the Second World War
--- Every term that began between 1 September 1939 and 2 September 1945, both days included, in date order and, on the
--- same day, by country.
-SELECT *
-FROM head
-WHERE term_start BETWEEN '1939-09-01' AND '1945-09-02'
-ORDER BY term_start ASC, country ASC
-;
-
-
 -- ----------------------------------------------------------------------- HOG_HEAD_B_08 Heads who lived past ninety-two
 -- The heads whose year of death less their year of birth is 93 or more, once per person, the greatest first and, at a
 -- tie, by country, then by name. born and died are years, so the age is as fine as the data allows and may be a year
@@ -103,4 +93,35 @@ SELECT DISTINCT country, name, born, died, died - born AS age
 FROM head
 WHERE died - born >= 93
 ORDER BY age DESC, country ASC, name ASC
+;
+
+
+-- ---------------------------------------------------------------------------------- HOG_HEAD_B_09 The ten latest terms
+-- A news page lists the ten terms that began most recently, in any country, the latest first; on the same day, by
+-- country.
+SELECT *
+FROM head
+ORDER BY term_start DESC, country ASC
+LIMIT 10
+;
+
+
+-- -------------------------------------------------------------------- HOG_HEAD_B_10 A country's list, ten terms a page
+-- A reader pages through a country's list ten terms at a time, first to latest, and asks for the second page.
+-- term_start is distinct within a country, so the order, and with it each page, is fixed.
+SELECT *
+FROM head
+WHERE country = :country
+ORDER BY term_start ASC
+LIMIT 10 OFFSET 10
+;
+
+
+-- ------------------------------------------------------------- HOG_HEAD_B_11 Heads born in the 1940s, the living first
+-- The heads born from 1940 to 1949, once per person: the living first, then the dead, the latest death first; then by
+-- year of birth, by country and by name. died is NULL for the living, and DESC alone would put them last.
+SELECT DISTINCT country, name, born, died
+FROM head
+WHERE born BETWEEN 1940 AND 1949
+ORDER BY died DESC NULLS FIRST, born ASC, country ASC, name ASC
 ;

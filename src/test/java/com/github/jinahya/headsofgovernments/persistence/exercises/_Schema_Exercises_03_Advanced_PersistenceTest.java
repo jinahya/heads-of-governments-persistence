@@ -48,48 +48,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class _Schema_Exercises_03_Advanced_PersistenceTest {
 
-    @DisplayName("HOG_SCHEMA_A_01: Each office's longest-serving head")
-    @Nested
-    class HOG_SCHEMA_A_01_Test {
-
-        /**
-         * Each place is held by a completed term or terms, so what date('now') adds to an open term
-         * does not move it.
-         */
-        private static final List<List<Object>> EXPECTED = List.of(
-                row("FR", "Président de la République", "François Mitterrand", 2L, 5109L),
-                row("GB", "Prime Minister", "Robert Walpole", 1L, 7619L),
-                row("JP", "内閣総理大臣", "安倍晋三", 4L, 3186L),
-                row("KR", "대통령", "박정희", 5L, 5788L),
-                row("US", "President", "Franklin D. Roosevelt", 1L, 4422L)
-        );
-
-        // JPQL has no difference of two dates, nor window functions; julianday() and date('now')
-        // are SQLite's
-        // own and RANK() OVER (PARTITION BY ...) is SQL's, and the Criteria API has none of them
-        @Test
-        void nativeQuery() {
-            final var list = __Exercises_TestUtils.apply(em -> (List<?>) em.createNativeQuery(
-                            """
-                                    SELECT country, head_title, name, terms, days
-                                    FROM (SELECT g.country,
-                                                 g.head_title,
-                                                 h.name,
-                                                 COUNT(*)                                                                                   AS terms,
-                                                 CAST(SUM(julianday(COALESCE(h.term_end, date('now'))) - julianday(h.term_start)) AS INTEGER) AS days,
-                                                 RANK() OVER (PARTITION BY g.country
-                                                     ORDER BY SUM(julianday(COALESCE(h.term_end, date('now'))) - julianday(h.term_start)) DESC) AS place
-                                          FROM office g
-                                                   JOIN head h ON h.country = g.country
-                                          GROUP BY g.country, g.head_title, h.name)
-                                    WHERE place = 1
-                                    ORDER BY country ASC"""
-                    )
-                    .getResultList());
-            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
-        }
-    }
-
     @DisplayName("HOG_SCHEMA_A_02: Every office on a day, vacant or not")
     @Nested
     class HOG_SCHEMA_A_02_Test {
@@ -497,6 +455,44 @@ class _Schema_Exercises_03_Advanced_PersistenceTest {
                 return em.createQuery(cq)
                         .getResultList();
             });
+            assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
+        }
+    }
+
+    @DisplayName("HOG_SCHEMA_A_08: The median completed term of each office")
+    @Nested
+    class HOG_SCHEMA_A_08_Test {
+
+        private static final List<List<Object>> EXPECTED = List.of(
+                row("FR", "Président de la République", 30L, 1826L),
+                row("GB", "Prime Minister", 80L, 960L),
+                row("JP", "内閣総理大臣", 104L, 408L),
+                row("KR", "대통령", 20L, 1467L),
+                row("US", "President", 46L, 1461L)
+        );
+
+        // JPQL has no WITH, no difference of two dates and no window functions; julianday() is
+        // SQLite's own, ROW_NUMBER() OVER and COUNT(*) OVER are SQL's, and the Criteria API has
+        // none of them
+        @Test
+        void nativeQuery() {
+            final var list = __Exercises_TestUtils.apply(em -> (List<?>) em.createNativeQuery(
+                            """
+                                    WITH lengths AS (SELECT country,
+                                                            julianday(term_end) - julianday(term_start)                     AS days,
+                                                            ROW_NUMBER() OVER (PARTITION BY country
+                                                                ORDER BY julianday(term_end) - julianday(term_start)) AS rn,
+                                                            COUNT(*) OVER (PARTITION BY country)                            AS n
+                                                     FROM head
+                                                     WHERE term_end IS NOT NULL)
+                                    SELECT g.country, g.head_title, l.n AS terms, CAST(AVG(l.days) AS INTEGER) AS median_days
+                                    FROM office g
+                                             JOIN lengths l ON l.country = g.country
+                                    WHERE l.rn IN ((l.n + 1) / 2, (l.n + 2) / 2)
+                                    GROUP BY g.country, g.head_title, l.n
+                                    ORDER BY g.country ASC"""
+                    )
+                    .getResultList());
             assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
         }
     }

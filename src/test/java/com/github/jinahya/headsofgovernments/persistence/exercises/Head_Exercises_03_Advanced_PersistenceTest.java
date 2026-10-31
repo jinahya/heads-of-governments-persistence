@@ -577,4 +577,79 @@ class Head_Exercises_03_Advanced_PersistenceTest {
             assertThat(rows(list)).containsExactlyElementsOf(EXPECTED);
         }
     }
+
+    @DisplayName("HOG_HEAD_A_08: Living heads who outlived their successor")
+    @Nested
+    class HOG_HEAD_A_08_Test {
+
+        private static final List<List<Object>> EXPECTED = List.of(
+                row("JP", 79L, "細川護熙", "1993-08-09", "1994-04-28", "羽田孜", 2017L),
+                row("JP", 89L, "小泉純一郎", "2005-09-21", "2006-09-26", "安倍晋三", 2022L),
+                row("JP", 95L, "野田佳彦", "2011-09-02", "2012-12-26", "安倍晋三", 2022L)
+        );
+
+        @Test
+        void __QueryLanguage() {
+            final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
+                            """
+                                    SELECT h, s
+                                    FROM Head AS h
+                                         JOIN Head AS s ON s.country = h.country
+                                    WHERE s.termStart = (SELECT MIN(s2.termStart)
+                                                         FROM Head AS s2
+                                                         WHERE s2.country = h.country
+                                                           AND s2.termStart > h.termStart)
+                                      AND h.died IS NULL
+                                      AND s.name <> h.name
+                                      AND s.died IS NOT NULL
+                                    ORDER BY h.country ASC, h.termStart ASC""",
+                            Object[].class
+                    )
+                    .getResultList());
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var h = (Head) r[0];
+                                        final var s = (Head) r[1];
+                                        return new Object[]{h.getOffice().getCountry(),
+                                                h.getNumber(), h.getName(), h.getTermStart(),
+                                                h.getTermEnd(), s.getName(), s.getDied()};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
+        }
+
+        @Test
+        void __CriteriaApi() {
+            final var list = __Exercises_TestUtils.apply(em -> {
+                final var cb = em.getCriteriaBuilder();
+                final var cq = cb.createQuery(Object[].class);
+                final var h = cq.from(Head.class);
+                final var s = h.join(Head.class);
+                s.on(cb.equal(s.get(Head_.country), h.get(Head_.country)));
+                final var next = cq.subquery(String.class);
+                final var s2 = next.from(Head.class);
+                next.select(cb.least(s2.get(Head_.termStart)))
+                        .where(cb.equal(s2.get(Head_.country), h.get(Head_.country)),
+                               cb.greaterThan(s2.get(Head_.termStart), h.get(Head_.termStart)));
+                cq.select(cb.array(h, s))
+                        .where(cb.equal(s.get(Head_.termStart), next),
+                               cb.isNull(h.get(Head_.died)),
+                               cb.notEqual(s.get(Head_.name), h.get(Head_.name)),
+                               cb.isNotNull(s.get(Head_.died)))
+                        .orderBy(cb.asc(h.get(Head_.country)), cb.asc(h.get(Head_.termStart)));
+                return em.createQuery(cq)
+                        .getResultList();
+            });
+            assertThat(rows(list.stream()
+                                    .map(r -> {
+                                        final var h = (Head) r[0];
+                                        final var s = (Head) r[1];
+                                        return new Object[]{h.getOffice().getCountry(),
+                                                h.getNumber(), h.getName(), h.getTermStart(),
+                                                h.getTermEnd(), s.getName(), s.getDied()};
+                                    })
+                                    .toList()))
+                    .containsExactlyElementsOf(EXPECTED);
+        }
+    }
 }

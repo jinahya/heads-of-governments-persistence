@@ -25,27 +25,6 @@
 --
 
 
--- ------------------------------------------------------------------ HOG_SCHEMA_A_01 Each office's longest-serving head
--- Per office, the person with the most days in office over all their terms, with the title they held; ties
--- share the place.
-SELECT country, head_title, name, terms, days
-FROM (SELECT g.country,
-             g.head_title,
-             h.name,
-             COUNT(*)                                        AS terms,
-             CAST(SUM(julianday(COALESCE(h.term_end, date('now'))) -
-                      julianday(h.term_start)) AS INTEGER)   AS days,
-             RANK() OVER (PARTITION BY g.country
-                 ORDER BY SUM(julianday(COALESCE(h.term_end, date('now'))) -
-                              julianday(h.term_start)) DESC) AS place
-      FROM office g
-               JOIN head h ON h.country = g.country
-      GROUP BY g.country, g.head_title, h.name)
-WHERE place = 1
-ORDER BY country ASC
-;
-
-
 -- ---------------------------------------------------------------- HOG_SCHEMA_A_02 Every office on a day, vacant or not
 -- A reader gives a date and wants every office with its head on that day, or 'vacant' where the office was empty
 -- or the list had not yet begun.
@@ -139,4 +118,25 @@ FROM head h
 GROUP BY decade
 HAVING COUNT(DISTINCT h.country) = (SELECT COUNT(*) FROM office)
 ORDER BY decade ASC
+;
+
+
+-- ------------------------------------------------------------ HOG_SCHEMA_A_08 The median completed term of each office
+-- Per office, with its title, how many terms have ended and the median of their lengths in days, cut to whole days, by
+-- country code. The median is the middle length, or the average of the two middle ones when the count is even:
+-- ROW_NUMBER numbers the lengths, COUNT(*) OVER gives the count n, and the middle rows are (n + 1) / 2 and (n + 2) / 2
+-- in integer division, one row when n is odd.
+WITH lengths AS (SELECT country,
+                        julianday(term_end) - julianday(term_start)                     AS days,
+                        ROW_NUMBER() OVER (PARTITION BY country
+                            ORDER BY julianday(term_end) - julianday(term_start)) AS rn,
+                        COUNT(*) OVER (PARTITION BY country)                            AS n
+                 FROM head
+                 WHERE term_end IS NOT NULL)
+SELECT g.country, g.head_title, l.n AS terms, CAST(AVG(l.days) AS INTEGER) AS median_days
+FROM office g
+         JOIN lengths l ON l.country = g.country
+WHERE l.rn IN ((l.n + 1) / 2, (l.n + 2) / 2)
+GROUP BY g.country, g.head_title, l.n
+ORDER BY g.country ASC
 ;

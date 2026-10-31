@@ -49,3 +49,12 @@ FROM office
 WHERE numbering LIKE '%keeps the same number%'
 ORDER BY country ASC
 ;
+
+
+-- -------------------------------------------------------------- HOG_OFFICE_B_04 The offices headed by a prime minister
+-- The offices whose head is a prime minister (head_kind 'PRIME_MINISTER'), by country code.
+SELECT *
+FROM office
+WHERE head_kind = 'PRIME_MINISTER'
+ORDER BY country ASC
+;

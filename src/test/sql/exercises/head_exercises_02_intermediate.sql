@@ -37,16 +37,6 @@ ORDER BY days DESC, term_start ASC
 ;
 
 
--- ------------------------------------------------------------------------------------ HOG_HEAD_I_02 More than one term
--- Per country, the persons with more than one term, with how many and the numbers they held.
-SELECT country, name, COUNT(*) AS terms, GROUP_CONCAT(number, ', ' ORDER BY term_start) AS numbers
-FROM head
-GROUP BY country, name
-HAVING COUNT(*) > 1
-ORDER BY country ASC, MIN(term_start) ASC
-;
-
-
 -- ---------------------------------------------------------------------------------- HOG_HEAD_I_03 Age on taking office
 -- Per country, the youngest, the oldest and the average age at which a term began, in whole years of the calendar
 -- (the year of term_start less the year of birth; born is a year, so that is as fine as the data allows).
@@ -91,17 +81,6 @@ SELECT SUBSTR(term_start, 1, 3) || '0s' AS decade,
 FROM head
 GROUP BY decade
 ORDER BY decade ASC
-;
-
-
--- ---------------------------------------------------------------------- HOG_HEAD_I_07 The latest terms of each country
--- Per country, the :n most recent terms, oldest of them first. Terms, not persons: a head re-elected appears once per
--- term. term_start is NOT NULL and distinct within a country, so the numbering has no ties.
-SELECT *
-FROM (SELECT h.*, ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start DESC) AS latest_rn
-      FROM head AS h)
-WHERE latest_rn <= :n
-ORDER BY country ASC, term_start ASC
 ;
 
 
@@ -211,4 +190,43 @@ WHERE died IS NOT NULL
 GROUP BY country, name, died
 ORDER BY years_after DESC NULLS LAST, country ASC, name ASC
 LIMIT 10
+;
+
+
+-- ------------------------------------------------------- HOG_HEAD_I_15 Years with a new term in four or more countries
+-- The years in which a term began in four or more of the countries, with how many terms began and in how many
+-- countries, oldest first.
+SELECT SUBSTR(term_start, 1, 4) AS year, COUNT(*) AS terms, COUNT(DISTINCT country) AS countries
+FROM head
+GROUP BY SUBSTR(term_start, 1, 4)
+HAVING COUNT(DISTINCT country) >= 4
+ORDER BY year ASC
+;
+
+
+-- ------------------------------------------------------------------------ HOG_HEAD_I_16 Overlapping terms in a country
+-- Within a country, a term should not begin before the one before it has ended. List each pair of terms of a country
+-- where the later begins before the earlier ends, an open term running to '9999-12-31', by country, then by the earlier
+-- term; the check passes when nothing comes back. A handover day, the end of one term and the start of the next, is not
+-- an overlap.
+SELECT a.*, b.id AS later_id, b.name AS later_name, b.term_start AS later_term_start
+FROM head a
+         JOIN head b ON b.country = a.country
+    AND b.term_start > a.term_start
+    AND b.term_start < COALESCE(a.term_end, '9999-12-31')
+ORDER BY a.country ASC, a.term_start ASC, b.term_start ASC
+;
+
+
+-- ------------------------------------------ HOG_HEAD_I_17 Terms begun fifteen years younger than the country's average
+-- The terms whose head, in years of the calendar, was fifteen or more years younger than the average age at which that
+-- country's terms began, by country, then in date order. A correlated subquery gives each term its own country's
+-- average.
+SELECT h.*, CAST(SUBSTR(h.term_start, 1, 4) AS INTEGER) - h.born AS age
+FROM head h
+WHERE CAST(SUBSTR(h.term_start, 1, 4) AS INTEGER) - h.born
+          <= (SELECT AVG(CAST(SUBSTR(s.term_start, 1, 4) AS INTEGER) - s.born)
+              FROM head s
+              WHERE s.country = h.country) - 15
+ORDER BY h.country ASC, h.term_start ASC
 ;
