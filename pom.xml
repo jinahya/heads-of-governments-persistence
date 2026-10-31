@@ -64,9 +64,6 @@
          quietly picking one. -->
     <version.maven-failsafe>${version.maven-surefire}</version.maven-failsafe>
     <version.maven-surefire>3.6.0</version.maven-surefire>
-    <!-- https://central.sonatype.com/artifact/ch.qos.logback/logback-classic/versions -->
-    <!-- https://central.sonatype.com/artifact/ch.qos.logback/logback-parent -->
-    <version.ch.qos.logback>1.6.5</version.ch.qos.logback>
     <!-- https://central.sonatype.com/artifact/org.xerial/sqlite-jdbc/versions -->
     <version.org.xerial.sqlite-jdbc>3.53.4.0</version.org.xerial.sqlite-jdbc>
     <!-- https://central.sonatype.com/artifact/org.assertj/assertj-core/versions -->
@@ -83,11 +80,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>${version.ch.qos.logback}</version>
-      </dependency>
       <dependency><!-- https://central.sonatype.com/artifact/jakarta.platform/jakarta.jakartaee-bom/versions -->
         <groupId>jakarta.platform</groupId>
         <artifactId>jakarta.jakartaee-bom</artifactId>
@@ -138,11 +130,6 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>jakarta.persistence</groupId>
       <artifactId>jakarta.persistence-api</artifactId>
       <scope>provided</scope>
@@ -183,7 +170,7 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <scope>provided</scope>
-      <!-- for @Slf4j on main classes; the binding (logback) stays test scope -->
+      <!-- for @Slf4j on main classes -->
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
