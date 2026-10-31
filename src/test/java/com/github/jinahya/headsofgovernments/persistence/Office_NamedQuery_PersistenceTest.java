@@ -36,9 +36,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Slf4j
-class OfficePersistenceNamedQueryTest {
+class Office_NamedQuery_PersistenceTest {
 
-    static final List<String> COUNTRY_LIST = OfficePersistenceTest.COUNTRY_LIST;
+    static final List<String> COUNTRY_LIST = Office_PersistenceTest.COUNTRY_LIST;
 
     // ---------------------------------------------------------------------------------------------
     @DisplayName("Office.selectAll")

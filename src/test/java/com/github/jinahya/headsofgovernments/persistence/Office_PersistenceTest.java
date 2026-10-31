@@ -43,7 +43,7 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Slf4j
-class OfficePersistenceTest {
+class Office_PersistenceTest {
 
     static final List<String> COUNTRY_LIST = List.of("FR", "GB", "JP", "KR", "US");
 
@@ -92,7 +92,7 @@ class OfficePersistenceTest {
                         .isNotNull()
                         .extracting(Office::getHeads)
                         .asInstanceOf(InstanceOfAssertFactories.LIST)
-                        .hasSize(HeadPersistenceTest.HEAD_COUNTS.get("FR").intValue());
+                        .hasSize(Head_PersistenceTest.HEAD_COUNTS.get("FR").intValue());
             }
 
             @Test
@@ -114,7 +114,7 @@ class OfficePersistenceTest {
                         .isNotNull()
                         .extracting(Office::getHeads)
                         .asInstanceOf(InstanceOfAssertFactories.LIST)
-                        .hasSize(HeadPersistenceTest.HEAD_COUNTS.get("FR").intValue());
+                        .hasSize(Head_PersistenceTest.HEAD_COUNTS.get("FR").intValue());
             }
         }
 
@@ -232,7 +232,7 @@ class OfficePersistenceTest {
                         r -> ((Office) r[0]).getCountry(),
                         r -> (Long) r[1]
                 ));
-                assertThat(counts).isEqualTo(HeadPersistenceTest.HEAD_COUNTS);
+                assertThat(counts).isEqualTo(Head_PersistenceTest.HEAD_COUNTS);
             }
 
             @Test
@@ -276,7 +276,7 @@ class OfficePersistenceTest {
                         r -> ((Office) r[0]).getCountry(),
                         r -> List.of(String.valueOf(r[1]), String.valueOf(r[2]))
                 ));
-                assertThat(ranges).isEqualTo(HeadPersistenceTest.HEAD_TERM_START_RANGES);
+                assertThat(ranges).isEqualTo(Head_PersistenceTest.HEAD_TERM_START_RANGES);
             }
 
             @Test

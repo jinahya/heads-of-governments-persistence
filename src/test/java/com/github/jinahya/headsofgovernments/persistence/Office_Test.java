@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Slf4j
-class OfficeTest {
+class Office_Test {
 
     @DisplayName("toString")
     @Nested

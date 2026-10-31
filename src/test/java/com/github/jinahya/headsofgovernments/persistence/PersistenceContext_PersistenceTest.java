@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Slf4j
-class PersistenceContextTest {
+class PersistenceContext_PersistenceTest {
 
     @Test
     void find_sameInstance_sameIdentifier() {

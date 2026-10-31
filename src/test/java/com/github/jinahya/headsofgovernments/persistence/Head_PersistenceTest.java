@@ -40,7 +40,7 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Slf4j
-class HeadPersistenceTest {
+class Head_PersistenceTest {
 
     /**
      * The number of rows in the {@code head} table.

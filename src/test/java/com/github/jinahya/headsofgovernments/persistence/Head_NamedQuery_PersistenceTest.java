@@ -40,9 +40,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Slf4j
-class HeadPersistenceNamedQueryTest {
+class Head_NamedQuery_PersistenceTest {
 
-    static final List<String> OFFICE_COUNTRIES = OfficePersistenceTest.COUNTRY_LIST;
+    static final List<String> OFFICE_COUNTRIES = Office_PersistenceTest.COUNTRY_LIST;
 
     // every office has terms starting on or after this
     static final String TERM_START_MIN_INCLUSIVE = "1950-01-01";

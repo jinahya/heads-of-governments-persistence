@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Slf4j
-class PersistenceUnitTest {
+class PersistenceUnit_PersistenceTest {
 
     @Test
     void __() {
