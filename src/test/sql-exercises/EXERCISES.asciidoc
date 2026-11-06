@@ -331,7 +331,9 @@ WHERE died IS NOT NULL
 ORDER BY country ASC, term_start ASC
 ----
 
-// NOT YET RUN
+....
+no rows.
+....
 
 ====
 
@@ -622,7 +624,24 @@ WHERE place <= 3
 ORDER BY country ASC, place ASC
 ----
 
-// NOT YET RUN
+....
++---------+------------------------------------+--------------+
+| country |               party                | tenure_share |
++---------+------------------------------------+--------------+
+| FR      | Alliance_républicaine_démocratique |         14.6 |
+| FR      | PS                                 |         12.8 |
+| FR      | Républicain_opportuniste           |         10.8 |
+| GB      | Conservative                       |         32.1 |
+| GB      | Whig                               |         22.8 |
+| GB      | Tory                               |         19.3 |
+| JP      | 自由民主党                         |         46.1 |
+| JP      | 無所属                             |         24.6 |
+| JP      | 立憲政友会                         |          8.5 |
+| KR      | 민주공화당                         |         21.3 |
++---------+------------------------------------+--------------+
+....
+
+15 rows; the first 10.
 
 ====
 
@@ -856,7 +875,9 @@ HAVING COUNT(*) > 1
 ORDER BY country ASC, term_start ASC
 ----
 
-// NOT YET RUN
+....
+no rows.
+....
 
 ====
 
@@ -879,7 +900,9 @@ HAVING COUNT(*) > 1
 ORDER BY country ASC
 ----
 
-// NOT YET RUN
+....
+no rows.
+....
 
 ====
 
@@ -1707,7 +1730,17 @@ GROUP BY g.country
 ORDER BY g.country ASC
 ----
 
-// NOT YET RUN
+....
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+--------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | living |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+--------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |      3 |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |     10 |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |     12 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |      5 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |      5 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+--------+
+....
 
 ====
 
@@ -1734,7 +1767,17 @@ GROUP BY g.country
 ORDER BY g.country ASC
 ----
 
-// NOT YET RUN
+....
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+-----+-----+-----+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | c18 | c19 | c20 | c21 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+-----+-----+-----+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |   0 |   9 |  17 |   5 |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |  16 |  33 |  24 |   8 |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |   0 |   9 |  75 |  21 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |   0 |   0 |  15 |   6 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |   2 |  23 |  17 |   5 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+-----+-----+-----+
+....
 
 ====
 
@@ -1859,7 +1902,24 @@ WHERE i.term_end IS NULL
 ORDER BY i.country ASC, o.country ASC, o.term_start ASC
 ----
 
-// NOT YET RUN
+....
++---------+-----------------+-------------+---------------+----------------------------+-----------------+
+| country |    incumbent    | took_office | other_country |        other_title         |   other_head    |
++---------+-----------------+-------------+---------------+----------------------------+-----------------+
+| FR      | Emmanuel Macron | 2022-05-14  | GB            | Prime Minister             | Boris Johnson   |
+| FR      | Emmanuel Macron | 2022-05-14  | JP            | 内閣総理大臣               | 岸田文雄        |
+| FR      | Emmanuel Macron | 2022-05-14  | KR            | 대통령                     | 윤석열          |
+| FR      | Emmanuel Macron | 2022-05-14  | US            | President                  | Joe Biden       |
+| GB      | Andy Burnham    | 2026-07-20  | FR            | Président de la République | Emmanuel Macron |
+| GB      | Andy Burnham    | 2026-07-20  | JP            | 内閣総理大臣               | 高市早苗        |
+| GB      | Andy Burnham    | 2026-07-20  | KR            | 대통령                     | 이재명          |
+| GB      | Andy Burnham    | 2026-07-20  | US            | President                  | Donald Trump    |
+| JP      | 高市早苗        | 2026-02-18  | FR            | Président de la République | Emmanuel Macron |
+| JP      | 高市早苗        | 2026-02-18  | GB            | Prime Minister             | Keir Starmer    |
++---------+-----------------+-------------+---------------+----------------------------+-----------------+
+....
+
+20 rows; the first 10.
 
 ====
 
