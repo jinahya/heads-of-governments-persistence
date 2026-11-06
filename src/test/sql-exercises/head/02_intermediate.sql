@@ -75,9 +75,9 @@ ORDER BY country ASC, last_term_end DESC NULLS LAST
 
 -- -------------------------------------------------------------------------------- HOG_HEAD_I_06 Terms begun per decade
 -- Across all countries, how many terms began in each decade, with the countries that had one.
-SELECT SUBSTR(term_start, 1, 3) || '0s' AS decade,
-       COUNT(*)                         AS terms,
-       GROUP_CONCAT(DISTINCT country)   AS countries
+SELECT SUBSTR(term_start, 1, 3) || '0s'                AS decade,
+       COUNT(*)                                        AS terms,
+       GROUP_CONCAT(DISTINCT country ORDER BY country) AS countries
 FROM head
 GROUP BY decade
 ORDER BY decade ASC
@@ -103,9 +103,10 @@ ORDER BY country ASC, term_start ASC
 -- ------------------------------------------------------------------- HOG_HEAD_I_09 The first two terms of each country
 -- Per country, its first two terms, the earlier first. Terms, not persons: a head whose first two terms were
 -- consecutive appears twice. term_start is NOT NULL and distinct within a country, so the numbering has no ties.
-SELECT *
-FROM (SELECT h.*, ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start ASC) AS first_rn
-      FROM head AS h)
+SELECT country, name, term_start, term_end
+FROM (SELECT country, name, term_start, term_end,
+             ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start ASC) AS first_rn
+      FROM head)
 WHERE first_rn <= 2
 ORDER BY country ASC, term_start ASC
 ;
@@ -212,7 +213,7 @@ ORDER BY year ASC
 -- where the later begins before the earlier ends, an open term running to '9999-12-31', by country, then by the earlier
 -- term; the check passes when nothing comes back. A handover day, the end of one term and the start of the next, is not
 -- an overlap.
-SELECT a.*, b.id AS later_id, b.name AS later_name, b.term_start AS later_term_start
+SELECT a.*, b.name AS later_name, b.term_start AS later_term_start
 FROM head a
          JOIN head b ON b.country = a.country
     AND b.term_start > a.term_start

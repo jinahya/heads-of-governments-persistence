@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Comparator;
@@ -46,6 +47,12 @@ class Head_PersistenceTest {
      * The number of rows in the {@code head} table.
      */
     private static final int HEAD_COUNT = 285;
+
+    /**
+     * The id of the first row of the {@code head} table, by {@code country} and then
+     * {@code term_start}: Louis-Napoléon Bonaparte's.
+     */
+    private static final HeadId HEAD_ID_FIRST = new HeadId("FR", "1848-12-20");
 
     /**
      * The number of rows in the {@code head} table, by {@code country}.
@@ -77,12 +84,12 @@ class Head_PersistenceTest {
         @Nested
         class FetchTypeTest {
 
-            // 1. Louis-Napoléon Bonaparte
+            // Louis-Napoléon Bonaparte
             @Test
             void __1() {
                 final var found = PersistenceTestUtils.applyEntityManager(em -> {
                     try {
-                        return em.find(Head.class, 1L);
+                        return em.find(Head.class, HEAD_ID_FIRST);
                     } finally {
                         HibernateOrmUtils.logEntities(em);
                     }
@@ -102,10 +109,12 @@ class Head_PersistenceTest {
                                                 SELECT e
                                                 FROM Head AS e
                                                 JOIN FETCH e.office
-                                                WHERE e.id = :id""",
+                                                WHERE e.country = :country
+                                                  AND e.termStart = :termStart""",
                                         Head.class
                                 )
-                                .setParameter("id", 1L)
+                                .setParameter("country", HEAD_ID_FIRST.country())
+                                .setParameter("termStart", HEAD_ID_FIRST.termStart())
                                 .getSingleResult();
                     } finally {
                         HibernateOrmUtils.logEntities(em);
@@ -125,7 +134,10 @@ class Head_PersistenceTest {
                     final var root = query.from(Head.class);
                     root.fetch(Head_.office);
                     query.select(root)
-                            .where(builder.equal(root.get(Head_.id), 1L));
+                            .where(builder.equal(root.get(Head_.country),
+                                                 HEAD_ID_FIRST.country()),
+                                   builder.equal(root.get(Head_.termStart),
+                                                 HEAD_ID_FIRST.termStart()));
                     try {
                         return em.createQuery(query).getSingleResult();
                     } finally {
@@ -139,32 +151,34 @@ class Head_PersistenceTest {
             }
         }
 
-        @ValueSource(longs = {
-                1,
-                HEAD_COUNT
+        @CsvSource({
+                "FR,1848-12-20",
+                "US,2025-01-20"
         })
         @ParameterizedTest
-        void __1(final long id) {
+        void __1(final String country, final String termStart) {
             final var found = PersistenceTestUtils.applyEntityManager(em -> {
-                return em.find(Head.class, id);
+                return em.find(Head.class, new HeadId(country, termStart));
             });
             assertThat(found)
                     .isNotNull()
-                    .extracting(Head::getId)
-                    .isEqualTo(id);
+                    .satisfies(h -> {
+                        assertThat(h.getCountry()).isEqualTo(country);
+                        assertThat(h.getTermStart()).isEqualTo(termStart);
+                    });
         }
 
         @RepeatedTest(8)
         void __2() {
             final var random = PersistenceTestUtils.selectRandomEntity(Head.class).orElseThrow();
-            final var id = random.getId();
+            final var id = new HeadId(random.getCountry(), random.getTermStart());
             final var found = PersistenceTestUtils.applyEntityManager(em -> {
                 return em.find(Head.class, id);
             });
             assertThat(found)
                     .isNotNull()
                     .satisfies(h -> {
-                        assertThat(h.getId()).isEqualTo(id);
+                        assertThat(h).isEqualTo(random);
                         assertThat(h.getNumber()).isEqualTo(random.getNumber());
                         assertThat(h.getTermStart()).isEqualTo(random.getTermStart());
                         assertThat(h.getTermEnd()).isEqualTo(random.getTermEnd());
@@ -187,14 +201,14 @@ class Head_PersistenceTest {
                     });
         }
 
-        @ValueSource(longs = {
-                0,
-                HEAD_COUNT + 1
+        @CsvSource({
+                "FR,1848-12-19",
+                "XX,2025-01-20"
         })
         @ParameterizedTest
-        void _Null_Absent(final long id) {
+        void _Null_Absent(final String country, final String termStart) {
             final var found = PersistenceTestUtils.applyEntityManager(em -> {
-                return em.find(Head.class, id);
+                return em.find(Head.class, new HeadId(country, termStart));
             });
             assertThat(found).isNull();
         }
@@ -202,13 +216,13 @@ class Head_PersistenceTest {
         @Test
         void _Office_Walkable() {
             PersistenceTestUtils.applyEntityManager(em -> {
-                final var head = em.find(Head.class, 1L);
+                final var head = em.find(Head.class, HEAD_ID_FIRST);
                 assertThat(head).isNotNull();
                 final var office = head.getOffice();
                 assertThat(office).isNotNull();
                 assertThat(office.getHeads())
                         .isNotEmpty()
-                        .anySatisfy(h -> assertThat(h.getId()).isEqualTo(head.getId()));
+                        .anySatisfy(h -> assertThat(h).isEqualTo(head));
                 return null;
             });
         }

@@ -84,7 +84,7 @@ FROM head p
          JOIN head m ON m.term_start <= COALESCE(p.term_end, '9999-12-31')
     AND COALESCE(m.term_end, '9999-12-31') >= p.term_start
          JOIN office mg ON mg.country = m.country AND mg.head_kind = 'PRIME_MINISTER'
-GROUP BY p.id
+GROUP BY p.country, p.term_start
 ORDER BY prime_ministers DESC, p.term_start ASC, p.country ASC
 LIMIT 10
 ;

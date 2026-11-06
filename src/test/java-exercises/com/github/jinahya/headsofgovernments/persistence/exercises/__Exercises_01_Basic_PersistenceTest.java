@@ -123,7 +123,7 @@ class __Exercises_01_Basic_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT g, COUNT(h.id)
+                                    SELECT g, COUNT(h.termStart)
                                     FROM Office AS g
                                          LEFT JOIN g.heads AS h
                                     GROUP BY g
@@ -145,7 +145,7 @@ class __Exercises_01_Basic_PersistenceTest {
                 final var cq = cb.createQuery(Object[].class);
                 final var g = cq.from(Office.class);
                 final var h = g.join(Office_.heads, JoinType.LEFT);
-                cq.select(cb.array(g, cb.count(h.get(Head_.id))))
+                cq.select(cb.array(g, cb.count(h.get(Head_.termStart))))
                         .groupBy(g)
                         .orderBy(cb.asc(g.get(Office_.country)));
                 return em.createQuery(cq)
@@ -315,7 +315,7 @@ class __Exercises_01_Basic_PersistenceTest {
         void __QueryLanguage() {
             final var list = __Exercises_TestUtils.apply(em -> em.createQuery(
                             """
-                                    SELECT g, COUNT(h.id) AS terms
+                                    SELECT g, COUNT(h.termStart) AS terms
                                     FROM Office AS g
                                          LEFT JOIN g.heads AS h ON h.termStart >= '2000-01-01'
                                     GROUP BY g
@@ -338,7 +338,7 @@ class __Exercises_01_Basic_PersistenceTest {
                 final var g = cq.from(Office.class);
                 final var h = g.join(Office_.heads, JoinType.LEFT);
                 h.on(cb.greaterThanOrEqualTo(h.get(Head_.termStart), "2000-01-01"));
-                final var terms = cb.count(h.get(Head_.id));
+                final var terms = cb.count(h.get(Head_.termStart));
                 cq.select(cb.array(g, terms))
                         .groupBy(g)
                         .orderBy(cb.desc(terms), cb.asc(g.get(Office_.country)));

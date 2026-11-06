@@ -33,11 +33,10 @@ CREATE TABLE office (
     CHECK (head_kind IN ('PRESIDENT', 'PRIME_MINISTER'))
 ) WITHOUT ROWID;
 
--- id is the rowid, so SQLite assigned it; the file was loaded by country then term_start, so it is 1..N in that
--- order. id is a surrogate; (country, term_start) identifies a term, but the schema declares no constraint on it.
+-- (country, term_start) is the key: a country starts at most one term on a given day. number is not unique, as a
+-- person re-elected or re-appointed keeps a number across several rows.
 CREATE TABLE head (
     -- one term of a head of government
-    id         INTEGER PRIMARY KEY,                          -- the rowid; assigned by the build, not stable
     country    TEXT    NOT NULL REFERENCES office (country), -- the office's country
     number     INTEGER NOT NULL,                             -- the term number, as office.numbering says
     term_start TEXT    NOT NULL,                             -- ISO-8601 date, yyyy-MM-dd
@@ -46,9 +45,10 @@ CREATE TABLE head (
     party      TEXT    NOT NULL,                             -- one token; / separates successive parties
     born       INTEGER NOT NULL,                             -- the year of birth
     died       INTEGER,                                      -- the year of death; NULL while living
+    PRIMARY KEY (country, term_start),
     CHECK (term_end IS NULL OR term_end >= term_start),
     CHECK (died IS NULL OR died >= born)
-);
+) WITHOUT ROWID;
 
 CREATE INDEX idx_head_country_number ON head (country, number);
 

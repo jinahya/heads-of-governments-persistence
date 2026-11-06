@@ -21,7 +21,6 @@
 -- 'no rows' marks a check that passes when nothing comes back.
 --
 -- CREATE TABLE head (
---     id         INTEGER PRIMARY KEY,
 --     country    TEXT    NOT NULL REFERENCES office (country),
 --     number     INTEGER NOT NULL,
 --     term_start TEXT    NOT NULL,
@@ -30,9 +29,10 @@
 --     party      TEXT    NOT NULL,
 --     born       INTEGER NOT NULL,
 --     died       INTEGER,
+--     PRIMARY KEY (country, term_start),
 --     CHECK (term_end IS NULL OR term_end >= term_start),
 --     CHECK (died IS NULL OR died >= born)
--- )
+-- ) WITHOUT ROWID
 -- CREATE INDEX idx_head_country_number ON head (country, number)
 -- CREATE INDEX idx_head_term_start ON head (term_start)
 -- CREATE INDEX idx_head_term_end ON head (term_end)
@@ -44,22 +44,6 @@
 --
 
 
--- ------------------------------------------------------------------------------------------------------------------ id
--- id is the rowid; the file was loaded by country, then term_start, so ids run 1..N in that order in this file.
-SELECT MIN(id), MAX(id), COUNT(*)
-FROM head
-;
-
--- a row whose id disagrees with its position by (country, term_start).
--- no rows: ids are 1..N by country, then term_start.
-SELECT id, country, term_start, position
-FROM (SELECT id, country, term_start, ROW_NUMBER() OVER (ORDER BY country, term_start) AS position
-      FROM head)
-WHERE id <> position
-ORDER BY id ASC
-;
-
-
 -- ------------------------------------------------------------------------------------------------------------- country
 SELECT country, COUNT(*) AS terms
 FROM head
@@ -69,7 +53,7 @@ ORDER BY country ASC
 
 -- a head whose country is not an office; the foreign key forbids it while enforced, as it was while loading.
 -- no rows: no orphan.
-SELECT id, country, name
+SELECT country, term_start, name
 FROM head
 WHERE country NOT IN (SELECT country FROM office)
 ;
@@ -135,13 +119,13 @@ ORDER BY country ASC
 
 -- a term_start that is not a yyyy-MM-dd date; date() returns NULL for a malformed value and rewrites a lax one.
 -- no rows: every term_start is a well-formed date.
-SELECT id, country, term_start
+SELECT country, term_start
 FROM head
 WHERE term_start NOT GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'
    OR date(term_start) IS NOT term_start
 ;
 
--- two terms of one country starting on the same day; the schema does not refuse it, the file was checked for it.
+-- two terms of one country starting on the same day; the primary key refuses it.
 -- no rows: (country, term_start) is distinct.
 SELECT country, term_start, COUNT(*) AS terms
 FROM head
@@ -152,7 +136,7 @@ HAVING COUNT(*) > 1
 
 -- ------------------------------------------------------------------------------------------------------------ term_end
 -- the incumbent is the row with no term_end.
-SELECT country, id, number, name, term_start
+SELECT country, number, name, term_start
 FROM head
 WHERE term_end IS NULL
 ORDER BY country ASC
@@ -169,7 +153,7 @@ HAVING COUNT(*) <> 1
 
 -- the same format check as term_start.
 -- no rows: every term_end is a well-formed date.
-SELECT id, country, term_end
+SELECT country, term_start, term_end
 FROM head
 WHERE term_end IS NOT NULL
   AND (term_end NOT GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'
@@ -227,7 +211,7 @@ FROM head
 
 -- a name which is blank, or carries leading or trailing spaces.
 -- no rows: every name is trimmed and not blank.
-SELECT id, '[' || name || ']' AS name
+SELECT country, term_start, '[' || name || ']' AS name
 FROM head
 WHERE TRIM(name) = ''
    OR name <> TRIM(name)
@@ -270,7 +254,7 @@ FROM head
 
 -- party is one token: '_' inside a multi-word name, '/' between successive parties, never a space.
 -- no rows: no party is blank or has a space.
-SELECT id, country, party
+SELECT country, term_start, party
 FROM head
 WHERE TRIM(party) = ''
    OR party LIKE '% %'
@@ -298,14 +282,14 @@ FROM head
 
 -- a head under 18 when the term started, by year: a typo in born or in term_start.
 -- no rows: every head was an adult on taking office.
-SELECT id, country, name, born, term_start
+SELECT country, term_start, name, born
 FROM head
 WHERE born + 18 > CAST(SUBSTR(term_start, 1, 4) AS INTEGER)
 ;
 
 -- a living head born more than a hundred years ago: more likely a missing died than a centenarian.
 -- no rows: no living head is over a hundred.
-SELECT id, country, name, born
+SELECT country, term_start, name, born
 FROM head
 WHERE died IS NULL
   AND born < CAST(STRFTIME('%Y', 'now') AS INTEGER) - 100
@@ -319,7 +303,7 @@ FROM head
 
 -- an incumbent recorded as dead.
 -- no rows: every incumbent is alive.
-SELECT id, country, name, died
+SELECT country, term_start, name, died
 FROM head
 WHERE term_end IS NULL
   AND died IS NOT NULL
@@ -327,7 +311,7 @@ WHERE term_end IS NULL
 
 -- a year of death before the year the term ended; a head who died in office died in the year the term ended.
 -- no rows: nobody's term outlasts them.
-SELECT id, country, name, term_end, died
+SELECT country, term_start, name, term_end, died
 FROM head
 WHERE died < CAST(SUBSTR(term_end, 1, 4) AS INTEGER)
 ;

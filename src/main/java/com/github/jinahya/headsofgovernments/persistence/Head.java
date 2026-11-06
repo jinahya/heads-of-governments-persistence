@@ -24,11 +24,11 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -45,8 +45,9 @@ import java.util.Optional;
 
 /**
  * An entity for the {@code head} table: one row per term of office of a head of government. The
- * {@code number} column is the country's own ordinal and is not unique, which is why the table
- * carries a surrogate {@code id}.
+ * {@code number} column is the country's own ordinal and is not unique, so the table is keyed by
+ * {@code (country, term_start)}: the two {@code @Id} attributes, with {@link HeadId} as their id
+ * class.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see Office
@@ -91,6 +92,7 @@ import java.util.Optional;
                     FROM Head AS e
                     WHERE e.office = :office
                     ORDER BY e.number ASC""")
+@IdClass(HeadId.class)
 @Entity(name = "Head")
 @Table(name = "head",
        check = {
@@ -146,8 +148,7 @@ public class Head {
     @Override
     public String toString() {
         return super.toString() + '{' +
-               "id=" + id +
-               ",country=" + country +
+               "country=" + country +
                ",number=" + number +
                ",termStart=" + termStart +
                ",termEnd=" + termEnd +
@@ -163,15 +164,14 @@ public class Head {
         if (!(obj instanceof Head that)) {
             return false;
         }
-        return Objects.equals(getId(), that.getId());
+        return Objects.equals(getCountry(), that.getCountry())
+               && Objects.equals(getTermStart(), that.getTermStart());
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hashCode(getId());
+        return Objects.hash(getCountry(), getTermStart());
     }
-
-    // ------------------------------------------------------------------------------------------ id
 
     // ------------------------------------------------------------------------------------- country
 
@@ -190,7 +190,7 @@ public class Head {
      * the attribute is {@code null}, as on a new instance.
      * @see LocalDate#parse(CharSequence)
      */
-    @Transient
+    @jakarta.persistence.Transient
     public LocalDate getTermStartAsLocalDate() {
         return Optional.ofNullable(getTermStart()).map(LocalDate::parse).orElse(null);
     }
@@ -221,12 +221,7 @@ public class Head {
     // ---------------------------------------------------------------------------------------------
     @Id
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(name = "id", nullable = false, insertable = false, updatable = false)
-    private Long id;
-
-    // ---------------------------------------------------------------------------------------------
-    @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(name = "country", nullable = false, insertable = false, updatable = false)
+    @Column(name = "country", nullable = false, updatable = false)
     @Getter(AccessLevel.PACKAGE)
     private String country;
 
@@ -244,11 +239,12 @@ public class Head {
     private Integer number;
 
     // ---------------------------------------------------------------------------------------------
+    @Id
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(name = "term_start", nullable = false, insertable = false, updatable = false)
+    @Column(name = "term_start", nullable = false, updatable = false)
     private String termStart;
 
-    @Convert(converter = LocalDateConverter.class)
+    @jakarta.persistence.Convert(converter = LocalDateConverter.class)
     @Basic(fetch = FetchType.EAGER, optional = true)
     @Column(name = "term_end", nullable = true, insertable = false, updatable = false)
     private LocalDate termEnd;

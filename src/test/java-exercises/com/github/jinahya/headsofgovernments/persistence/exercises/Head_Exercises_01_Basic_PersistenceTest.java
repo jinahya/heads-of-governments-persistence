@@ -114,32 +114,32 @@ class Head_Exercises_01_Basic_PersistenceTest {
     class HOG_HEAD_B_02_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
-                row(218L, "KR", 1L, "1948-07-24", "1952-08-14", "이승만", "대한독립촉성국민회/자유당", 1875L,
+                row("KR", 1L, "1948-07-24", "1952-08-14", "이승만", "대한독립촉성국민회/자유당", 1875L,
                     1965L),
-                row(219L, "KR", 2L, "1952-08-15", "1956-08-14", "이승만", "자유당", 1875L, 1965L),
-                row(220L, "KR", 3L, "1956-08-15", "1960-04-27", "이승만", "자유당", 1875L, 1965L),
-                row(221L, "KR", 4L, "1960-08-12", "1962-03-22", "윤보선", "무소속", 1897L, 1990L),
-                row(222L, "KR", 5L, "1963-12-17", "1967-06-30", "박정희", "민주공화당", 1917L, 1979L),
-                row(223L, "KR", 6L, "1967-07-01", "1971-06-30", "박정희", "민주공화당", 1917L, 1979L),
-                row(224L, "KR", 7L, "1971-07-01", "1972-12-26", "박정희", "민주공화당", 1917L, 1979L),
-                row(225L, "KR", 8L, "1972-12-27", "1978-12-26", "박정희", "민주공화당", 1917L, 1979L),
-                row(226L, "KR", 9L, "1978-12-27", "1979-10-26", "박정희", "민주공화당", 1917L, 1979L),
-                row(227L, "KR", 10L, "1979-12-06", "1980-08-16", "최규하", "무소속", 1919L, 2006L),
-                row(228L, "KR", 11L, "1980-08-27", "1981-02-24", "전두환", "무소속/민주정의당", 1931L, 2021L),
-                row(229L, "KR", 12L, "1981-02-25", "1988-02-24", "전두환", "민주정의당", 1931L, 2021L),
-                row(230L, "KR", 13L, "1988-02-25", "1993-02-24", "노태우", "민주정의당/민주자유당/무소속", 1932L,
+                row("KR", 2L, "1952-08-15", "1956-08-14", "이승만", "자유당", 1875L, 1965L),
+                row("KR", 3L, "1956-08-15", "1960-04-27", "이승만", "자유당", 1875L, 1965L),
+                row("KR", 4L, "1960-08-12", "1962-03-22", "윤보선", "무소속", 1897L, 1990L),
+                row("KR", 5L, "1963-12-17", "1967-06-30", "박정희", "민주공화당", 1917L, 1979L),
+                row("KR", 6L, "1967-07-01", "1971-06-30", "박정희", "민주공화당", 1917L, 1979L),
+                row("KR", 7L, "1971-07-01", "1972-12-26", "박정희", "민주공화당", 1917L, 1979L),
+                row("KR", 8L, "1972-12-27", "1978-12-26", "박정희", "민주공화당", 1917L, 1979L),
+                row("KR", 9L, "1978-12-27", "1979-10-26", "박정희", "민주공화당", 1917L, 1979L),
+                row("KR", 10L, "1979-12-06", "1980-08-16", "최규하", "무소속", 1919L, 2006L),
+                row("KR", 11L, "1980-08-27", "1981-02-24", "전두환", "무소속/민주정의당", 1931L, 2021L),
+                row("KR", 12L, "1981-02-25", "1988-02-24", "전두환", "민주정의당", 1931L, 2021L),
+                row("KR", 13L, "1988-02-25", "1993-02-24", "노태우", "민주정의당/민주자유당/무소속", 1932L,
                     2021L),
-                row(231L, "KR", 14L, "1993-02-25", "1998-02-24", "김영삼", "민주자유당/신한국당/무소속", 1929L,
+                row("KR", 14L, "1993-02-25", "1998-02-24", "김영삼", "민주자유당/신한국당/무소속", 1929L,
                     2015L),
-                row(232L, "KR", 15L, "1998-02-25", "2003-02-24", "김대중", "새정치국민회의/새천년민주당/무소속", 1924L,
+                row("KR", 15L, "1998-02-25", "2003-02-24", "김대중", "새정치국민회의/새천년민주당/무소속", 1924L,
                     2009L),
-                row(233L, "KR", 16L, "2003-02-25", "2008-02-24", "노무현", "새천년민주당/무소속/열린우리당/무소속",
+                row("KR", 16L, "2003-02-25", "2008-02-24", "노무현", "새천년민주당/무소속/열린우리당/무소속",
                     1946L, 2009L),
-                row(234L, "KR", 17L, "2008-02-25", "2013-02-24", "이명박", "한나라당/새누리당", 1941L, null),
-                row(235L, "KR", 18L, "2013-02-25", "2017-03-10", "박근혜", "새누리당/자유한국당", 1952L, null),
-                row(236L, "KR", 19L, "2017-05-10", "2022-05-09", "문재인", "더불어민주당", 1953L, null),
-                row(237L, "KR", 20L, "2022-05-10", "2025-04-04", "윤석열", "국민의힘", 1960L, null),
-                row(238L, "KR", 21L, "2025-06-04", null, "이재명", "더불어민주당", 1963L, null)
+                row("KR", 17L, "2008-02-25", "2013-02-24", "이명박", "한나라당/새누리당", 1941L, null),
+                row("KR", 18L, "2013-02-25", "2017-03-10", "박근혜", "새누리당/자유한국당", 1952L, null),
+                row("KR", 19L, "2017-05-10", "2022-05-09", "문재인", "더불어민주당", 1953L, null),
+                row("KR", 20L, "2022-05-10", "2025-04-04", "윤석열", "국민의힘", 1960L, null),
+                row("KR", 21L, "2025-06-04", null, "이재명", "더불어민주당", 1963L, null)
         );
 
         @Test
@@ -155,7 +155,7 @@ class Head_Exercises_01_Basic_PersistenceTest {
                     .setParameter("country", "KR")
                     .getResultList());
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getId(), h.getOffice().getCountry(),
+                                    .map(h -> new Object[]{h.getOffice().getCountry(),
                                             h.getNumber(), h.getTermStart(),
                                             h.getTermEnd(), h.getName(), h.getParty(), h.getBorn(),
                                             h.getDied()})
@@ -178,7 +178,7 @@ class Head_Exercises_01_Basic_PersistenceTest {
                         .getResultList();
             });
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getId(), h.getOffice().getCountry(),
+                                    .map(h -> new Object[]{h.getOffice().getCountry(),
                                             h.getNumber(), h.getTermStart(),
                                             h.getTermEnd(), h.getName(), h.getParty(), h.getBorn(),
                                             h.getDied()})
@@ -514,16 +514,16 @@ class Head_Exercises_01_Basic_PersistenceTest {
     class HOG_HEAD_B_10_Test {
 
         private static final List<List<Object>> EXPECTED = List.of(
-                row(228L, 11L, "전두환", "1980-08-27"),
-                row(229L, 12L, "전두환", "1981-02-25"),
-                row(230L, 13L, "노태우", "1988-02-25"),
-                row(231L, 14L, "김영삼", "1993-02-25"),
-                row(232L, 15L, "김대중", "1998-02-25"),
-                row(233L, 16L, "노무현", "2003-02-25"),
-                row(234L, 17L, "이명박", "2008-02-25"),
-                row(235L, 18L, "박근혜", "2013-02-25"),
-                row(236L, 19L, "문재인", "2017-05-10"),
-                row(237L, 20L, "윤석열", "2022-05-10")
+                row(11L, "전두환", "1980-08-27"),
+                row(12L, "전두환", "1981-02-25"),
+                row(13L, "노태우", "1988-02-25"),
+                row(14L, "김영삼", "1993-02-25"),
+                row(15L, "김대중", "1998-02-25"),
+                row(16L, "노무현", "2003-02-25"),
+                row(17L, "이명박", "2008-02-25"),
+                row(18L, "박근혜", "2013-02-25"),
+                row(19L, "문재인", "2017-05-10"),
+                row(20L, "윤석열", "2022-05-10")
         );
 
         @Test
@@ -541,7 +541,7 @@ class Head_Exercises_01_Basic_PersistenceTest {
                     .setMaxResults(10)
                     .getResultList());
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getId(), h.getNumber(), h.getName(),
+                                    .map(h -> new Object[]{h.getNumber(), h.getName(),
                                             h.getTermStart()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
@@ -564,7 +564,7 @@ class Head_Exercises_01_Basic_PersistenceTest {
                         .getResultList();
             });
             assertThat(rows(list.stream()
-                                    .map(h -> new Object[]{h.getId(), h.getNumber(), h.getName(),
+                                    .map(h -> new Object[]{h.getNumber(), h.getName(),
                                             h.getTermStart()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);

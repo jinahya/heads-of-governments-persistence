@@ -431,27 +431,27 @@ class __Exercises_02_Intermediate_PersistenceTest {
                 row("FR", "PRESIDENT", "Président de la République",
                     "ordinal of the person by first election; a person re-elected has one line " +
                     "per term and keeps the same number on each",
-                    7L, "FR", 6L, "1894-06-27", "1895-01-16", "Jean Casimir-Perier",
+                    "FR", 6L, "1894-06-27", "1895-01-16", "Jean Casimir-Perier",
                     "Républicain_opportuniste", 1847L, 1907L, 203L),
                 row("GB", "PRIME_MINISTER", "Prime Minister",
                     "ordinal of the person by first appointment; a person who served " +
                     "non-consecutive terms has one line per term and keeps the same number on each",
-                    59L, "GB", 21L, "1834-11-17", "1834-12-09", "Arthur Wellesley", "Tory", 1769L,
+                    "GB", 21L, "1834-11-17", "1834-12-09", "Arthur Wellesley", "Tory", 1769L,
                     1852L, 22L),
                 row("JP", "PRIME_MINISTER", "内閣総理大臣",
                     "代, one per appointment; a cabinet re-formed after a general election starts " +
                     "a new 代, so a person keeps one line per 代 with a new number on each",
-                    212L, "JP", 100L, "2021-10-04", "2021-11-10", "岸田文雄", "自由民主党", 1957L,
+                    "JP", 100L, "2021-10-04", "2021-11-10", "岸田文雄", "自由民主党", 1957L,
                     null, 37L),
                 row("KR", "PRESIDENT", "대통령",
                     "대, one per election; a person re-elected keeps one line per term with " +
                     "consecutive numbers",
-                    228L, "KR", 11L, "1980-08-27", "1981-02-24", "전두환", "무소속/민주정의당", 1931L, 2021L,
+                    "KR", 11L, "1980-08-27", "1981-02-24", "전두환", "무소속/민주정의당", 1931L, 2021L,
                     181L),
                 row("US", "PRESIDENT", "President",
                     "presidency number, one per non-consecutive presidency; a person returning " +
                     "after an absence gets a new number",
-                    247L, "US", 9L, "1841-03-04", "1841-04-04", "William Henry Harrison", "Whig",
+                    "US", 9L, "1841-03-04", "1841-04-04", "William Henry Harrison", "Whig",
                     1773L, 1841L, 31L)
         );
 

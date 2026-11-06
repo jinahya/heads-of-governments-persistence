@@ -25,7 +25,6 @@ CREATE TABLE office (
 ) WITHOUT ROWID;
 
 CREATE TABLE head (
-    id         INTEGER PRIMARY KEY,
     country    TEXT    NOT NULL REFERENCES office (country),
     number     INTEGER NOT NULL,
     term_start TEXT    NOT NULL,
@@ -34,9 +33,10 @@ CREATE TABLE head (
     party      TEXT    NOT NULL,
     born       INTEGER NOT NULL,
     died       INTEGER,
+    PRIMARY KEY (country, term_start),
     CHECK (term_end IS NULL OR term_end >= term_start),
     CHECK (died IS NULL OR died >= born)
-);
+) WITHOUT ROWID;
 CREATE INDEX idx_head_country_number ON head (country, number);
 CREATE INDEX idx_head_term_start ON head (term_start);
 CREATE INDEX idx_head_term_end ON head (term_end);
@@ -48,14 +48,17 @@ CREATE INDEX idx_head_died ON head (died);
 `office` has one row per country (`FR`, `GB`, `JP`, `KR`, `US`): what its head is called, and a
 sentence saying how that country numbers them. `head` has one row per term of office. `number` is the
 country's own ordinal and is **not unique** -- a person re-elected or re-appointed keeps a number across
-several rows -- which is why `head` carries a surrogate `id`.
+several rows -- so `head` is keyed by `(country, term_start)`: a country starts at most one term on a given
+day. The table is `WITHOUT ROWID` and has no surrogate.
 
-Dates are ISO-8601 text and years are integers, exactly as SQLite stores them. `termStart` and
-`termEnd` are `LocalDate`, through `@Convert(converter = Head.LocalDateConverter.class)`, a converter
-nested in `Head` and listed in the unit; `born` and `died` are `java.time.Year`, a basic type with no
-converter, and a query does arithmetic on one through a cast. Hibernate types a converted
-attribute by its column, so JPQL string functions (`SUBSTRING(h.termStart, 1, 4)`) still work on it
-and `EXTRACT` does not; the Criteria API reaches the text with `.cast(String.class)`. `head_kind` is
+Dates are ISO-8601 text and years are integers, exactly as SQLite stores them. `termStart`, part of the
+key, is a `String`, so a query compares it as text (`h.termStart >= '2000-01-01'`), and
+`getTermStartAsLocalDate()` is its typed, unmapped view. `termEnd` is a `LocalDate`, through
+`@Convert(converter = Head.LocalDateConverter.class)`, a converter nested in `Head` and listed in the unit;
+Hibernate types a converted attribute by its column, so JPQL string functions still work on it and `EXTRACT`
+does not, and the Criteria API reaches the text with `.as(String.class)`. `born` is an `Integer`, with
+`getBornAsYear()` as its typed view, and `died` is a `java.time.Year`, a basic type with no converter, which a
+query does arithmetic on through a cast. `head_kind` is
 mapped as the nested `Office.HeadKind` enum, with `@Enumerated(EnumType.STRING)`.
 
 When the file changes, dump its schema (`sqlite3 src/main/resources/heads_of_governments.sqlite3 .schema`) and bring the
@@ -68,18 +71,24 @@ SQLite error from the first query that reads it.
 | table | entity | identifier | association |
 | --- | --- | --- | --- |
 | `office` | `Office` | `@Id String country` | `@OneToMany(mappedBy = "office") List<Head> heads` |
-| `head` | `Head` | `@Id Long id` | `@ManyToOne Office office` over `country` |
+| `head` | `Head` | `@Id String country`, `@Id String termStart`, `@IdClass(HeadId.class)` | `@ManyToOne Office office` over `country` |
 
-Both are standalone: no superclass, no shared base, no id class. `Head`'s identifier is `Long`: `id` is an
-`INTEGER PRIMARY KEY`, an alias for SQLite's signed 64-bit `rowid`, and the row count does not bound its
-values. Hibernate's `hibernate.hbm2ddl.auto=validate`, which the unit does not set, would refuse it, since
-the driver reports the column as `Types#INTEGER` ("found integer, but expecting bigint").
+Both are standalone: no superclass and no shared base. `Head` keeps its two key columns as plain `@Id`
+attributes, so a query reaches them as `h.country` and `h.termStart` and the Criteria API as `Head_.country` and
+`Head_.termStart`, the same as any other column; this is an introductory project, so the entity keeps the shape of
+the table, and `@EmbeddedId` is not used. `HeadId` is the id class: a `record HeadId(String country, String
+termStart)`, which Jakarta Persistence 3.2 allows, with no annotation; its components match the `@Id` attributes by
+name and type, and the record's own `equals` and `hashCode` are the value equality the specification asks for. The
+specification does not require it to be `Serializable`; the providers' documentation does, so it is. The database is
+read-only, so a `HeadId` is only built to look a head up (`em.find(Head.class, new HeadId("FR", "1848-12-20"))`),
+and it is not listed in the unit.
 
 Conventions the two classes follow, and new members must keep:
 
 - **Nothing is updatable, and only the `@Id` column is insertable.** Every `@Column` and the
-  `@JoinColumn` carry `insertable = false, updatable = false`, except the `@Id` column, which carries
-  only `updatable = false` and so stays insertable by default. The file is opened read-only, so nothing is lost; the
+  `@JoinColumn` carry `insertable = false, updatable = false`, except the `@Id` columns (`Office`'s
+  `country`, `Head`'s `country` and `termStart`), which carry only `updatable = false` and so stay insertable
+  by default. The file is opened read-only, so nothing is lost; the
   mappings say so explicitly rather than relying on the driver to refuse.
 - **An element is left out only when its default is the right value.** So there is no
   `unique = false`, `length = 255`, `cascade = {}`, `catalog`/`schema`, `targetEntity` (the field
@@ -93,13 +102,13 @@ Conventions the two classes follow, and new members must keep:
   `columnDefinition`, `options`, `check`, `comment`, `table`, `precision`, `scale`, `secondPrecision`, `indexes` or `uniqueConstraints`. The database's own `CHECK` constraints
   and indexes are not repeated in the annotations.
 - **Attributes are declared in table column order**, accessors and fields alike, with an association
-  placed directly after the column it maps (`office` right after `id`, as the next thing in `head`
-  is `country`). `Head` does not map `country` as a basic attribute; the association owns the column.
+  placed directly after the column it maps (`office` right after `country`, which it maps read-only; the
+  `@Id` attribute owns the column).
 - **Member order inside a class**: nested types, then `// ----` the `protected` no-arg constructor,
   then the accessors under `// ----` markers, then the `private` fields last. Markers are line comments
   padded with dashes to column 120.
-- `toString`, `equals` and `hashCode` are not overridden; identity equality is fine for a read-only
-  mapping, and an association must never take part in either anyway.
+- `equals` and `hashCode` compare the identifier alone: `Office`'s `country`, and `Head`'s and `HeadId`'s
+  `country` and `termStart`. An association never takes part in them, nor in `toString`.
 
 ### The persistence unit and the static metamodel
 
@@ -157,7 +166,7 @@ the plain `verify` in CI does not, so no `*IT` class runs there. Nothing needs a
 and any IT read the SQLite file in `db/`. As of maven-failsafe-plugin 3.6.0 `-DskipTests` reaches
 surefire alone, so dropping the ITs from a `_verify` run takes `-DskipITs`.
 
-A check against the file that proves a mapping change is sound: open the unit, `find` a `Head` by id,
+A check against the file that proves a mapping change is sound: open the unit, `find` a `Head` by its `HeadId`,
 walk to its `Office` and back to `getHeads()`, and count both tables -- 285 heads, 5 offices.
 
 ## Dependency convergence

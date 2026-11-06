@@ -59,38 +59,38 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
          * The completed terms; the incumbent's, measured to date('now'), is checked against today.
          */
         private static final List<List<Object>> EXPECTED = List.of(
-                row(229L, "KR", 12L, "1981-02-25", "1988-02-24", "전두환", "민주정의당", 1931L, 2021L,
+                row("KR", 12L, "1981-02-25", "1988-02-24", "전두환", "민주정의당", 1931L, 2021L,
                     2555L),
-                row(225L, "KR", 8L, "1972-12-27", "1978-12-26", "박정희", "민주공화당", 1917L, 1979L,
+                row("KR", 8L, "1972-12-27", "1978-12-26", "박정희", "민주공화당", 1917L, 1979L,
                     2190L),
-                row(230L, "KR", 13L, "1988-02-25", "1993-02-24", "노태우", "민주정의당/민주자유당/무소속", 1932L,
+                row("KR", 13L, "1988-02-25", "1993-02-24", "노태우", "민주정의당/민주자유당/무소속", 1932L,
                     2021L, 1826L),
-                row(234L, "KR", 17L, "2008-02-25", "2013-02-24", "이명박", "한나라당/새누리당", 1941L, null,
+                row("KR", 17L, "2008-02-25", "2013-02-24", "이명박", "한나라당/새누리당", 1941L, null,
                     1826L),
-                row(231L, "KR", 14L, "1993-02-25", "1998-02-24", "김영삼", "민주자유당/신한국당/무소속", 1929L,
+                row("KR", 14L, "1993-02-25", "1998-02-24", "김영삼", "민주자유당/신한국당/무소속", 1929L,
                     2015L, 1825L),
-                row(232L, "KR", 15L, "1998-02-25", "2003-02-24", "김대중", "새정치국민회의/새천년민주당/무소속", 1924L,
+                row("KR", 15L, "1998-02-25", "2003-02-24", "김대중", "새정치국민회의/새천년민주당/무소속", 1924L,
                     2009L, 1825L),
-                row(233L, "KR", 16L, "2003-02-25", "2008-02-24", "노무현", "새천년민주당/무소속/열린우리당/무소속",
+                row("KR", 16L, "2003-02-25", "2008-02-24", "노무현", "새천년민주당/무소속/열린우리당/무소속",
                     1946L, 2009L, 1825L),
-                row(236L, "KR", 19L, "2017-05-10", "2022-05-09", "문재인", "더불어민주당", 1953L, null,
+                row("KR", 19L, "2017-05-10", "2022-05-09", "문재인", "더불어민주당", 1953L, null,
                     1825L),
-                row(218L, "KR", 1L, "1948-07-24", "1952-08-14", "이승만", "대한독립촉성국민회/자유당", 1875L,
+                row("KR", 1L, "1948-07-24", "1952-08-14", "이승만", "대한독립촉성국민회/자유당", 1875L,
                     1965L, 1482L),
-                row(235L, "KR", 18L, "2013-02-25", "2017-03-10", "박근혜", "새누리당/자유한국당", 1952L, null,
+                row("KR", 18L, "2013-02-25", "2017-03-10", "박근혜", "새누리당/자유한국당", 1952L, null,
                     1474L),
-                row(219L, "KR", 2L, "1952-08-15", "1956-08-14", "이승만", "자유당", 1875L, 1965L, 1460L),
-                row(223L, "KR", 6L, "1967-07-01", "1971-06-30", "박정희", "민주공화당", 1917L, 1979L,
+                row("KR", 2L, "1952-08-15", "1956-08-14", "이승만", "자유당", 1875L, 1965L, 1460L),
+                row("KR", 6L, "1967-07-01", "1971-06-30", "박정희", "민주공화당", 1917L, 1979L,
                     1460L),
-                row(220L, "KR", 3L, "1956-08-15", "1960-04-27", "이승만", "자유당", 1875L, 1965L, 1351L),
-                row(222L, "KR", 5L, "1963-12-17", "1967-06-30", "박정희", "민주공화당", 1917L, 1979L,
+                row("KR", 3L, "1956-08-15", "1960-04-27", "이승만", "자유당", 1875L, 1965L, 1351L),
+                row("KR", 5L, "1963-12-17", "1967-06-30", "박정희", "민주공화당", 1917L, 1979L,
                     1291L),
-                row(237L, "KR", 20L, "2022-05-10", "2025-04-04", "윤석열", "국민의힘", 1960L, null, 1060L),
-                row(221L, "KR", 4L, "1960-08-12", "1962-03-22", "윤보선", "무소속", 1897L, 1990L, 587L),
-                row(224L, "KR", 7L, "1971-07-01", "1972-12-26", "박정희", "민주공화당", 1917L, 1979L, 544L),
-                row(226L, "KR", 9L, "1978-12-27", "1979-10-26", "박정희", "민주공화당", 1917L, 1979L, 303L),
-                row(227L, "KR", 10L, "1979-12-06", "1980-08-16", "최규하", "무소속", 1919L, 2006L, 254L),
-                row(228L, "KR", 11L, "1980-08-27", "1981-02-24", "전두환", "무소속/민주정의당", 1931L, 2021L,
+                row("KR", 20L, "2022-05-10", "2025-04-04", "윤석열", "국민의힘", 1960L, null, 1060L),
+                row("KR", 4L, "1960-08-12", "1962-03-22", "윤보선", "무소속", 1897L, 1990L, 587L),
+                row("KR", 7L, "1971-07-01", "1972-12-26", "박정희", "민주공화당", 1917L, 1979L, 544L),
+                row("KR", 9L, "1978-12-27", "1979-10-26", "박정희", "민주공화당", 1917L, 1979L, 303L),
+                row("KR", 10L, "1979-12-06", "1980-08-16", "최규하", "무소속", 1919L, 2006L, 254L),
+                row("KR", 11L, "1980-08-27", "1981-02-24", "전두환", "무소속/민주정의당", 1931L, 2021L,
                     181L)
         );
 
@@ -111,11 +111,11 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                     .getResultList());
             // the incumbent's term runs to today, so its length is checked apart
             final var rows = rows(list);
-            assertThat(rows).filteredOn(r -> r.get(4) != null).containsExactlyElementsOf(EXPECTED);
-            assertThat(rows).filteredOn(r -> r.get(4) == null).singleElement().satisfies(r -> {
+            assertThat(rows).filteredOn(r -> r.get(3) != null).containsExactlyElementsOf(EXPECTED);
+            assertThat(rows).filteredOn(r -> r.get(3) == null).singleElement().satisfies(r -> {
                 final var today = LocalDate.now(ZoneOffset.UTC);
-                assertThat(r.get(9)).isEqualTo(
-                        ChronoUnit.DAYS.between(LocalDate.parse((String) r.get(3)), today));
+                assertThat(r.get(8)).isEqualTo(
+                        ChronoUnit.DAYS.between(LocalDate.parse((String) r.get(2)), today));
             });
         }
     }
@@ -354,9 +354,9 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
         void nativeQuery() {
             final var list = __Exercises_TestUtils.apply(em -> (List<?>) em.createNativeQuery(
                             """
-                                    SELECT SUBSTR(term_start, 1, 3) || '0s' AS decade,
-                                           COUNT(*)                         AS terms,
-                                           GROUP_CONCAT(DISTINCT country)   AS countries
+                                    SELECT SUBSTR(term_start, 1, 3) || '0s'                AS decade,
+                                           COUNT(*)                                        AS terms,
+                                           GROUP_CONCAT(DISTINCT country ORDER BY country) AS countries
                                     FROM head
                                     GROUP BY decade
                                     ORDER BY decade ASC"""
@@ -887,8 +887,9 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                     )
                     .getResultList());
             assertThat(rows(list.stream()
-                                    .map(r -> new Object[]{((Head) r[0]).getId(),
-                                            ((Head) r[1]).getId()})
+                                    .map(r -> new Object[]{((Head) r[0]).getOffice().getCountry(),
+                                            ((Head) r[0]).getTermStart(),
+                                            ((Head) r[1]).getTermStart()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
@@ -911,8 +912,9 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                         .getResultList();
             });
             assertThat(rows(list.stream()
-                                    .map(r -> new Object[]{((Head) r[0]).getId(),
-                                            ((Head) r[1]).getId()})
+                                    .map(r -> new Object[]{((Head) r[0]).getOffice().getCountry(),
+                                            ((Head) r[0]).getTermStart(),
+                                            ((Head) r[1]).getTermStart()})
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }

@@ -51,11 +51,15 @@ class Office_Test {
     @Nested
     class EqualsTest {
 
-        private static Head of(final Long id) throws ReflectiveOperationException {
+        private static Head of(final String country, final String termStart)
+                throws ReflectiveOperationException {
             final var head = new Head();
-            final var field = Head.class.getDeclaredField("id");
-            field.setAccessible(true);
-            field.set(head, id);
+            final var countryField = Head.class.getDeclaredField("country");
+            countryField.setAccessible(true);
+            countryField.set(head, country);
+            final var termStartField = Head.class.getDeclaredField("termStart");
+            termStartField.setAccessible(true);
+            termStartField.set(head, termStart);
             return head;
         }
 
@@ -63,7 +67,7 @@ class Office_Test {
         void __() throws ReflectiveOperationException {
             EqualsVerifier.forClass(Office.class)
                     .suppress(Warning.SURROGATE_KEY)
-                    .withPrefabValues(Head.class, of(1L), of(2L))
+                    .withPrefabValues(Head.class, of("FR", "1848-12-20"), of("GB", "1721-04-03"))
                     .verify();
         }
     }

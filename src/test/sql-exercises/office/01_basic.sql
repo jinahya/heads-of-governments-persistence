@@ -35,7 +35,7 @@ WHERE country = UPPER(:country)
 
 -- ----------------------------------------------------------------------------------------- HOG_OFFICE_B_02 The offices
 -- The front page lists every office with the title of its head, by country code.
-SELECT *
+SELECT country, head_kind, head_title
 FROM office
 ORDER BY country ASC
 ;
@@ -43,7 +43,7 @@ ORDER BY country ASC
 
 -- ------------------------------------------------------------------- HOG_OFFICE_B_03 Offices where a number can repeat
 -- The offices whose numbering says a person keeps the same number on each term, by country code. There, number does not
--- identify a term, which is why head carries an id.
+-- identify a term, which is why head is keyed by country and term_start.
 SELECT *
 FROM office
 WHERE numbering LIKE '%keeps the same number%'

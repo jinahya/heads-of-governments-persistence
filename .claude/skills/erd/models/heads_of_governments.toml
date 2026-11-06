@@ -8,7 +8,7 @@ output = "docs/erd"
 pk = ["country"]
 
 [table.head]
-pk = ["id"]
+pk = ["country", "term_start"]
 [[table.head.fk]]
 columns = ["country"]
 references = "office"

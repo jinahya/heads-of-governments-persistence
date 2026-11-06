@@ -36,7 +36,7 @@ ORDER BY g.country ASC
 
 -- ------------------------------------------------------------------------------------ HOG_SCHEMA_B_03 Terms per office
 -- Each office with the kind of head it has and how many terms the list holds.
-SELECT g.*, COUNT(h.id) AS terms
+SELECT g.country, g.head_kind, COUNT(h.term_start) AS terms
 FROM office g
          LEFT JOIN head h ON h.country = g.country
 GROUP BY g.country
@@ -71,7 +71,7 @@ ORDER BY g.country ASC, h.term_start ASC
 -- ------------------------------------------------------------------------- HOG_SCHEMA_B_07 Terms since 2000 per office
 -- Each office with the number of terms that began in 2000 or later, most first and, at a tie, by country code. The date
 -- goes into the join condition, not WHERE, so an office with no such term would still show, with 0.
-SELECT g.*, COUNT(h.id) AS terms
+SELECT g.*, COUNT(h.term_start) AS terms
 FROM office g
          LEFT JOIN head h ON h.country = g.country AND h.term_start >= '2000-01-01'
 GROUP BY g.country
