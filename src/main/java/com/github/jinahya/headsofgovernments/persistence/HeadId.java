@@ -20,6 +20,7 @@ package com.github.jinahya.headsofgovernments.persistence;
  * #L%
  */
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -40,4 +41,7 @@ import java.io.Serializable;
  */
 public record HeadId(String country, String termStart)
         implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -1L;
 }
