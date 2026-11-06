@@ -41,7 +41,7 @@ import static com.github.jinahya.headsofgovernments.persistence.exercises.__Exer
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Answers the exercises of {@code src/test/sql/exercises/head_exercises_02_intermediate.sql},
+ * Answers the exercises of {@code src/test/sql-exercises/head/02_intermediate.sql},
  * against {@code heads_of_governments.sqlite3}; a nested class per exercise, which answers it
  * with JPQL and with the Criteria API, or with a native query where neither can, and checks that it
  * gives what the SQL of the file gives.
@@ -993,5 +993,15 @@ class Head_Exercises_02_Intermediate_PersistenceTest {
                                     .toList()))
                     .containsExactlyElementsOf(EXPECTED);
         }
+    }
+
+    @DisplayName("HOG_HEAD_I_18: Repeated term starts")
+    @Nested
+    class HOG_HEAD_I_18_Test {
+    }
+
+    @DisplayName("HOG_HEAD_I_19: More than one incumbent")
+    @Nested
+    class HOG_HEAD_I_19_Test {
     }
 }

@@ -42,17 +42,15 @@ ORDER BY country ASC, term_start ASC
 
 
 -- ------------------------------------------------------------------------------------- HOG_HEAD_A_02 Longest in office
--- Per country, the person with the most days in office over all their terms, counting an open term to today; ties
--- share the place.
+-- Per country, the person with the most days in office over all their terms, counting an open term to today; ties share
+-- the place.
 SELECT country, name, terms, days
 FROM (SELECT country,
              name,
-             COUNT(*)                                      AS terms,
-             CAST(SUM(julianday(COALESCE(term_end, date('now'))) -
-                      julianday(term_start)) AS INTEGER)   AS days,
+             COUNT(*)                                                                                 AS terms,
+             CAST(SUM(julianday(COALESCE(term_end, date('now'))) - julianday(term_start)) AS INTEGER) AS days,
              RANK() OVER (PARTITION BY country
-                 ORDER BY SUM(julianday(COALESCE(term_end, date('now'))) -
-                              julianday(term_start)) DESC) AS place
+                 ORDER BY SUM(julianday(COALESCE(term_end, date('now'))) - julianday(term_start)) DESC) AS place
       FROM head
       GROUP BY country, name)
 WHERE place = 1
@@ -61,8 +59,8 @@ ORDER BY country ASC
 
 
 -- -------------------------------------------------------------------------- HOG_HEAD_A_03 The longest run of one party
--- Per country, the longest unbroken run of consecutive terms held by the same party, with when it began and ended;
--- a run is counted in terms, not days, and a succession ('UNR/UDR') is a party of its own.
+-- Per country, the longest unbroken run of consecutive terms held by the same party, with when it began and ended; a
+-- run is counted in terms, not days, and a succession ('UNR/UDR') is a party of its own.
 WITH ordered AS (SELECT country,
                         party,
                         term_start,

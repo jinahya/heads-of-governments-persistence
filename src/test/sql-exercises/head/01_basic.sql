@@ -28,7 +28,8 @@
 
 
 -- ------------------------------------------------------------------------------ HOG_HEAD_B_01 Who held office on a day
--- A reader gives a date and wants each country's head on that day. A country whose office was vacant is absent.
+-- A reader gives a date and wants each country's head on that day. A country whose office was vacant is absent; on a
+-- handover day, the day one term ends and the next begins, both heads show.
 SELECT *
 FROM head
 WHERE term_start <= :date
@@ -108,7 +109,7 @@ LIMIT 10
 
 -- -------------------------------------------------------------------- HOG_HEAD_B_10 A country's list, ten terms a page
 -- A reader pages through a country's list ten terms at a time, first to latest, and asks for the second page.
--- term_start is distinct within a country, so the order, and with it each page, is fixed.
+-- term_start is distinct within a country (HOG_HEAD_I_18 checks it), so the order, and with it each page, is fixed.
 SELECT *
 FROM head
 WHERE country = :country
@@ -124,4 +125,27 @@ SELECT DISTINCT country, name, born, died
 FROM head
 WHERE born BETWEEN 1940 AND 1949
 ORDER BY died DESC NULLS FIRST, born ASC, country ASC, name ASC
+;
+
+
+-- ------------------------------------------------------------------------- HOG_HEAD_B_12 A term by its official number
+-- A reader has a country and a term number, as the official list writes it, and wants that term. The number need not be
+-- unique: where a person keeps one number on each term (HOG_OFFICE_B_03), it gives every term of that person, earliest
+-- first.
+SELECT *
+FROM head
+WHERE country = :country
+  AND number = :number
+ORDER BY term_start ASC
+;
+
+
+-- -------------------------------------------------------------------- HOG_HEAD_B_13 Terms that end after the head died
+-- A term cannot outlast its head. List the terms whose end falls in a year after the head's death, by country, then in
+-- date order; the check passes when nothing comes back.
+SELECT *
+FROM head
+WHERE died IS NOT NULL
+  AND CAST(SUBSTR(term_end, 1, 4) AS INTEGER) > died
+ORDER BY country ASC, term_start ASC
 ;

@@ -69,12 +69,12 @@ ORDER BY g.country ASC
 
 
 -- ----------------------------------------------------------------------------- HOG_SCHEMA_I_04 Living heads per office
--- Per office, with its title, how many of its heads are still living, the incumbent included, by country code. A name
--- is taken as one person within a country.
+-- Per office, with its title, how many of its heads are still living, the incumbent included, and 0 where none is, by
+-- country code. A name is taken as one person within a country; the condition on died goes into the join, so an office
+-- without a living head still shows.
 SELECT g.*, COUNT(DISTINCT h.name) AS living
 FROM office g
-         JOIN head h ON h.country = g.country
-WHERE h.died IS NULL
+         LEFT JOIN head h ON h.country = g.country AND h.died IS NULL
 GROUP BY g.country
 ORDER BY g.country ASC
 ;
@@ -82,12 +82,13 @@ ORDER BY g.country ASC
 
 -- --------------------------------------------------------------------- HOG_SCHEMA_I_05 Terms per century, side by side
 -- Per office, with its title, the terms begun in each century from the 18th to the 21st, one column per century, by
--- country code. A SUM of CASE per column turns the rows of a GROUP BY into columns.
+-- country code. A century is counted the way people say the 1800s, so 1800 is in the 19th, as in HOG_SCHEMA_A_06. A SUM
+-- of CASE per column turns the rows of a GROUP BY into columns.
 SELECT g.*,
-       SUM(CASE WHEN h.term_start < '1800' THEN 1 ELSE 0 END)                            AS c18,
+       SUM(CASE WHEN h.term_start >= '1700' AND h.term_start < '1800' THEN 1 ELSE 0 END) AS c18,
        SUM(CASE WHEN h.term_start >= '1800' AND h.term_start < '1900' THEN 1 ELSE 0 END) AS c19,
        SUM(CASE WHEN h.term_start >= '1900' AND h.term_start < '2000' THEN 1 ELSE 0 END) AS c20,
-       SUM(CASE WHEN h.term_start >= '2000' THEN 1 ELSE 0 END)                           AS c21
+       SUM(CASE WHEN h.term_start >= '2000' AND h.term_start < '2100' THEN 1 ELSE 0 END) AS c21
 FROM office g
          JOIN head h ON h.country = g.country
 GROUP BY g.country

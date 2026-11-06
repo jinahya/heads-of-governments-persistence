@@ -42,7 +42,7 @@ import static com.github.jinahya.headsofgovernments.persistence.exercises.__Exer
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Answers the exercises of {@code src/test/sql/exercises/_schema_exercises_02_intermediate.sql},
+ * Answers the exercises of {@code src/test/sql-exercises/__/02_intermediate.sql},
  * against {@code heads_of_governments.sqlite3}; a nested class per exercise, which answers it
  * with JPQL and with the Criteria API, or with a native query where neither can, and checks that it
  * gives what the SQL of the file gives.
@@ -50,7 +50,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class _Schema_Exercises_02_Intermediate_PersistenceTest {
+class __Exercises_02_Intermediate_PersistenceTest {
 
     @DisplayName("HOG_SCHEMA_I_01: Presidents against prime ministers")
     @Nested

@@ -297,6 +297,26 @@
       </plugins>
     </pluginManagement>
     <plugins>
+      <!-- src/test/java-exercises holds the tests that answer the exercises of src/test/sql-exercises, a class per
+           .sql file; src/test/java keeps to the persistence tests. -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-exercises-test-source</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/test/java-exercises</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>

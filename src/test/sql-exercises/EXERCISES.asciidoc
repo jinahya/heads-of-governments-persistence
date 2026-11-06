@@ -13,7 +13,7 @@ Run a file as a whole:
 
 [source,sh]
 ----
-sqlite3 -readonly src/main/resources/heads_of_governments.sqlite3 < src/test/sql/exercises/<file>.sql
+sqlite3 -readonly src/main/resources/heads_of_governments.sqlite3 < src/test/sql-exercises/<section>/<NN>_<level>.sql
 ----
 
 == head
@@ -26,9 +26,9 @@ The `head` table: a row per term of a head of government.
 ==== HOG_HEAD_B_01: Who held office on a day
 
 A reader gives a date and wants each country's head on that day.
-A country whose office was vacant is absent.
+A country whose office was vacant is absent; on a handover day, the day one term ends and the next begins, both heads show.
 
-.`head_exercises_01_basic.sql`, HOG_HEAD_B_01
+.`head/01_basic.sql`, HOG_HEAD_B_01
 [%collapsible]
 ====
 [source,sql]
@@ -47,7 +47,7 @@ ORDER BY country ASC
 
 A reader wants a country's heads, first to latest, as the source lists them.
 
-.`head_exercises_01_basic.sql`, HOG_HEAD_B_02
+.`head/01_basic.sql`, HOG_HEAD_B_02
 [%collapsible]
 ====
 [source,sql]
@@ -65,7 +65,7 @@ ORDER BY term_start ASC
 
 The dashboard shows who is in office now, per country, and since when.
 
-.`head_exercises_01_basic.sql`, HOG_HEAD_B_03
+.`head/01_basic.sql`, HOG_HEAD_B_03
 [%collapsible]
 ====
 [source,sql]
@@ -96,7 +96,7 @@ ORDER BY country ASC
 A reader types part of a name and wants every term of anyone matching it.
 LIKE folds case for ASCII letters only, so 'churchill' finds Churchill and '吉田' finds 吉田茂; the index on name does not help a leading wildcard.
 
-.`head_exercises_01_basic.sql`, HOG_HEAD_B_04
+.`head/01_basic.sql`, HOG_HEAD_B_04
 [%collapsible]
 ====
 [source,sql]
@@ -114,7 +114,7 @@ ORDER BY country ASC, term_start ASC
 
 A timeline wants every term that began in a given year, in any country, in date order.
 
-.`head_exercises_01_basic.sql`, HOG_HEAD_B_05
+.`head/01_basic.sql`, HOG_HEAD_B_05
 [%collapsible]
 ====
 [source,sql]
@@ -133,7 +133,7 @@ ORDER BY term_start ASC, country ASC
 The ten earliest-born heads still living, in any country, oldest first.
 A person with several terms appears once; at the same year of birth, by country, then by name.
 
-.`head_exercises_01_basic.sql`, HOG_HEAD_B_06
+.`head/01_basic.sql`, HOG_HEAD_B_06
 [%collapsible]
 ====
 [source,sql]
@@ -169,7 +169,7 @@ LIMIT 10
 
 The heads whose year of death less their year of birth is 93 or more, once per person, the greatest first and, at a tie, by country, then by name. born and died are years, so the age is as fine as the data allows and may be a year too high.
 
-.`head_exercises_01_basic.sql`, HOG_HEAD_B_08
+.`head/01_basic.sql`, HOG_HEAD_B_08
 [%collapsible]
 ====
 [source,sql]
@@ -205,7 +205,7 @@ ORDER BY age DESC, country ASC, name ASC
 
 A news page lists the ten terms that began most recently, in any country, the latest first; on the same day, by country.
 
-.`head_exercises_01_basic.sql`, HOG_HEAD_B_09
+.`head/01_basic.sql`, HOG_HEAD_B_09
 [%collapsible]
 ====
 [source,sql]
@@ -239,9 +239,9 @@ LIMIT 10
 ==== HOG_HEAD_B_10: A country's list, ten terms a page
 
 A reader pages through a country's list ten terms at a time, first to latest, and asks for the second page.
-term_start is distinct within a country, so the order, and with it each page, is fixed.
+term_start is distinct within a country (HOG_HEAD_I_18 checks it), so the order, and with it each page, is fixed.
 
-.`head_exercises_01_basic.sql`, HOG_HEAD_B_10
+.`head/01_basic.sql`, HOG_HEAD_B_10
 [%collapsible]
 ====
 [source,sql]
@@ -261,7 +261,7 @@ LIMIT 10 OFFSET 10
 The heads born from 1940 to 1949, once per person: the living first, then the dead, the latest death first; then by year of birth, by country and by name.
 died is NULL for the living, and DESC alone would put them last.
 
-.`head_exercises_01_basic.sql`, HOG_HEAD_B_11
+.`head/01_basic.sql`, HOG_HEAD_B_11
 [%collapsible]
 ====
 [source,sql]
@@ -293,6 +293,48 @@ ORDER BY died DESC NULLS FIRST, born ASC, country ASC, name ASC
 
 ====
 
+[[HOG_HEAD_B_12]]
+==== HOG_HEAD_B_12: A term by its official number
+
+A reader has a country and a term number, as the official list writes it, and wants that term.
+The number need not be unique: where a person keeps one number on each term (HOG_OFFICE_B_03), it gives every term of that person, earliest first.
+
+.`head/01_basic.sql`, HOG_HEAD_B_12
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM head
+WHERE country = :country
+  AND number = :number
+ORDER BY term_start ASC
+----
+
+====
+
+[[HOG_HEAD_B_13]]
+==== HOG_HEAD_B_13: Terms that end after the head died
+
+A term cannot outlast its head.
+List the terms whose end falls in a year after the head's death, by country, then in date order; the check passes when nothing comes back.
+
+.`head/01_basic.sql`, HOG_HEAD_B_13
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM head
+WHERE died IS NOT NULL
+  AND CAST(SUBSTR(term_end, 1, 4) AS INTEGER) > died
+ORDER BY country ASC, term_start ASC
+----
+
+// NOT YET RUN
+
+====
+
 === Intermediate
 
 [[HOG_HEAD_I_01]]
@@ -300,13 +342,13 @@ ORDER BY died DESC NULLS FIRST, born ASC, country ASC, name ASC
 
 For one country, each term with its length in days, longest first; the incumbent's term runs to today.
 
-.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_01
+.`head/02_intermediate.sql`, HOG_HEAD_I_01
 [%collapsible]
 ====
 [source,sql]
 ----
 SELECT *,
-       CAST(julianday(COALESCE(term_end, date ('now'))) - julianday(term_start) AS INTEGER) AS days
+       CAST(julianday(COALESCE(term_end, date('now'))) - julianday(term_start) AS INTEGER) AS days
 FROM head
 WHERE country = :country
 ORDER BY days DESC, term_start ASC
@@ -319,7 +361,7 @@ ORDER BY days DESC, term_start ASC
 
 Per country, the youngest, the oldest and the average age at which a term began, in whole years of the calendar (the year of term_start less the year of birth; born is a year, so that is as fine as the data allows).
 
-.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_03
+.`head/02_intermediate.sql`, HOG_HEAD_I_03
 [%collapsible]
 ====
 [source,sql]
@@ -354,7 +396,7 @@ ORDER BY g.country ASC
 For one country, each party with how many terms it held and how many different persons, most terms first.
 A party written as a succession ('RPR/UMP') counts as its own value.
 
-.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_04
+.`head/02_intermediate.sql`, HOG_HEAD_I_04
 [%collapsible]
 ====
 [source,sql]
@@ -373,7 +415,7 @@ ORDER BY terms DESC, party ASC
 
 Per country, the former heads still living, with the day their last term ended, most recent first.
 
-.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_05
+.`head/02_intermediate.sql`, HOG_HEAD_I_05
 [%collapsible]
 ====
 [source,sql]
@@ -412,7 +454,7 @@ ORDER BY country ASC, last_term_end DESC NULLS LAST
 
 Across all countries, how many terms began in each decade, with the countries that had one.
 
-.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_06
+.`head/02_intermediate.sql`, HOG_HEAD_I_06
 [%collapsible]
 ====
 [source,sql]
@@ -450,9 +492,10 @@ ORDER BY decade ASC
 ==== HOG_HEAD_I_08: The first and the latest terms of each country
 
 Per country, its first :n terms and its most recent :n, each row saying which it is.
-A row is 'first' when it is among the first :n, so with a country of 2 * :n terms or fewer the two sets overlap and 'first' wins.
+A row is 'first' when it is among the first :n, so with a country of fewer than 2 * :n terms the two sets overlap and 'first' wins.
+term_start is distinct within a country (HOG_HEAD_I_18 checks it), so the numbering has no ties.
 
-.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_08
+.`head/02_intermediate.sql`, HOG_HEAD_I_08
 [%collapsible]
 ====
 [source,sql]
@@ -460,7 +503,8 @@ A row is 'first' when it is among the first :n, so with a country of 2 * :n term
 SELECT *,
        CASE WHEN first_rn <= :n THEN 'first' ELSE 'latest' END AS which
 FROM (SELECT h.*,
-             ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start ASC)  AS first_rn, ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start DESC) AS latest_rn
+             ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start ASC)  AS first_rn,
+             ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start DESC) AS latest_rn
       FROM head AS h)
 WHERE first_rn <= :n
    OR latest_rn <= :n
@@ -475,7 +519,7 @@ ORDER BY country ASC, term_start ASC
 Per country, its first two terms, the earlier first.
 Terms, not persons: a head whose first two terms were consecutive appears twice. term_start is NOT NULL and distinct within a country, so the numbering has no ties.
 
-.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_09
+.`head/02_intermediate.sql`, HOG_HEAD_I_09
 [%collapsible]
 ====
 [source,sql]
@@ -511,7 +555,7 @@ ORDER BY country ASC, term_start ASC
 
 Per country, up to three heads with two or more terms, most terms first and, at a tie, the earlier first term first; a name is taken as one person.
 
-.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_10
+.`head/02_intermediate.sql`, HOG_HEAD_I_10
 [%collapsible]
 ====
 [source,sql]
@@ -555,48 +599,30 @@ ORDER BY country ASC, place ASC
 ==== HOG_HEAD_I_11: Party share of completed terms, the top three per country
 
 Per country, over the terms that have ended, each party's share of the days in office as a percentage of that country's total (its tenure share), the top three parties; a succession ('A/B') counts as a party of its own.
+At a tie in days, by party.
 
-.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_11
+.`head/02_intermediate.sql`, HOG_HEAD_I_11
 [%collapsible]
 ====
 [source,sql]
 ----
+WITH totals AS (SELECT country,
+                       party,
+                       SUM(julianday(term_end) - julianday(term_start)) AS days
+                FROM head
+                WHERE term_end IS NOT NULL
+                GROUP BY country, party),
+     placed AS (SELECT *,
+                       ROUND(100.0 * days / NULLIF(SUM(days) OVER (PARTITION BY country), 0), 1) AS tenure_share,
+                       ROW_NUMBER() OVER (PARTITION BY country ORDER BY days DESC, party ASC)    AS place
+                FROM totals)
 SELECT country, party, tenure_share
-FROM (SELECT country,
-             party,
-             ROUND(100.0 * SUM(julianday(term_end) - julianday(term_start))
-                       / SUM(SUM(julianday(term_end) - julianday(term_start))) OVER (PARTITION BY country),
-                   1) AS  tenure_share,
-             ROW_NUMBER() OVER (PARTITION BY country
-                 ORDER BY SUM(julianday(term_end) - julianday(term_start)) DESC)             AS place
-      FROM head
-      WHERE term_end IS NOT NULL
-      GROUP BY country, party)
+FROM placed
 WHERE place <= 3
-ORDER BY country ASC, tenure_share DESC
+ORDER BY country ASC, place ASC
 ----
 
-....
-+---------+------------------------------------+--------------+
-| country |               party                | tenure_share |
-+---------+------------------------------------+--------------+
-| FR      | Alliance_républicaine_démocratique |         14.6 |
-| FR      | PS                                 |         12.8 |
-| FR      | Républicain_opportuniste           |         10.8 |
-| GB      | Conservative                       |         32.1 |
-| GB      | Whig                               |         22.8 |
-| GB      | Tory                               |         19.3 |
-| JP      | 自由民主党                         |         46.1 |
-| JP      | 無所属                             |         24.6 |
-| JP      | 立憲政友会                         |          8.5 |
-| KR      | 민주공화당                         |         21.3 |
-| KR      | 자유당                             |         10.4 |
-| KR      | 민주정의당                         |          9.4 |
-| US      | Democratic                         |         39.0 |
-| US      | Republican                         |         37.3 |
-| US      | Democratic-Republican              |         10.2 |
-+---------+------------------------------------+--------------+
-....
+// NOT YET RUN
 
 ====
 
@@ -606,7 +632,7 @@ ORDER BY country ASC, tenure_share DESC
 Per country, how many terms ended in the same year their head died, by country code.
 It catches the heads who died in office, but also those who left office and died later that year; died is a year, so the data cannot tell the two apart.
 
-.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_12
+.`head/02_intermediate.sql`, HOG_HEAD_I_12
 [%collapsible]
 ====
 [source,sql]
@@ -638,7 +664,7 @@ ORDER BY g.country ASC
 
 Across all countries, how many terms began on each day of the week, Sunday first. strftime('%w', ...) gives the day as a digit, Sunday as 0; a CASE turns it into a name.
 
-.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_13
+.`head/02_intermediate.sql`, HOG_HEAD_I_13
 [%collapsible]
 ====
 [source,sql]
@@ -680,7 +706,7 @@ ORDER BY strftime('%w', term_start) ASC
 For the heads who have died, the years between the end of their last term and their death, the ten longest first.
 A name is taken as one person within a country; at a tie, by country, then by name.
 
-.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_14
+.`head/02_intermediate.sql`, HOG_HEAD_I_14
 [%collapsible]
 ====
 [source,sql]
@@ -721,7 +747,7 @@ LIMIT 10
 
 The years in which a term began in four or more of the countries, with how many terms began and in how many countries, oldest first.
 
-.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_15
+.`head/02_intermediate.sql`, HOG_HEAD_I_15
 [%collapsible]
 ====
 [source,sql]
@@ -752,7 +778,7 @@ Within a country, a term should not begin before the one before it has ended.
 List each pair of terms of a country where the later begins before the earlier ends, an open term running to '9999-12-31', by country, then by the earlier term; the check passes when nothing comes back.
 A handover day, the end of one term and the start of the next, is not an overlap.
 
-.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_16
+.`head/02_intermediate.sql`, HOG_HEAD_I_16
 [%collapsible]
 ====
 [source,sql]
@@ -777,7 +803,7 @@ no rows.
 The terms whose head, in years of the calendar, was fifteen or more years younger than the average age at which that country's terms began, by country, then in date order.
 A correlated subquery gives each term its own country's average.
 
-.`head_exercises_02_intermediate.sql`, HOG_HEAD_I_17
+.`head/02_intermediate.sql`, HOG_HEAD_I_17
 [%collapsible]
 ====
 [source,sql]
@@ -812,6 +838,51 @@ ORDER BY h.country ASC, h.term_start ASC
 
 ====
 
+[[HOG_HEAD_I_18]]
+==== HOG_HEAD_I_18: Repeated term starts
+
+Several exercises rely on term_start being distinct within a country, which the schema does not declare.
+List each country and start date held by more than one term, with how many, by country, then by date; the check passes when nothing comes back.
+
+.`head/02_intermediate.sql`, HOG_HEAD_I_18
+[%collapsible]
+====
+[source,sql]
+----
+SELECT country, term_start, COUNT(*) AS terms
+FROM head
+GROUP BY country, term_start
+HAVING COUNT(*) > 1
+ORDER BY country ASC, term_start ASC
+----
+
+// NOT YET RUN
+
+====
+
+[[HOG_HEAD_I_19]]
+==== HOG_HEAD_I_19: More than one incumbent
+
+A country has one head in office now, at most; HOG_OFFICE_I_03 checks the other side, an office with none.
+List the countries with more than one term that has not ended, and how many; the check passes when nothing comes back.
+
+.`head/02_intermediate.sql`, HOG_HEAD_I_19
+[%collapsible]
+====
+[source,sql]
+----
+SELECT country, COUNT(*) AS open_terms
+FROM head
+WHERE term_end IS NULL
+GROUP BY country
+HAVING COUNT(*) > 1
+ORDER BY country ASC
+----
+
+// NOT YET RUN
+
+====
+
 === Advanced
 
 [[HOG_HEAD_A_01]]
@@ -819,7 +890,7 @@ ORDER BY h.country ASC, h.term_start ASC
 
 Per country, each gap of more than a day between a term's end and the next term's start, with its length; a day between is only how some sources write a succession, so it does not count.
 
-.`head_exercises_03_advanced.sql`, HOG_HEAD_A_01
+.`head/03_advanced.sql`, HOG_HEAD_A_01
 [%collapsible]
 ====
 [source,sql]
@@ -827,7 +898,8 @@ Per country, each gap of more than a day between a term's end and the next term'
 SELECT *,
        CAST(julianday(term_start) - julianday(previous_term_end) AS INTEGER) - 1 AS days_vacant
 FROM (SELECT h.*,
-             LAG(name) OVER (PARTITION BY country ORDER BY term_start)     AS previous_name, LAG(term_end) OVER (PARTITION BY country ORDER BY term_start) AS previous_term_end
+             LAG(name) OVER (PARTITION BY country ORDER BY term_start)     AS previous_name,
+             LAG(term_end) OVER (PARTITION BY country ORDER BY term_start) AS previous_term_end
       FROM head AS h)
 WHERE julianday(term_start) - julianday(previous_term_end) > 1
 ORDER BY country ASC, term_start ASC
@@ -859,7 +931,7 @@ ORDER BY country ASC, term_start ASC
 
 Per country, the person with the most days in office over all their terms, counting an open term to today; ties share the place.
 
-.`head_exercises_03_advanced.sql`, HOG_HEAD_A_02
+.`head/03_advanced.sql`, HOG_HEAD_A_02
 [%collapsible]
 ====
 [source,sql]
@@ -867,9 +939,9 @@ Per country, the person with the most days in office over all their terms, count
 SELECT country, name, terms, days
 FROM (SELECT country,
              name,
-             COUNT(*)                                                                                  AS terms,
-             CAST(SUM(julianday(COALESCE(term_end, date ('now'))) - julianday(term_start)) AS INTEGER) AS days,
-             RANK()                                                                                       OVER (PARTITION BY country
+             COUNT(*)                                                                                 AS terms,
+             CAST(SUM(julianday(COALESCE(term_end, date('now'))) - julianday(term_start)) AS INTEGER) AS days,
+             RANK() OVER (PARTITION BY country
                  ORDER BY SUM(julianday(COALESCE(term_end, date('now'))) - julianday(term_start)) DESC) AS place
       FROM head
       GROUP BY country, name)
@@ -884,7 +956,7 @@ ORDER BY country ASC
 
 Per country, the longest unbroken run of consecutive terms held by the same party, with when it began and ended; a run is counted in terms, not days, and a succession ('UNR/UDR') is a party of its own.
 
-.`head_exercises_03_advanced.sql`, HOG_HEAD_A_03
+.`head/03_advanced.sql`, HOG_HEAD_A_03
 [%collapsible]
 ====
 [source,sql]
@@ -893,13 +965,14 @@ WITH ordered AS (SELECT country,
                         party,
                         term_start,
                         term_end,
-                        ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start)        AS seq, ROW_NUMBER() OVER (PARTITION BY country, party ORDER BY term_start) AS seq_in_party
+                        ROW_NUMBER() OVER (PARTITION BY country ORDER BY term_start)        AS seq,
+                        ROW_NUMBER() OVER (PARTITION BY country, party ORDER BY term_start) AS seq_in_party
                  FROM head),
      runs AS (SELECT country,
                      party,
-                     COUNT(*)                              AS terms,
-                     MIN(term_start)                       AS since,
-                     MAX(COALESCE(term_end, date ('now'))) AS until
+                     COUNT(*)                             AS terms,
+                     MIN(term_start)                      AS since,
+                     MAX(COALESCE(term_end, date('now'))) AS until
               FROM ordered
               GROUP BY country, party, seq - seq_in_party),
      placed AS (SELECT *, RANK() OVER (PARTITION BY country ORDER BY terms DESC, since ASC) AS place
@@ -930,7 +1003,7 @@ ORDER BY country ASC
 party may be a succession, 'A/B', when the party was renamed or changed under the head.
 Give the heads whose party is one, with each party on its own row and its position in the succession.
 
-.`head_exercises_03_advanced.sql`, HOG_HEAD_A_04
+.`head/03_advanced.sql`, HOG_HEAD_A_04
 [%collapsible]
 ====
 [source,sql]
@@ -981,14 +1054,15 @@ ORDER BY country ASC, term_start ASC, position ASC
 
 For a person named exactly, each of their terms with who held the office immediately before and after it in that country; the incumbent has no successor.
 
-.`head_exercises_03_advanced.sql`, HOG_HEAD_A_05
+.`head/03_advanced.sql`, HOG_HEAD_A_05
 [%collapsible]
 ====
 [source,sql]
 ----
 SELECT *
 FROM (SELECT h.*,
-             LAG(name) OVER (PARTITION BY country ORDER BY term_start)  AS predecessor, LEAD(name) OVER (PARTITION BY country ORDER BY term_start) AS successor
+             LAG(name) OVER (PARTITION BY country ORDER BY term_start)  AS predecessor,
+             LEAD(name) OVER (PARTITION BY country ORDER BY term_start) AS successor
       FROM head AS h)
 WHERE name = :name
 ORDER BY country ASC, term_start ASC
@@ -1002,7 +1076,7 @@ ORDER BY country ASC, term_start ASC
 Per country, over the successions where the head changed (not a head following themselves), how many also changed the party, and that as a percentage, by country code.
 LAG gives the previous term's name and party; a succession ('A/B') counts as a party of its own.
 
-.`head_exercises_03_advanced.sql`, HOG_HEAD_A_06
+.`head/03_advanced.sql`, HOG_HEAD_A_06
 [%collapsible]
 ====
 [source,sql]
@@ -1045,7 +1119,7 @@ A stint is an unbroken run of terms by one person; a head who left and came back
 Give the heads with three stints or more, with the year each stint began, most stints first and, at a tie, by country, then by the first term.
 A term starts a stint when the term before it in that country was someone else's.
 
-.`head_exercises_03_advanced.sql`, HOG_HEAD_A_07
+.`head/03_advanced.sql`, HOG_HEAD_A_07
 [%collapsible]
 ====
 [source,sql]
@@ -1088,7 +1162,7 @@ ORDER BY stints DESC, country ASC, MIN(term_start) ASC
 The terms of heads still living whose immediate successor, someone else, has died, with the successor and the year of their death, by country, then by the term.
 died is NULL for the living, so the test is IS NULL on the head and IS NOT NULL on the successor; comparing the two years would give NULL, and no row, for exactly these heads.
 
-.`head_exercises_03_advanced.sql`, HOG_HEAD_A_08
+.`head/03_advanced.sql`, HOG_HEAD_A_08
 [%collapsible]
 ====
 [source,sql]
@@ -1127,7 +1201,7 @@ The `office` table: a row per country's office.
 
 A reader has a country code, typed in whatever case, and wants that office.
 
-.`office_exercises_01_basic.sql`, HOG_OFFICE_B_01
+.`office/01_basic.sql`, HOG_OFFICE_B_01
 [%collapsible]
 ====
 [source,sql]
@@ -1144,7 +1218,7 @@ WHERE country = UPPER(:country)
 
 The front page lists every office with the title of its head, by country code.
 
-.`office_exercises_01_basic.sql`, HOG_OFFICE_B_02
+.`office/01_basic.sql`, HOG_OFFICE_B_02
 [%collapsible]
 ====
 [source,sql]
@@ -1174,7 +1248,7 @@ ORDER BY country ASC
 The offices whose numbering says a person keeps the same number on each term, by country code.
 There, number does not identify a term, which is why head carries an id.
 
-.`office_exercises_01_basic.sql`, HOG_OFFICE_B_03
+.`office/01_basic.sql`, HOG_OFFICE_B_03
 [%collapsible]
 ====
 [source,sql]
@@ -1201,7 +1275,7 @@ ORDER BY country ASC
 
 The offices whose head is a prime minister (head_kind 'PRIME_MINISTER'), by country code.
 
-.`office_exercises_01_basic.sql`, HOG_OFFICE_B_04
+.`office/01_basic.sql`, HOG_OFFICE_B_04
 [%collapsible]
 ====
 [source,sql]
@@ -1230,7 +1304,7 @@ ORDER BY country ASC
 
 How many offices have a president and how many a prime minister, naming the countries of each.
 
-.`office_exercises_02_intermediate.sql`, HOG_OFFICE_I_01
+.`office/02_intermediate.sql`, HOG_OFFICE_I_01
 [%collapsible]
 ====
 [source,sql]
@@ -1258,7 +1332,7 @@ ORDER BY head_kind ASC
 head_title is in the country's own language.
 Which titles use a character outside ASCII, and which do not?
 
-.`office_exercises_02_intermediate.sql`, HOG_OFFICE_I_02
+.`office/02_intermediate.sql`, HOG_OFFICE_I_02
 [%collapsible]
 ====
 [source,sql]
@@ -1289,7 +1363,7 @@ ORDER BY script ASC, country ASC
 Every office should have a head in office now, a term with no end.
 List the offices that have none, by country code; the check passes when nothing comes back.
 
-.`office_exercises_02_intermediate.sql`, HOG_OFFICE_I_03
+.`office/02_intermediate.sql`, HOG_OFFICE_I_03
 [%collapsible]
 ====
 [source,sql]
@@ -1317,7 +1391,7 @@ no rows.
 numbering is a sentence, but each opens by naming what is counted -- 'ordinal of the person by first election', '代', '대', 'presidency number' -- before its first comma or semicolon.
 Show each office with that phrase alone.
 
-.`office_exercises_03_advanced.sql`, HOG_OFFICE_A_01
+.`office/03_advanced.sql`, HOG_OFFICE_A_01
 [%collapsible]
 ====
 [source,sql]
@@ -1358,7 +1432,7 @@ Exercises that read both tables.
 
 The front page names each country's head of government today, with the title the country gives the office.
 
-.`_schema_exercises_01_basic.sql`, HOG_SCHEMA_B_01
+.`__/01_basic.sql`, HOG_SCHEMA_B_01
 [%collapsible]
 ====
 [source,sql]
@@ -1388,7 +1462,7 @@ ORDER BY g.country ASC
 
 Each office with the kind of head it has and how many terms the list holds.
 
-.`_schema_exercises_01_basic.sql`, HOG_SCHEMA_B_03
+.`__/01_basic.sql`, HOG_SCHEMA_B_03
 [%collapsible]
 ====
 [source,sql]
@@ -1419,7 +1493,7 @@ ORDER BY g.country ASC
 
 Every term of a president (head_kind 'PRESIDENT') that began in 2000 or later, with the title, in date order and, on the same day, by country.
 
-.`_schema_exercises_01_basic.sql`, HOG_SCHEMA_B_05
+.`__/01_basic.sql`, HOG_SCHEMA_B_05
 [%collapsible]
 ====
 [source,sql]
@@ -1463,7 +1537,7 @@ ORDER BY h.term_start ASC, g.country ASC
 The presidents' terms whose party is one of 'Indépendant', 'Unaffiliated' or '무소속', by country, then in date order.
 A succession that includes one of them ('무소속/민주정의당') is a different value and does not match.
 
-.`_schema_exercises_01_basic.sql`, HOG_SCHEMA_B_06
+.`__/01_basic.sql`, HOG_SCHEMA_B_06
 [%collapsible]
 ====
 [source,sql]
@@ -1496,7 +1570,7 @@ ORDER BY g.country ASC, h.term_start ASC
 Each office with the number of terms that began in 2000 or later, most first and, at a tie, by country code.
 The date goes into the join condition, not WHERE, so an office with no such term would still show, with 0.
 
-.`_schema_exercises_01_basic.sql`, HOG_SCHEMA_B_07
+.`__/01_basic.sql`, HOG_SCHEMA_B_07
 [%collapsible]
 ====
 [source,sql]
@@ -1529,7 +1603,7 @@ ORDER BY terms DESC, g.country ASC
 
 By the kind of head: how many terms, how many different persons, and the average length of a term in days, an open term counted to today.
 
-.`_schema_exercises_02_intermediate.sql`, HOG_SCHEMA_I_01
+.`__/02_intermediate.sql`, HOG_SCHEMA_I_01
 [%collapsible]
 ====
 [source,sql]
@@ -1551,7 +1625,7 @@ ORDER BY g.head_kind ASC
 
 Per office: how many terms, how many distinct numbers, the highest number, and the rule; where terms exceed numbers, number is the person's and repeats.
 
-.`_schema_exercises_02_intermediate.sql`, HOG_SCHEMA_I_02
+.`__/02_intermediate.sql`, HOG_SCHEMA_I_02
 [%collapsible]
 ====
 [source,sql]
@@ -1585,7 +1659,7 @@ ORDER BY g.country ASC
 
 Per office, the first term's start, the latest term's start and the years between them, with the head's title.
 
-.`_schema_exercises_02_intermediate.sql`, HOG_SCHEMA_I_03
+.`__/02_intermediate.sql`, HOG_SCHEMA_I_03
 [%collapsible]
 ====
 [source,sql]
@@ -1618,33 +1692,22 @@ ORDER BY g.country ASC
 [[HOG_SCHEMA_I_04]]
 ==== HOG_SCHEMA_I_04: Living heads per office
 
-Per office, with its title, how many of its heads are still living, the incumbent included, by country code.
-A name is taken as one person within a country.
+Per office, with its title, how many of its heads are still living, the incumbent included, and 0 where none is, by country code.
+A name is taken as one person within a country; the condition on died goes into the join, so an office without a living head still shows.
 
-.`_schema_exercises_02_intermediate.sql`, HOG_SCHEMA_I_04
+.`__/02_intermediate.sql`, HOG_SCHEMA_I_04
 [%collapsible]
 ====
 [source,sql]
 ----
 SELECT g.*, COUNT(DISTINCT h.name) AS living
 FROM office g
-         JOIN head h ON h.country = g.country
-WHERE h.died IS NULL
+         LEFT JOIN head h ON h.country = g.country AND h.died IS NULL
 GROUP BY g.country
 ORDER BY g.country ASC
 ----
 
-....
-+---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+--------+
-| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | living |
-+---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+--------+
-| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |      3 |
-| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |     10 |
-| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |     12 |
-| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |      5 |
-| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |      5 |
-+---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+--------+
-....
+// NOT YET RUN
 
 ====
 
@@ -1652,35 +1715,26 @@ ORDER BY g.country ASC
 ==== HOG_SCHEMA_I_05: Terms per century, side by side
 
 Per office, with its title, the terms begun in each century from the 18th to the 21st, one column per century, by country code.
+A century is counted the way people say the 1800s, so 1800 is in the 19th, as in HOG_SCHEMA_A_06.
 A SUM of CASE per column turns the rows of a GROUP BY into columns.
 
-.`_schema_exercises_02_intermediate.sql`, HOG_SCHEMA_I_05
+.`__/02_intermediate.sql`, HOG_SCHEMA_I_05
 [%collapsible]
 ====
 [source,sql]
 ----
 SELECT g.*,
-       SUM(CASE WHEN h.term_start < '1800' THEN 1 ELSE 0 END)                            AS c18,
+       SUM(CASE WHEN h.term_start >= '1700' AND h.term_start < '1800' THEN 1 ELSE 0 END) AS c18,
        SUM(CASE WHEN h.term_start >= '1800' AND h.term_start < '1900' THEN 1 ELSE 0 END) AS c19,
        SUM(CASE WHEN h.term_start >= '1900' AND h.term_start < '2000' THEN 1 ELSE 0 END) AS c20,
-       SUM(CASE WHEN h.term_start >= '2000' THEN 1 ELSE 0 END)                           AS c21
+       SUM(CASE WHEN h.term_start >= '2000' AND h.term_start < '2100' THEN 1 ELSE 0 END) AS c21
 FROM office g
          JOIN head h ON h.country = g.country
 GROUP BY g.country
 ORDER BY g.country ASC
 ----
 
-....
-+---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+-----+-----+-----+
-| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | c18 | c19 | c20 | c21 |
-+---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+-----+-----+-----+
-| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |   0 |   9 |  17 |   5 |
-| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |  16 |  33 |  24 |   8 |
-| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |   0 |   9 |  75 |  21 |
-| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |   0 |   0 |  15 |   6 |
-| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |   2 |  23 |  17 |   5 |
-+---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-----+-----+-----+-----+
-....
+// NOT YET RUN
 
 ====
 
@@ -1690,7 +1744,7 @@ ORDER BY g.country ASC
 By the kind of head: how many persons, and the youngest, the oldest and the average age at which each first took office, in years of the calendar.
 Each person counts once, at their first term, unlike HOG_HEAD_I_03, which counts every term; a name is taken as one person within a country.
 
-.`_schema_exercises_02_intermediate.sql`, HOG_SCHEMA_I_06
+.`__/02_intermediate.sql`, HOG_SCHEMA_I_06
 [%collapsible]
 ====
 [source,sql]
@@ -1725,7 +1779,7 @@ ORDER BY g.head_kind ASC
 Per office, with its title, the completed term with the fewest days and who held it, by country code; at a tie, every such term, the earlier first.
 An open term has no term_end, so julianday gives NULL and the term drops out.
 
-.`_schema_exercises_02_intermediate.sql`, HOG_SCHEMA_I_07
+.`__/02_intermediate.sql`, HOG_SCHEMA_I_07
 [%collapsible]
 ====
 [source,sql]
@@ -1761,19 +1815,20 @@ ORDER BY g.country ASC, h.term_start ASC
 [[HOG_SCHEMA_A_02]]
 ==== HOG_SCHEMA_A_02: Every office on a day, vacant or not
 
-A reader gives a date and wants every office with its head on that day, or 'vacant' where the office was empty or the list had not yet begun.
+A reader gives a date and wants every office with its head on that day, or '(vacant)' where the office was empty or the list had not yet begun.
+On a handover day, the day one term ends and the next begins, both heads show.
 
-.`_schema_exercises_03_advanced.sql`, HOG_SCHEMA_A_02
+.`__/03_advanced.sql`, HOG_SCHEMA_A_02
 [%collapsible]
 ====
 [source,sql]
 ----
-SELECT g.*, COALESCE(h.name, '(vacant)') AS name, h.*
+SELECT g.country, g.head_title, COALESCE(h.name, '(vacant)') AS name, h.number, h.term_start, h.term_end
 FROM office g
          LEFT JOIN head h ON h.country = g.country
     AND h.term_start <= :date
     AND (h.term_end IS NULL OR h.term_end >= :date)
-ORDER BY g.country ASC
+ORDER BY g.country ASC, h.term_start ASC NULLS FIRST
 ----
 
 ====
@@ -1784,47 +1839,27 @@ ORDER BY g.country ASC
 On the day each incumbent took office, who headed the other offices?
 One row per pair, the incumbent first.
 
-.`_schema_exercises_03_advanced.sql`, HOG_SCHEMA_A_03
+.`__/03_advanced.sql`, HOG_SCHEMA_A_03
 [%collapsible]
 ====
 [source,sql]
 ----
-SELECT i.*, o.*, g.*
+SELECT i.country    AS country,
+       i.name       AS incumbent,
+       i.term_start AS took_office,
+       o.country    AS other_country,
+       g.head_title AS other_title,
+       o.name       AS other_head
 FROM head i
          JOIN head o ON o.country <> i.country
     AND o.term_start <= i.term_start
     AND (o.term_end IS NULL OR o.term_end >= i.term_start)
          JOIN office g ON g.country = o.country
 WHERE i.term_end IS NULL
-ORDER BY i.country ASC, o.country ASC
+ORDER BY i.country ASC, o.country ASC, o.term_start ASC
 ----
 
-....
-+-----+---------+--------+------------+----------+-----------------+------------------+------+------+-----+---------+--------+------------+------------+-----------------+------------------+------+------+---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-| id  | country | number | term_start | term_end |      name       |      party       | born | died | id  | country | number | term_start |  term_end  |      name       |      party       | born | died | country |   head_kind    |         head_title         |                                                                     numbering                                                                      |
-+-----+---------+--------+------------+----------+-----------------+------------------+------+------+-----+---------+--------+------------+------------+-----------------+------------------+------+------+---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-|  31 | FR      |     25 | 2022-05-14 |          | Emmanuel Macron | LREM/Renaissance | 1977 |      | 108 | GB      |     55 | 2019-07-24 | 2022-09-06 | Boris Johnson   | Conservative     | 1964 |      | GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |
-|  31 | FR      |     25 | 2022-05-14 |          | Emmanuel Macron | LREM/Renaissance | 1977 |      | 213 | JP      |    101 | 2021-11-10 | 2024-10-01 | 岸田文雄        | 自由民主党       | 1957 |      | JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |
-|  31 | FR      |     25 | 2022-05-14 |          | Emmanuel Macron | LREM/Renaissance | 1977 |      | 237 | KR      |     20 | 2022-05-10 | 2025-04-04 | 윤석열          | 국민의힘         | 1960 |      | KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |
-|  31 | FR      |     25 | 2022-05-14 |          | Emmanuel Macron | LREM/Renaissance | 1977 |      | 284 | US      |     46 | 2021-01-20 | 2025-01-20 | Joe Biden       | Democratic       | 1942 |      | US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |
-| 112 | GB      |     59 | 2026-07-20 |          | Andy Burnham    | Labour           | 1970 |      |  31 | FR      |     25 | 2022-05-14 |            | Emmanuel Macron | LREM/Renaissance | 1977 |      | FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |
-| 112 | GB      |     59 | 2026-07-20 |          | Andy Burnham    | Labour           | 1970 |      | 217 | JP      |    105 | 2026-02-18 |            | 高市早苗        | 自由民主党       | 1961 |      | JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |
-| 112 | GB      |     59 | 2026-07-20 |          | Andy Burnham    | Labour           | 1970 |      | 238 | KR      |     21 | 2025-06-04 |            | 이재명          | 더불어민주당     | 1963 |      | KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |
-| 112 | GB      |     59 | 2026-07-20 |          | Andy Burnham    | Labour           | 1970 |      | 285 | US      |     47 | 2025-01-20 |            | Donald Trump    | Republican       | 1946 |      | US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |
-| 217 | JP      |    105 | 2026-02-18 |          | 高市早苗        | 自由民主党       | 1961 |      |  31 | FR      |     25 | 2022-05-14 |            | Emmanuel Macron | LREM/Renaissance | 1977 |      | FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |
-| 217 | JP      |    105 | 2026-02-18 |          | 高市早苗        | 自由民主党       | 1961 |      | 111 | GB      |     58 | 2024-07-05 | 2026-07-20 | Keir Starmer    | Labour           | 1962 |      | GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |
-| 217 | JP      |    105 | 2026-02-18 |          | 高市早苗        | 自由民主党       | 1961 |      | 238 | KR      |     21 | 2025-06-04 |            | 이재명          | 더불어민주당     | 1963 |      | KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |
-| 217 | JP      |    105 | 2026-02-18 |          | 高市早苗        | 自由民主党       | 1961 |      | 285 | US      |     47 | 2025-01-20 |            | Donald Trump    | Republican       | 1946 |      | US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |
-| 238 | KR      |     21 | 2025-06-04 |          | 이재명          | 더불어민주당     | 1963 |      |  31 | FR      |     25 | 2022-05-14 |            | Emmanuel Macron | LREM/Renaissance | 1977 |      | FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |
-| 238 | KR      |     21 | 2025-06-04 |          | 이재명          | 더불어민주당     | 1963 |      | 111 | GB      |     58 | 2024-07-05 | 2026-07-20 | Keir Starmer    | Labour           | 1962 |      | GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |
-| 238 | KR      |     21 | 2025-06-04 |          | 이재명          | 더불어민주당     | 1963 |      | 215 | JP      |    103 | 2024-11-11 | 2025-10-21 | 石破茂          | 自由民主党       | 1957 |      | JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |
-| 238 | KR      |     21 | 2025-06-04 |          | 이재명          | 더불어민주당     | 1963 |      | 285 | US      |     47 | 2025-01-20 |            | Donald Trump    | Republican       | 1946 |      | US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |
-| 285 | US      |     47 | 2025-01-20 |          | Donald Trump    | Republican       | 1946 |      |  31 | FR      |     25 | 2022-05-14 |            | Emmanuel Macron | LREM/Renaissance | 1977 |      | FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |
-| 285 | US      |     47 | 2025-01-20 |          | Donald Trump    | Republican       | 1946 |      | 111 | GB      |     58 | 2024-07-05 | 2026-07-20 | Keir Starmer    | Labour           | 1962 |      | GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |
-| 285 | US      |     47 | 2025-01-20 |          | Donald Trump    | Republican       | 1946 |      | 215 | JP      |    103 | 2024-11-11 | 2025-10-21 | 石破茂          | 自由民主党       | 1957 |      | JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |
-| 285 | US      |     47 | 2025-01-20 |          | Donald Trump    | Republican       | 1946 |      | 237 | KR      |     20 | 2022-05-10 | 2025-04-04 | 윤석열          | 국민의힘         | 1960 |      | KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |
-+-----+---------+--------+------------+----------+-----------------+------------------+------+------+-----+---------+--------+------------+------------+-----------------+------------------+------+------+---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-....
+// NOT YET RUN
 
 ====
 
@@ -1833,7 +1868,7 @@ ORDER BY i.country ASC, o.country ASC
 
 Per office, with its title, the head who lived the most years (died less born) among those who have died; ties share the place and are listed by name.
 
-.`_schema_exercises_03_advanced.sql`, HOG_SCHEMA_A_04
+.`__/03_advanced.sql`, HOG_SCHEMA_A_04
 [%collapsible]
 ====
 [source,sql]
@@ -1873,7 +1908,7 @@ ORDER BY country ASC, name ASC
 For each president's term, how many different prime ministers, of any office, were in office at some point during it; the ten terms with the most first and, at a tie, the earlier term first, then by country.
 Two terms overlap when each starts on or before the other's end, the handover day counting for both; an open term ends at '9999-12-31'.
 
-.`_schema_exercises_03_advanced.sql`, HOG_SCHEMA_A_05
+.`__/03_advanced.sql`, HOG_SCHEMA_A_05
 [%collapsible]
 ====
 [source,sql]
@@ -1914,7 +1949,7 @@ LIMIT 10
 Per office, with its title, how many persons first took office in each century, and the running total of persons up to that century, by country, then by century.
 The century is the first two digits of the year plus one, so 1800 counts in the 19th; a name is taken as one person within a country.
 
-.`_schema_exercises_03_advanced.sql`, HOG_SCHEMA_A_06
+.`__/03_advanced.sql`, HOG_SCHEMA_A_06
 [%collapsible]
 ====
 [source,sql]
@@ -1969,7 +2004,7 @@ ORDER BY country ASC, century ASC
 The decades in which a term began in every office, with how many terms began in all, oldest first.
 This is relational division: a decade qualifies when the number of distinct countries with a term begun in it equals the number of offices.
 
-.`_schema_exercises_03_advanced.sql`, HOG_SCHEMA_A_07
+.`__/03_advanced.sql`, HOG_SCHEMA_A_07
 [%collapsible]
 ====
 [source,sql]
@@ -2004,7 +2039,7 @@ ORDER BY decade ASC
 Per office, with its title, how many terms have ended and the median of their lengths in days, cut to whole days, by country code.
 The median is the middle length, or the average of the two middle ones when the count is even: ROW_NUMBER numbers the lengths, COUNT(*) OVER gives the count n, and the middle rows are (n + 1) / 2 and (n + 2) / 2 in integer division, one row when n is odd.
 
-.`_schema_exercises_03_advanced.sql`, HOG_SCHEMA_A_08
+.`__/03_advanced.sql`, HOG_SCHEMA_A_08
 [%collapsible]
 ====
 [source,sql]

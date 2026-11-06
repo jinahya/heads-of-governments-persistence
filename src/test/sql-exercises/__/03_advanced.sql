@@ -26,27 +26,32 @@
 
 
 -- ---------------------------------------------------------------- HOG_SCHEMA_A_02 Every office on a day, vacant or not
--- A reader gives a date and wants every office with its head on that day, or 'vacant' where the office was empty
--- or the list had not yet begun.
-SELECT g.*, COALESCE(h.name, '(vacant)') AS name, h.*
+-- A reader gives a date and wants every office with its head on that day, or '(vacant)' where the office was empty or
+-- the list had not yet begun. On a handover day, the day one term ends and the next begins, both heads show.
+SELECT g.country, g.head_title, COALESCE(h.name, '(vacant)') AS name, h.number, h.term_start, h.term_end
 FROM office g
          LEFT JOIN head h ON h.country = g.country
     AND h.term_start <= :date
     AND (h.term_end IS NULL OR h.term_end >= :date)
-ORDER BY g.country ASC
+ORDER BY g.country ASC, h.term_start ASC NULLS FIRST
 ;
 
 
 -- ---------------------------------------------------------------------- HOG_SCHEMA_A_03 The incumbents' contemporaries
 -- On the day each incumbent took office, who headed the other offices? One row per pair, the incumbent first.
-SELECT i.*, o.*, g.*
+SELECT i.country    AS country,
+       i.name       AS incumbent,
+       i.term_start AS took_office,
+       o.country    AS other_country,
+       g.head_title AS other_title,
+       o.name       AS other_head
 FROM head i
          JOIN head o ON o.country <> i.country
     AND o.term_start <= i.term_start
     AND (o.term_end IS NULL OR o.term_end >= i.term_start)
          JOIN office g ON g.country = o.country
 WHERE i.term_end IS NULL
-ORDER BY i.country ASC, o.country ASC
+ORDER BY i.country ASC, o.country ASC, o.term_start ASC
 ;
 
 

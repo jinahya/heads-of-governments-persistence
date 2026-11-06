@@ -37,8 +37,8 @@ $ sqlite3 -header src/main/resources/heads_of_governments.sqlite3 "select * from
 ```
 
 Queries to profile each table are under [src/test/sql](src/test/sql), and the exercises on them under
-[src/test/sql/exercises](src/test/sql/exercises).
-The exercises are listed, with their ids, in [EXERCISES.asciidoc](EXERCISES.asciidoc).
+[src/test/sql-exercises](src/test/sql-exercises).
+The exercises are listed, with their ids, in [EXERCISES.asciidoc](src/test/sql-exercises/EXERCISES.asciidoc).
 
 ## Building
 

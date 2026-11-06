@@ -35,7 +35,7 @@ import java.util.function.Function;
 
 /**
  * Helpers for the {@code *_Exercises_*_PersistenceTest} classes, which answer the exercises of
- * {@code src/test/sql/exercises}.
+ * {@code src/test/sql-exercises}.
  * <p>
  * A result is compared as rows of values, each row a list. A number is widened, an integral one to
  * {@link Long} and any other to {@link Double}, since what type a query gives back for a column

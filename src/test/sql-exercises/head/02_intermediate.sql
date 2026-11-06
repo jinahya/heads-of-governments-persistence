@@ -86,7 +86,8 @@ ORDER BY decade ASC
 
 -- -------------------------------------------------------- HOG_HEAD_I_08 The first and the latest terms of each country
 -- Per country, its first :n terms and its most recent :n, each row saying which it is. A row is 'first' when it is
--- among the first :n, so with a country of 2 * :n terms or fewer the two sets overlap and 'first' wins.
+-- among the first :n, so with a country of fewer than 2 * :n terms the two sets overlap and 'first' wins. term_start is
+-- distinct within a country (HOG_HEAD_I_18 checks it), so the numbering has no ties.
 SELECT *,
        CASE WHEN first_rn <= :n THEN 'first' ELSE 'latest' END AS which
 FROM (SELECT h.*,
@@ -109,6 +110,7 @@ WHERE first_rn <= 2
 ORDER BY country ASC, term_start ASC
 ;
 
+
 -- ---------------------------------------------------------- HOG_HEAD_I_10 Two or more terms, the top three per country
 -- Per country, up to three heads with two or more terms, most terms first and, at a tie, the earlier first term first;
 -- a name is taken as one person.
@@ -127,21 +129,22 @@ ORDER BY country ASC, place ASC
 
 -- --------------------------------------------- HOG_HEAD_I_11 Party share of completed terms, the top three per country
 -- Per country, over the terms that have ended, each party's share of the days in office as a percentage of that
--- country's total (its tenure share), the top three parties; a succession ('A/B') counts as a party of its own.
+-- country's total (its tenure share), the top three parties; a succession ('A/B') counts as a party of its own. At a
+-- tie in days, by party.
+WITH totals AS (SELECT country,
+                       party,
+                       SUM(julianday(term_end) - julianday(term_start)) AS days
+                FROM head
+                WHERE term_end IS NOT NULL
+                GROUP BY country, party),
+     placed AS (SELECT *,
+                       ROUND(100.0 * days / NULLIF(SUM(days) OVER (PARTITION BY country), 0), 1) AS tenure_share,
+                       ROW_NUMBER() OVER (PARTITION BY country ORDER BY days DESC, party ASC)    AS place
+                FROM totals)
 SELECT country, party, tenure_share
-FROM (SELECT country,
-             party,
-             ROUND(100.0 * SUM(julianday(term_end) - julianday(term_start))
-                       / SUM(SUM(julianday(term_end) - julianday(term_start)))
-                             OVER (PARTITION BY country),
-                   1)                                                            AS tenure_share,
-             ROW_NUMBER() OVER (PARTITION BY country
-                 ORDER BY SUM(julianday(term_end) - julianday(term_start)) DESC) AS place
-      FROM head
-      WHERE term_end IS NOT NULL
-      GROUP BY country, party)
+FROM placed
 WHERE place <= 3
-ORDER BY country ASC, tenure_share DESC
+ORDER BY country ASC, place ASC
 ;
 
 
@@ -229,4 +232,28 @@ WHERE CAST(SUBSTR(h.term_start, 1, 4) AS INTEGER) - h.born
               FROM head s
               WHERE s.country = h.country) - 15
 ORDER BY h.country ASC, h.term_start ASC
+;
+
+
+-- ---------------------------------------------------------------------------------- HOG_HEAD_I_18 Repeated term starts
+-- Several exercises rely on term_start being distinct within a country, which the schema does not declare. List each
+-- country and start date held by more than one term, with how many, by country, then by date; the check passes when
+-- nothing comes back.
+SELECT country, term_start, COUNT(*) AS terms
+FROM head
+GROUP BY country, term_start
+HAVING COUNT(*) > 1
+ORDER BY country ASC, term_start ASC
+;
+
+
+-- ------------------------------------------------------------------------------- HOG_HEAD_I_19 More than one incumbent
+-- A country has one head in office now, at most; HOG_OFFICE_I_03 checks the other side, an office with none. List the
+-- countries with more than one term that has not ended, and how many; the check passes when nothing comes back.
+SELECT country, COUNT(*) AS open_terms
+FROM head
+WHERE term_end IS NULL
+GROUP BY country
+HAVING COUNT(*) > 1
+ORDER BY country ASC
 ;
