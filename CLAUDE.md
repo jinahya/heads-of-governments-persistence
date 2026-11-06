@@ -79,8 +79,7 @@ attributes, so a query reaches them as `h.country` and `h.termStart` and the Cri
 the table, and `@EmbeddedId` is not used. `HeadId` is the id class: a `record HeadId(String country, String
 termStart)`, which Jakarta Persistence 3.2 allows, with no annotation; its components match the `@Id` attributes by
 name and type, and the record's own `equals` and `hashCode` are the value equality the specification asks for. The
-specification does not require it to be `Serializable`; the providers' documentation does, so it is. The database is
-read-only, so a `HeadId` is only built to look a head up (`em.find(Head.class, new HeadId("FR", "1848-12-20"))`),
+specification does not require it to be `Serializable`, and it is not. The database is read-only, so a `HeadId` is only built to look a head up (`em.find(Head.class, new HeadId("FR", "1848-12-20"))`),
 and it is not listed in the unit.
 
 Conventions the two classes follow, and new members must keep:
