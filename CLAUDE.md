@@ -123,7 +123,8 @@ The descriptor lives under **test**, not main, resources, so the jar does not ca
 resolves `${persistence.version}` and `${persistence.schemaLocation}` in it; the `<provider>` is written out, since
 Hibernate ORM is the only one.
 
-The generated `Office_` and `Head_`, from `hibernate-jpamodelgen`, are what persistence-context code uses for criteria paths;
+The generated `Office_` and `Head_`, from EclipseLink's processor by default, are what persistence-context code uses
+for criteria paths;
 `mappedBy` and other annotation values stay string literals, since an annotation value must be a
 compile-time constant.
 
@@ -183,12 +184,20 @@ build and is not skipped; treat a divergence as a build defect, not a warning.
   generation active fails at the BOM import rather than quietly building one.
 - **Hibernate ORM is the only persistence provider**, and the project stays Hibernate-only. Profiles
   exist only per Jakarta EE generation: `jakarta-ee-11` (`activeByDefault`) is the one so far, and a
-  new generation gets a `jakarta-ee-NN` profile, never a provider. Jakarta Persistence is the only
+  new generation gets a `jakarta-ee-NN` profile, never a provider. The one other axis is the static metamodel
+  generator, which is not a provider: EclipseLink's processor is the root default, and
+  `jakarta-ee-11-metamodel-hibernate-orm`, named beside the generation
+  (`-Pjakarta-ee-11,jakarta-ee-11-metamodel-hibernate-orm`), switches to `hibernate-jpamodelgen`;
+  `jakarta-ee-11-metamodel-eclipselink` only names the default explicitly. Their names carry the generation, as
+  each generation brings its own provider versions. EclipseLink's processor reads its own descriptor,
+  `src/metamodel-eclipselink/META-INF/metamodel-eclipselink.xml`, which the build copies into `target/classes` and
+  keeps out of the jar; `version.org.eclipse.persistence` sits in the
+  generation profile, aligned with the sibling projects. Jakarta Persistence is the only
   spec implemented here -- there is no Jakarta Validation and no CDI on any classpath, so the unit's
   default `<validation-mode>` of `AUTO` finds nothing to use. The dependencies themselves
   (`hibernate-core`, `hibernate-community-dialects`, test scope) are declared once in the root
-  `<dependencies>`; a profile carries only `<properties>`.
-- Do not add a profile to test a second version of anything. Any profile that is added must carry the
+  `<dependencies>`; a generation profile carries only `<properties>`.
+- Do not add a profile to test a second version of anything. Any generation profile that is added must carry the
   `jakarta-ee-NN` form and actually be certified for that generation.
 - Naming any profile on the command line deactivates every `activeByDefault` profile. With no
   default values in the root, naming only another profile (`-Pfailsafe` alone) leaves no generation

@@ -62,6 +62,12 @@
          persistence.version, persistence.schemaLocation) are NOT here: each jakarta-ee-NN profile
          sets them, and nothing defaults them, so a build with no generation active fails instead of
          quietly picking one. -->
+    <!-- The static metamodel generator on the annotation processor path; EclipseLink's unless
+         jakarta-ee-11-metamodel-hibernate-orm says otherwise. It only generates the *_ classes: the provider is
+         Hibernate ORM either way. The version comes from the generation profile. -->
+    <metamodel.generator.groupId>org.eclipse.persistence</metamodel.generator.groupId>
+    <metamodel.generator.artifactId>org.eclipse.persistence.jpa.modelgen.processor</metamodel.generator.artifactId>
+    <metamodel.generator.version>${version.org.eclipse.persistence}</metamodel.generator.version>
     <version.maven-failsafe>${version.maven-surefire}</version.maven-failsafe>
     <version.maven-surefire>3.6.0</version.maven-surefire>
     <!-- https://central.sonatype.com/artifact/org.xerial/sqlite-jdbc/versions -->
@@ -317,6 +323,40 @@
           </execution>
         </executions>
       </plugin>
+      <!-- The processor reads its descriptor from target/classes alone, before the test descriptor is there,
+           and generates nothing without one. So a descriptor of its own goes there first, under a name no
+           provider reads, and stays out of the jar. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-metamodel-eclipselink-descriptor</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/src/metamodel-eclipselink</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>META-INF/metamodel-eclipselink.xml</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -327,14 +367,16 @@
               <artifactId>lombok</artifactId>
               <version>${version.org.projectlombok}</version>
             </path>
-            <path><!-- the static metamodel generator; moves with hibernate-core -->
-              <groupId>org.hibernate.orm</groupId>
-              <artifactId>hibernate-jpamodelgen</artifactId>
-              <version>${version.org.hibernate.orm}</version>
+            <path><!-- the static metamodel generator; see the jakarta-ee-NN-metamodel-* profiles -->
+              <groupId>${metamodel.generator.groupId}</groupId>
+              <artifactId>${metamodel.generator.artifactId}</artifactId>
+              <version>${metamodel.generator.version}</version>
             </path>
           </annotationProcessorPaths>
           <compilerArgs>
             <arg>-Xlint</arg>
+            <!-- for EclipseLink's metamodel processor; see copy-metamodel-eclipselink-descriptor -->
+            <arg>-Aeclipselink.persistencexml=META-INF/metamodel-eclipselink.xml</arg>
           </compilerArgs>
         </configuration>
       </plugin>
@@ -554,7 +596,9 @@
     </profile>
 
     <!-- ===================================================================== jakarta ee ==== -->
-    <!-- One profile per Jakarta EE generation, and nothing else gets a profile. The dependencies are the
+    <!-- One profile per Jakarta EE generation; beside them, only the jakarta-ee-NN-metamodel-* profiles below,
+         which carry the generation in their name since each generation brings its own provider versions. The
+         dependencies are the
          same in every generation and are declared once, above; a profile sets only the versions that
          go with its generation. jakarta-ee-11 is the only one so far, and is active by default. -->
     <profile>
@@ -571,8 +615,63 @@
         <!-- https://central.sonatype.com/artifact/org.hibernate.orm/hibernate-platform/versions -->
         <!-- Jakarta Persistence: 3.2 / Jakarta EE: 11 -->
         <version.org.hibernate.orm>7.4.13.Final</version.org.hibernate.orm>
+        <!-- https://eclipse.dev/eclipselink/releases/index.html -->
+        <!-- https://central.sonatype.com/artifact/org.eclipse.persistence/org.eclipse.persistence.jpa/versions -->
+        <!-- Jakarta Persistence: 3.2 / Jakarta EE: 11; the metamodel processor only, not a provider -->
+        <version.org.eclipse.persistence>5.0.2</version.org.eclipse.persistence>
         <persistence.version>3.2</persistence.version>
         <persistence.schemaLocation>https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd</persistence.schemaLocation>
+      </properties>
+    </profile>
+
+    <!-- ====================================================================== metamodel ==== -->
+    <!-- Which annotation processor generates the static metamodel (Office_, Head_), and nothing else: the
+         persistence provider is Hibernate ORM in both, and will stay so. Name one alongside the generation,
+         -Pjakarta-ee-11,jakarta-ee-11-metamodel-hibernate-orm; with neither named, the root picks EclipseLink's,
+         which is the default. jakarta-ee-11-metamodel-eclipselink only says so explicitly. -->
+    <profile>
+      <id>jakarta-ee-11-metamodel-hibernate-orm</id>
+      <properties>
+        <metamodel.generator.groupId>org.hibernate.orm</metamodel.generator.groupId>
+        <metamodel.generator.artifactId>hibernate-jpamodelgen</metamodel.generator.artifactId>
+        <metamodel.generator.version>${version.org.hibernate.orm}</metamodel.generator.version>
+      </properties>
+      <build>
+        <plugins>
+          <!-- hibernate-jpamodelgen reads @Entity directly and needs no descriptor -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-metamodel-eclipselink-descriptor</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <compilerArgs combine.self="override">
+                <arg>-Xlint</arg>
+              </compilerArgs>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>jakarta-ee-11-metamodel-eclipselink</id>
+      <!-- Naming any profile, -Pjakarta-ee-11 included, switches this off; the root <properties> and build carry the
+           same values, so EclipseLink's processor stays the default either way. -->
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <metamodel.generator.groupId>org.eclipse.persistence</metamodel.generator.groupId>
+        <metamodel.generator.artifactId>org.eclipse.persistence.jpa.modelgen.processor</metamodel.generator.artifactId>
+        <metamodel.generator.version>${version.org.eclipse.persistence}</metamodel.generator.version>
       </properties>
     </profile>
   </profiles>
