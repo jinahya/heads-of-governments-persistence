@@ -5,7 +5,7 @@
   <parent>
     <groupId>io.github.jinahya</groupId>
     <artifactId>jinahya-parent</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
   </parent>
 
   <groupId>io.github.jinahya</groupId>
@@ -69,9 +69,9 @@
     <metamodel.generator.artifactId>org.eclipse.persistence.jpa.modelgen.processor</metamodel.generator.artifactId>
     <metamodel.generator.version>${version.org.eclipse.persistence}</metamodel.generator.version>
     <version.maven-failsafe>${version.maven-surefire}</version.maven-failsafe>
-    <version.maven-surefire>3.6.0</version.maven-surefire>
+    <version.maven-surefire>3.6.1</version.maven-surefire>
     <!-- https://central.sonatype.com/artifact/org.xerial/sqlite-jdbc/versions -->
-    <version.org.xerial.sqlite-jdbc>3.53.4.0</version.org.xerial.sqlite-jdbc>
+    <version.org.xerial.sqlite-jdbc>3.54.1.0</version.org.xerial.sqlite-jdbc>
     <!-- https://central.sonatype.com/artifact/org.assertj/assertj-core/versions -->
     <version.org.assertj>4.0.0-M1</version.org.assertj>
     <!-- https://central.sonatype.com/artifact/nl.jqno.equalsverifier/equalsverifier-nodep/versions -->
@@ -614,7 +614,7 @@
         <!-- https://hibernate.org/orm/releases/ -->
         <!-- https://central.sonatype.com/artifact/org.hibernate.orm/hibernate-platform/versions -->
         <!-- Jakarta Persistence: 3.2 / Jakarta EE: 11 -->
-        <version.org.hibernate.orm>7.4.13.Final</version.org.hibernate.orm>
+        <version.org.hibernate.orm>7.4.15.Final</version.org.hibernate.orm>
         <!-- https://eclipse.dev/eclipselink/releases/index.html -->
         <!-- https://central.sonatype.com/artifact/org.eclipse.persistence/org.eclipse.persistence.jpa/versions -->
         <!-- Jakarta Persistence: 3.2 / Jakarta EE: 11; the metamodel processor only, not a provider -->
