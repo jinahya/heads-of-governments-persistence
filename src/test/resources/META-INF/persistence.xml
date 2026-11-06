@@ -28,9 +28,9 @@
   <persistence-unit name="test" transaction-type="RESOURCE_LOCAL">
     <description>Persistence Unit for heads_of_governments.sqlite3, on the classpath</description>
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-    <class>com.github.jinahya.headsofgovernments.persistence.Office</class>
     <class>com.github.jinahya.headsofgovernments.persistence.Head</class>
     <class>com.github.jinahya.headsofgovernments.persistence.Head$LocalDateConverter</class>
+    <class>com.github.jinahya.headsofgovernments.persistence.Office</class>
     <properties>
       <property name="jakarta.persistence.jdbc.driver" value="org.sqlite.JDBC"/>
       <property name="jakarta.persistence.jdbc.url"

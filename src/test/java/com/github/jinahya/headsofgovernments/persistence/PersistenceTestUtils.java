@@ -70,8 +70,8 @@ public final class PersistenceTestUtils {
     public static <R> R applyEntityManager(
             final Function<? super EntityManager, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return applyEntityManagerFactory(factory -> {
-            try (var manager = factory.createEntityManager()) {
+        return applyEntityManagerFactory(f -> {
+            try (var manager = f.createEntityManager()) {
                 return function.apply(manager);
             }
         });

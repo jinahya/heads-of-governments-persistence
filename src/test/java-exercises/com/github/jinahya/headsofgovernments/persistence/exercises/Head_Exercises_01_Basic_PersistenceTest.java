@@ -37,9 +37,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Answers the exercises of {@code src/test/sql-exercises/head/01_basic.sql}, against
- * {@code heads_of_governments.sqlite3}; a nested class per exercise, which answers it with JPQL
- * and with the Criteria API, or with a native query where neither can, and checks that it gives
- * what the SQL of the file gives.
+ * {@code heads_of_governments.sqlite3}; a nested class per exercise, which answers it with JPQL and
+ * with the Criteria API, or with a native query where neither can, and checks that it gives what
+ * the SQL of the file gives.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -627,10 +627,12 @@ class Head_Exercises_01_Basic_PersistenceTest {
     @DisplayName("HOG_HEAD_B_12: A term by its official number")
     @Nested
     class HOG_HEAD_B_12_Test {
+
     }
 
     @DisplayName("HOG_HEAD_B_13: Terms that end after the head died")
     @Nested
     class HOG_HEAD_B_13_Test {
+
     }
 }

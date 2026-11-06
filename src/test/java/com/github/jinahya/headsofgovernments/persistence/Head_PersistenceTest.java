@@ -100,6 +100,23 @@ class Head_PersistenceTest {
                         .isEqualTo("Louis-Napoléon Bonaparte");
             }
 
+            // Office(FR) first, then Louis-Napoléon Bonaparte, in the same persistence context
+            @Test
+            void __1_officeFirst() {
+                final var found = PersistenceTestUtils.applyEntityManager(em -> {
+                    final var office = em.find(Office.class, HEAD_ID_FIRST.country());
+                    HibernateOrmUtils.logEntities(em);
+                    final var head = em.find(Head.class, HEAD_ID_FIRST);
+                    HibernateOrmUtils.logEntities(em);
+                    assertThat(head.getOffice()).isSameAs(office);
+                    return head;
+                });
+                assertThat(found)
+                        .isNotNull()
+                        .extracting(Head::getName)
+                        .isEqualTo("Louis-Napoléon Bonaparte");
+            }
+
             @Test
             void __QueryLanguage() {
                 final var found = PersistenceTestUtils.applyEntityManager(em -> {
