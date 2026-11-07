@@ -29,6 +29,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -180,6 +182,7 @@ public class Head {
     // -------------------------------------------------------------------------------------- number
 
     // ----------------------------------------------------------------------------------- termStart
+
     /**
      * Returns the value of {@code termStart} attribute, parsed as a {@link LocalDate}. The
      * attribute is mapped as the ISO-8601 text the {@code term_start} column holds, with no
@@ -187,7 +190,7 @@ public class Head {
      * is not mapped.
      *
      * @return the value of {@code termStart} attribute as a {@link LocalDate}; {@code null} when
-     * the attribute is {@code null}, as on a new instance.
+     *         the attribute is {@code null}, as on a new instance.
      * @see LocalDate#parse(CharSequence)
      */
     @jakarta.persistence.Transient
@@ -202,13 +205,14 @@ public class Head {
     // --------------------------------------------------------------------------------------- party
 
     // ---------------------------------------------------------------------------------------- born
+
     /**
      * Returns the value of {@code born} attribute as a {@link Year}. The attribute is mapped as the
      * integer the {@code born} column holds, so that a query can do arithmetic on it; this method
      * is the typed view of it, and is not mapped.
      *
      * @return the value of {@code born} attribute as a {@link Year}; {@code null} when the
-     * attribute is {@code null}, as on a new instance.
+     *         attribute is {@code null}, as on a new instance.
      * @see Year#of(int)
      */
     @Transient
@@ -225,10 +229,9 @@ public class Head {
     @Getter(AccessLevel.PACKAGE)
     private String country;
 
-    @jakarta.persistence.ManyToOne(targetEntity = Office.class, fetch = FetchType.EAGER,
-                                   optional = false)
-    @jakarta.persistence.JoinColumn(name = "country", referencedColumnName = "country",
-                                    nullable = false, insertable = false, updatable = false)
+    @ManyToOne(targetEntity = Office.class, fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "country", referencedColumnName = "country", nullable = false,
+                insertable = false, updatable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Office office;
