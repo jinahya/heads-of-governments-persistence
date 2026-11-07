@@ -51,7 +51,7 @@ import java.util.function.Function;
         "java:S101" // Class names should comply with a naming convention
 })
 @Slf4j
-final class __Exercises_TestUtils {
+public final class __Exercises_TestUtils {
 
     /**
      * Applies the specified function to an entity manager of the
@@ -61,7 +61,7 @@ final class __Exercises_TestUtils {
      * @param <R>      the type of the result.
      * @return the result of the {@code function}.
      */
-    static <R> R apply(final Function<? super EntityManager, ? extends R> function) {
+    public static <R> R apply(final Function<? super EntityManager, ? extends R> function) {
         return PersistenceTestUtils.applyEntityManager(function);
     }
 
@@ -73,7 +73,7 @@ final class __Exercises_TestUtils {
      * @param values the values of the row; {@code null} is allowed.
      * @return a row of the {@code values}.
      */
-    static List<Object> row(final Object... values) {
+    public static List<Object> row(final Object... values) {
         return Arrays.asList(Arrays.stream(values).map(__Exercises_TestUtils::widen).toArray());
     }
 
@@ -84,7 +84,7 @@ final class __Exercises_TestUtils {
      * @param results the result list of a query.
      * @return a list of rows of the {@code results}.
      */
-    static List<List<Object>> rows(final List<?> results) {
+    public static List<List<Object>> rows(final List<?> results) {
         Objects.requireNonNull(results, "results is null");
         final var rows = results.stream()
                 .map(r -> r instanceof Object[] a ? row(a) : row(r))

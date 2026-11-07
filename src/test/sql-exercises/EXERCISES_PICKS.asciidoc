@@ -47,7 +47,7 @@ The `head` table: a row per term of a head of government.
 
 // AI: Pick HOG_HEAD_B_01: Date predicates, nullable term ends, and explicit handover-day semantics.
 // AI: Copied from EXERCISES.asciidoc:25, anchor HOG_HEAD_B_01; retain the permanent ID when revising.
-// AI: Registry: section=HEAD; tier=Basic; sql=src/test/sql-exercises/head/01_basic.sql; test=Head_Exercises_01_Basic_PersistenceTest.HOG_HEAD_B_01_Test.
+// AI: Registry: section=HEAD; tier=Basic; sql=src/test/sql-exercises/head/01_basic.sql; test=hog.head.HOG_HEAD_B_01_PersistenceIT.
 [[HOG_HEAD_B_01]]
 ==== HOG_HEAD_B_01: Who held office on a day
 
@@ -70,7 +70,7 @@ ORDER BY country ASC
 
 // AI: Pick HOG_HEAD_B_02: A first entity-list query with a country parameter and chronological ordering.
 // AI: Copied from EXERCISES.asciidoc:45, anchor HOG_HEAD_B_02; retain the permanent ID when revising.
-// AI: Registry: section=HEAD; tier=Basic; sql=src/test/sql-exercises/head/01_basic.sql; test=Head_Exercises_01_Basic_PersistenceTest.HOG_HEAD_B_02_Test.
+// AI: Registry: section=HEAD; tier=Basic; sql=src/test/sql-exercises/head/01_basic.sql; test=hog.head.HOG_HEAD_B_02_PersistenceIT.
 [[HOG_HEAD_B_02]]
 ==== HOG_HEAD_B_02: One country's list
 
@@ -91,7 +91,7 @@ ORDER BY term_start ASC
 
 // AI: Pick HOG_HEAD_B_10: Deterministic pagination over the country's composite identifier.
 // AI: Copied from EXERCISES.asciidoc:238, anchor HOG_HEAD_B_10; retain the permanent ID when revising.
-// AI: Registry: section=HEAD; tier=Basic; sql=src/test/sql-exercises/head/01_basic.sql; test=Head_Exercises_01_Basic_PersistenceTest.HOG_HEAD_B_10_Test.
+// AI: Registry: section=HEAD; tier=Basic; sql=src/test/sql-exercises/head/01_basic.sql; test=hog.head.HOG_HEAD_B_10_PersistenceIT.
 [[HOG_HEAD_B_10]]
 ==== HOG_HEAD_B_10: A country's list, ten terms a page
 
@@ -119,7 +119,7 @@ LIMIT 10 OFFSET 10
 
 // AI: Pick HOG_HEAD_I_04: GROUP BY, COUNT, and COUNT DISTINCT distinguish terms from people.
 // AI: Copied from EXERCISES.asciidoc:395, anchor HOG_HEAD_I_04; retain the permanent ID when revising.
-// AI: Registry: section=HEAD; tier=Intermediate; sql=src/test/sql-exercises/head/02_intermediate.sql; test=Head_Exercises_02_Intermediate_PersistenceTest.HOG_HEAD_I_04_Test.
+// AI: Registry: section=HEAD; tier=Intermediate; sql=src/test/sql-exercises/head/02_intermediate.sql; test=hog.head.HOG_HEAD_I_04_PersistenceIT.
 [[HOG_HEAD_I_04]]
 ==== HOG_HEAD_I_04: Terms per party
 
@@ -142,7 +142,7 @@ ORDER BY terms DESC, party ASC
 
 // AI: Pick HOG_HEAD_I_05: Nullable year attributes and aggregation over repeated terms.
 // AI: Copied from EXERCISES.asciidoc:415, anchor HOG_HEAD_I_05; retain the permanent ID when revising.
-// AI: Registry: section=HEAD; tier=Intermediate; sql=src/test/sql-exercises/head/02_intermediate.sql; test=Head_Exercises_02_Intermediate_PersistenceTest.HOG_HEAD_I_05_Test.
+// AI: Registry: section=HEAD; tier=Intermediate; sql=src/test/sql-exercises/head/02_intermediate.sql; test=hog.head.HOG_HEAD_I_05_PersistenceIT.
 [[HOG_HEAD_I_05]]
 ==== HOG_HEAD_I_05: Living former heads
 
@@ -184,7 +184,7 @@ ORDER BY country ASC, last_term_end DESC NULLS LAST
 
 // AI: Pick HOG_HEAD_I_17: A correlated average with a clear per-country comparison.
 // AI: Copied from EXERCISES.asciidoc:820, anchor HOG_HEAD_I_17; retain the permanent ID when revising.
-// AI: Registry: section=HEAD; tier=Intermediate; sql=src/test/sql-exercises/head/02_intermediate.sql; test=Head_Exercises_02_Intermediate_PersistenceTest.HOG_HEAD_I_17_Test.
+// AI: Registry: section=HEAD; tier=Intermediate; sql=src/test/sql-exercises/head/02_intermediate.sql; test=hog.head.HOG_HEAD_I_17_PersistenceIT.
 [[HOG_HEAD_I_17]]
 ==== HOG_HEAD_I_17: Terms begun fifteen years younger than the country's average
 
@@ -233,7 +233,7 @@ ORDER BY h.country ASC, h.term_start ASC
 
 // AI: Pick HOG_HEAD_A_05: Predecessor and successor queries exercise temporal ordering within a country.
 // AI: Copied from EXERCISES.asciidoc:1075, anchor HOG_HEAD_A_05; retain the permanent ID when revising.
-// AI: Registry: section=HEAD; tier=Advanced; sql=src/test/sql-exercises/head/03_advanced.sql; test=Head_Exercises_03_Advanced_PersistenceTest.HOG_HEAD_A_05_Test.
+// AI: Registry: section=HEAD; tier=Advanced; sql=src/test/sql-exercises/head/03_advanced.sql; test=hog.head.HOG_HEAD_A_05_PersistenceIT.
 // AI: Check the actual JPQL/Criteria solution: source SQL uses database-specific syntax or analytics; do not call that SQL portable JPQL.
 [[HOG_HEAD_A_05]]
 ==== HOG_HEAD_A_05: Predecessor and successor
@@ -268,7 +268,7 @@ The `office` table: a row per country's office.
 
 // AI: Pick HOG_OFFICE_B_01: Case-normalized parameter lookup of a string identifier.
 // AI: Copied from EXERCISES.asciidoc:1222, anchor HOG_OFFICE_B_01; retain the permanent ID when revising.
-// AI: Registry: section=OFFICE; tier=Basic; sql=src/test/sql-exercises/office/01_basic.sql; test=Office_Exercises_01_Basic_PersistenceTest.HOG_OFFICE_B_01_Test.
+// AI: Registry: section=OFFICE; tier=Basic; sql=src/test/sql-exercises/office/01_basic.sql; test=hog.office.HOG_OFFICE_B_01_PersistenceIT.
 [[HOG_OFFICE_B_01]]
 ==== HOG_OFFICE_B_01: An office by country
 
@@ -288,7 +288,7 @@ WHERE country = UPPER(:country)
 
 // AI: Pick HOG_OFFICE_B_02: A small, readable first entity list.
 // AI: Copied from EXERCISES.asciidoc:1239, anchor HOG_OFFICE_B_02; retain the permanent ID when revising.
-// AI: Registry: section=OFFICE; tier=Basic; sql=src/test/sql-exercises/office/01_basic.sql; test=Office_Exercises_01_Basic_PersistenceTest.HOG_OFFICE_B_02_Test.
+// AI: Registry: section=OFFICE; tier=Basic; sql=src/test/sql-exercises/office/01_basic.sql; test=hog.office.HOG_OFFICE_B_02_PersistenceIT.
 [[HOG_OFFICE_B_02]]
 ==== HOG_OFFICE_B_02: The offices
 
@@ -320,7 +320,7 @@ ORDER BY country ASC
 
 // AI: Pick HOG_OFFICE_B_04: Filter an enum attribute using the mapped enum value.
 // AI: Copied from EXERCISES.asciidoc:1296, anchor HOG_OFFICE_B_04; retain the permanent ID when revising.
-// AI: Registry: section=OFFICE; tier=Basic; sql=src/test/sql-exercises/office/01_basic.sql; test=Office_Exercises_01_Basic_PersistenceTest.HOG_OFFICE_B_04_Test.
+// AI: Registry: section=OFFICE; tier=Basic; sql=src/test/sql-exercises/office/01_basic.sql; test=hog.office.HOG_OFFICE_B_04_PersistenceIT.
 [[HOG_OFFICE_B_04]]
 ==== HOG_OFFICE_B_04: The offices headed by a prime minister
 
@@ -356,7 +356,7 @@ ORDER BY country ASC
 
 // AI: Pick HOG_OFFICE_I_03: NOT EXISTS on the office's heads; an empty result is intentional here.
 // AI: Copied from EXERCISES.asciidoc:1383, anchor HOG_OFFICE_I_03; retain the permanent ID when revising.
-// AI: Registry: section=OFFICE; tier=Intermediate; sql=src/test/sql-exercises/office/02_intermediate.sql; test=Office_Exercises_02_Intermediate_PersistenceTest.HOG_OFFICE_I_03_Test.
+// AI: Registry: section=OFFICE; tier=Intermediate; sql=src/test/sql-exercises/office/02_intermediate.sql; test=hog.office.HOG_OFFICE_I_03_PersistenceIT.
 [[HOG_OFFICE_I_03]]
 ==== HOG_OFFICE_I_03: Offices without an incumbent
 
@@ -401,7 +401,7 @@ Exercises that read both tables.
 
 // AI: Pick HOG_SCHEMA_B_01: Navigate the head-to-office association to display an office title.
 // AI: Copied from EXERCISES.asciidoc:1453, anchor HOG_SCHEMA_B_01; retain the permanent ID when revising.
-// AI: Registry: section=SCHEMA; tier=Basic; sql=src/test/sql-exercises/__/01_basic.sql; test=__Exercises_01_Basic_PersistenceTest.HOG_SCHEMA_B_01_Test.
+// AI: Registry: section=SCHEMA; tier=Basic; sql=src/test/sql-exercises/__/01_basic.sql; test=hog.schema.HOG_SCHEMA_B_01_PersistenceIT.
 [[HOG_SCHEMA_B_01]]
 ==== HOG_SCHEMA_B_01: The incumbents, with their titles
 
@@ -434,7 +434,7 @@ ORDER BY g.country ASC
 
 // AI: Pick HOG_SCHEMA_B_03: Group terms by the mapped office rather than by a display string.
 // AI: Copied from EXERCISES.asciidoc:1483, anchor HOG_SCHEMA_B_03; retain the permanent ID when revising.
-// AI: Registry: section=SCHEMA; tier=Basic; sql=src/test/sql-exercises/__/01_basic.sql; test=__Exercises_01_Basic_PersistenceTest.HOG_SCHEMA_B_03_Test.
+// AI: Registry: section=SCHEMA; tier=Basic; sql=src/test/sql-exercises/__/01_basic.sql; test=hog.schema.HOG_SCHEMA_B_03_PersistenceIT.
 [[HOG_SCHEMA_B_03]]
 ==== HOG_SCHEMA_B_03: Terms per office
 
@@ -468,7 +468,7 @@ ORDER BY g.country ASC
 
 // AI: Pick HOG_SCHEMA_B_07: A LEFT JOIN condition preserves offices with no matching terms.
 // AI: Copied from EXERCISES.asciidoc:1590, anchor HOG_SCHEMA_B_07; retain the permanent ID when revising.
-// AI: Registry: section=SCHEMA; tier=Basic; sql=src/test/sql-exercises/__/01_basic.sql; test=__Exercises_01_Basic_PersistenceTest.HOG_SCHEMA_B_07_Test.
+// AI: Registry: section=SCHEMA; tier=Basic; sql=src/test/sql-exercises/__/01_basic.sql; test=hog.schema.HOG_SCHEMA_B_07_PersistenceIT.
 [[HOG_SCHEMA_B_07]]
 ==== HOG_SCHEMA_B_07: Terms since 2000 per office
 
@@ -508,7 +508,7 @@ ORDER BY terms DESC, g.country ASC
 
 // AI: Pick HOG_SCHEMA_I_02: Connect the composite key lesson to the non-unique official number.
 // AI: Copied from EXERCISES.asciidoc:1646, anchor HOG_SCHEMA_I_02; retain the permanent ID when revising.
-// AI: Registry: section=SCHEMA; tier=Intermediate; sql=src/test/sql-exercises/__/02_intermediate.sql; test=__Exercises_02_Intermediate_PersistenceTest.HOG_SCHEMA_I_02_Test.
+// AI: Registry: section=SCHEMA; tier=Intermediate; sql=src/test/sql-exercises/__/02_intermediate.sql; test=hog.schema.HOG_SCHEMA_I_02_PersistenceIT.
 [[HOG_SCHEMA_I_02]]
 ==== HOG_SCHEMA_I_02: Numbering in practice
 
@@ -545,7 +545,7 @@ ORDER BY g.country ASC
 
 // AI: Pick HOG_SCHEMA_I_04: COUNT DISTINCT with an outer-join predicate preserves zero counts.
 // AI: Copied from EXERCISES.asciidoc:1715, anchor HOG_SCHEMA_I_04; retain the permanent ID when revising.
-// AI: Registry: section=SCHEMA; tier=Intermediate; sql=src/test/sql-exercises/__/02_intermediate.sql; test=__Exercises_02_Intermediate_PersistenceTest.HOG_SCHEMA_I_04_Test.
+// AI: Registry: section=SCHEMA; tier=Intermediate; sql=src/test/sql-exercises/__/02_intermediate.sql; test=hog.schema.HOG_SCHEMA_I_04_PersistenceIT.
 [[HOG_SCHEMA_I_04]]
 ==== HOG_SCHEMA_I_04: Living heads per office
 
@@ -585,7 +585,7 @@ ORDER BY g.country ASC
 
 // AI: Pick HOG_SCHEMA_A_02: An as-of query preserves vacant offices and introduces COALESCE.
 // AI: Copied from EXERCISES.asciidoc:1858, anchor HOG_SCHEMA_A_02; retain the permanent ID when revising.
-// AI: Registry: section=SCHEMA; tier=Advanced; sql=src/test/sql-exercises/__/03_advanced.sql; test=__Exercises_03_Advanced_PersistenceTest.HOG_SCHEMA_A_02_Test.
+// AI: Registry: section=SCHEMA; tier=Advanced; sql=src/test/sql-exercises/__/03_advanced.sql; test=hog.schema.HOG_SCHEMA_A_02_PersistenceIT.
 [[HOG_SCHEMA_A_02]]
 ==== HOG_SCHEMA_A_02: Every office on a day, vacant or not
 
@@ -609,7 +609,7 @@ ORDER BY g.country ASC, h.term_start ASC NULLS FIRST
 
 // AI: Pick HOG_SCHEMA_A_03: A temporal self-join across offices combines associations and date conditions.
 // AI: Copied from EXERCISES.asciidoc:1879, anchor HOG_SCHEMA_A_03; retain the permanent ID when revising.
-// AI: Registry: section=SCHEMA; tier=Advanced; sql=src/test/sql-exercises/__/03_advanced.sql; test=__Exercises_03_Advanced_PersistenceTest.HOG_SCHEMA_A_03_Test.
+// AI: Registry: section=SCHEMA; tier=Advanced; sql=src/test/sql-exercises/__/03_advanced.sql; test=hog.schema.HOG_SCHEMA_A_03_PersistenceIT.
 [[HOG_SCHEMA_A_03]]
 ==== HOG_SCHEMA_A_03: The incumbents' contemporaries
 
