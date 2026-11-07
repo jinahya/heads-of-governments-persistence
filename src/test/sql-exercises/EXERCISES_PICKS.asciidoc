@@ -1,0 +1,659 @@
+= Exercises picks
+:toc: left
+:toclevels: 3
+
+// AI: Editorial review dated 2026-11-08. Source: sibling EXERCISES.asciidoc and EXERCISES.yaml.
+// AI: Reviewed every exercise in this module against Jakarta Persistence Applied, master src/main/asciidoc/00_book.asciidoc.
+// AI: This is a candidate shortlist, not a change to the official PROJECTS_EXERCISES.asciidoc picks or the manuscript.
+// AI: Preserve source scope order, level classifications, permanent IDs, statements, SQL, JPQL, and existing answer blocks.
+// AI: At most three candidates per original scope and level; fewer or zero is intentional. Do not fill slots mechanically.
+// AI: Prefer mapped attributes, identifiers, enum/converter behavior, associations, joins, aggregates, subqueries, fetching, and paging.
+// AI: Omit contrived name/string puzzles, redundant integrity audits, arbitrary rankings, and unrelated SQL analytics.
+// AI: Native-only candidates are explicit chapter-specific exceptions, not permission to replace portable solutions elsewhere.
+// AI: Agent handoff: read each rationale and TODO, resolve the registry sql/test paths, inspect the mapped types and actual tests,
+// AI: reconcile stale solutions, and run the relevant database/provider tests before promoting any candidate to the book.
+// AI: Existing output blocks below are archival copies from the source, not fresh test results or verified publication output.
+// AI: For manuscript output, rerun the query, retain // AI: provenance, and use the current mappings and provider policy.
+// AI: Source SHA-256 at review: 9a1ee8c2cf6d95d2bb7ad4ed82f415cbfeaf7ba76c020a8d0355bb89439c3db2.
+
+Selected exercises for a persistence-focused teaching sequence.
+The original scope and difficulty headings are retained; an empty level intentionally has no suitable pick.
+Statements and answers are copied from link:EXERCISES.asciidoc[the complete exercise collection].
+Selection is an editorial recommendation; implementation notes in the source comments identify follow-up work.
+
+// AI: Original source conventions below apply to the copied subset.
+The exercises on `src/main/resources/heads_of_governments.sqlite3`: a section for each table, with a section for each level, and, at the end, a section for the schema as a whole.
+Each exercise states the request it answers; the SQL that answers it is in the `.sql` file, under the same id.
+The ids are registered in `EXERCISES.yaml`.
+
+Parameters are bind variables (`:name`); the `sqlite3` shell binds one with `.parameter set :name 'value'`, and an IDE prompts for them when a statement runs.
+An exercise with a parameter, or one that measures to `date('now')`, shows no output, since what it gives back depends on the value or the day.
+
+Run a file as a whole:
+
+[source,sh]
+----
+sqlite3 -readonly src/main/resources/heads_of_governments.sqlite3 < src/test/sql-exercises/<section>/<NN>_<level>.sql
+----
+
+== head
+
+The `head` table: a row per term of a head of government.
+
+=== Basic
+
+// AI: Basic: selected 3 of 12 reviewed candidates in this original scope.
+// AI: Not selected: HOG_HEAD_B_03, HOG_HEAD_B_04, HOG_HEAD_B_05, HOG_HEAD_B_06, HOG_HEAD_B_08, HOG_HEAD_B_09, HOG_HEAD_B_11, HOG_HEAD_B_12, HOG_HEAD_B_13.
+
+// AI: Pick HOG_HEAD_B_01: Date predicates, nullable term ends, and explicit handover-day semantics.
+// AI: Copied from EXERCISES.asciidoc:25, anchor HOG_HEAD_B_01; retain the permanent ID when revising.
+// AI: Registry: section=HEAD; tier=Basic; sql=src/test/sql-exercises/head/01_basic.sql; test=Head_Exercises_01_Basic_PersistenceTest.HOG_HEAD_B_01_Test.
+[[HOG_HEAD_B_01]]
+==== HOG_HEAD_B_01: Who held office on a day
+
+A reader gives a date and wants each country's head on that day.
+A country whose office was vacant is absent; on a handover day, the day one term ends and the next begins, both heads show.
+
+.`head/01_basic.sql`, HOG_HEAD_B_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM head
+WHERE term_start <= :date
+  AND (term_end IS NULL OR term_end >= :date)
+ORDER BY country ASC
+----
+
+====
+
+// AI: Pick HOG_HEAD_B_02: A first entity-list query with a country parameter and chronological ordering.
+// AI: Copied from EXERCISES.asciidoc:45, anchor HOG_HEAD_B_02; retain the permanent ID when revising.
+// AI: Registry: section=HEAD; tier=Basic; sql=src/test/sql-exercises/head/01_basic.sql; test=Head_Exercises_01_Basic_PersistenceTest.HOG_HEAD_B_02_Test.
+[[HOG_HEAD_B_02]]
+==== HOG_HEAD_B_02: One country's list
+
+A reader wants a country's heads, first to latest, as the source lists them.
+
+.`head/01_basic.sql`, HOG_HEAD_B_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM head
+WHERE country = :country
+ORDER BY term_start ASC
+----
+
+====
+
+// AI: Pick HOG_HEAD_B_10: Deterministic pagination over the country's composite identifier.
+// AI: Copied from EXERCISES.asciidoc:238, anchor HOG_HEAD_B_10; retain the permanent ID when revising.
+// AI: Registry: section=HEAD; tier=Basic; sql=src/test/sql-exercises/head/01_basic.sql; test=Head_Exercises_01_Basic_PersistenceTest.HOG_HEAD_B_10_Test.
+[[HOG_HEAD_B_10]]
+==== HOG_HEAD_B_10: A country's list, ten terms a page
+
+A reader pages through a country's list ten terms at a time, first to latest, and asks for the second page.
+term_start is distinct within a country (HOG_HEAD_I_18 checks it), so the order, and with it each page, is fixed.
+
+.`head/01_basic.sql`, HOG_HEAD_B_10
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM head
+WHERE country = :country
+ORDER BY term_start ASC
+LIMIT 10 OFFSET 10
+----
+
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 3 of 17 reviewed candidates in this original scope.
+// AI: Not selected: HOG_HEAD_I_01, HOG_HEAD_I_03, HOG_HEAD_I_06, HOG_HEAD_I_08, HOG_HEAD_I_09, HOG_HEAD_I_10, HOG_HEAD_I_11, HOG_HEAD_I_12, HOG_HEAD_I_13, HOG_HEAD_I_14, HOG_HEAD_I_15, HOG_HEAD_I_16, HOG_HEAD_I_18, HOG_HEAD_I_19.
+
+// AI: Pick HOG_HEAD_I_04: GROUP BY, COUNT, and COUNT DISTINCT distinguish terms from people.
+// AI: Copied from EXERCISES.asciidoc:395, anchor HOG_HEAD_I_04; retain the permanent ID when revising.
+// AI: Registry: section=HEAD; tier=Intermediate; sql=src/test/sql-exercises/head/02_intermediate.sql; test=Head_Exercises_02_Intermediate_PersistenceTest.HOG_HEAD_I_04_Test.
+[[HOG_HEAD_I_04]]
+==== HOG_HEAD_I_04: Terms per party
+
+For one country, each party with how many terms it held and how many different persons, most terms first.
+A party written as a succession ('RPR/UMP') counts as its own value.
+
+.`head/02_intermediate.sql`, HOG_HEAD_I_04
+[%collapsible]
+====
+[source,sql]
+----
+SELECT party, COUNT(*) AS terms, COUNT(DISTINCT name) AS persons
+FROM head
+WHERE country = :country
+GROUP BY party
+ORDER BY terms DESC, party ASC
+----
+
+====
+
+// AI: Pick HOG_HEAD_I_05: Nullable year attributes and aggregation over repeated terms.
+// AI: Copied from EXERCISES.asciidoc:415, anchor HOG_HEAD_I_05; retain the permanent ID when revising.
+// AI: Registry: section=HEAD; tier=Intermediate; sql=src/test/sql-exercises/head/02_intermediate.sql; test=Head_Exercises_02_Intermediate_PersistenceTest.HOG_HEAD_I_05_Test.
+[[HOG_HEAD_I_05]]
+==== HOG_HEAD_I_05: Living former heads
+
+Per country, the former heads still living, with the day their last term ended, most recent first.
+
+.`head/02_intermediate.sql`, HOG_HEAD_I_05
+[%collapsible]
+====
+[source,sql]
+----
+SELECT country, name, born, MAX(term_end) AS last_term_end
+FROM head
+WHERE died IS NULL
+GROUP BY country, name
+HAVING MAX(term_end IS NULL) = 0
+ORDER BY country ASC, last_term_end DESC NULLS LAST
+----
+
+....
++---------+-------------------+------+---------------+
+| country |       name        | born | last_term_end |
++---------+-------------------+------+---------------+
+| FR      | François Hollande | 1954 | 2017-05-14    |
+| FR      | Nicolas Sarkozy   | 1955 | 2012-05-15    |
+| GB      | Keir Starmer      | 1962 | 2026-07-20    |
+| GB      | Rishi Sunak       | 1980 | 2024-07-05    |
+| GB      | Liz Truss         | 1975 | 2022-10-25    |
+| GB      | Boris Johnson     | 1964 | 2022-09-06    |
+| GB      | Theresa May       | 1956 | 2019-07-24    |
+| GB      | David Cameron     | 1966 | 2016-07-13    |
+| GB      | Gordon Brown      | 1951 | 2010-05-11    |
+| GB      | Tony Blair        | 1953 | 2007-06-27    |
++---------+-------------------+------+---------------+
+....
+
+30 rows; the first 10.
+
+====
+
+// AI: Pick HOG_HEAD_I_17: A correlated average with a clear per-country comparison.
+// AI: Copied from EXERCISES.asciidoc:820, anchor HOG_HEAD_I_17; retain the permanent ID when revising.
+// AI: Registry: section=HEAD; tier=Intermediate; sql=src/test/sql-exercises/head/02_intermediate.sql; test=Head_Exercises_02_Intermediate_PersistenceTest.HOG_HEAD_I_17_Test.
+[[HOG_HEAD_I_17]]
+==== HOG_HEAD_I_17: Terms begun fifteen years younger than the country's average
+
+The terms whose head, in years of the calendar, was fifteen or more years younger than the average age at which that country's terms began, by country, then in date order.
+A correlated subquery gives each term its own country's average.
+
+.`head/02_intermediate.sql`, HOG_HEAD_I_17
+[%collapsible]
+====
+[source,sql]
+----
+SELECT h.*, CAST(SUBSTR(h.term_start, 1, 4) AS INTEGER) - h.born AS age
+FROM head h
+WHERE CAST(SUBSTR(h.term_start, 1, 4) AS INTEGER) - h.born
+          <= (SELECT AVG(CAST(SUBSTR(s.term_start, 1, 4) AS INTEGER) - s.born)
+              FROM head s
+              WHERE s.country = h.country) - 15
+ORDER BY h.country ASC, h.term_start ASC
+----
+
+....
++---------+--------+------------+------------+--------------------------+------------------+------+------+-----+
+| country | number | term_start |  term_end  |           name           |      party       | born | died | age |
++---------+--------+------------+------------+--------------------------+------------------+------+------+-----+
+| FR      |      1 | 1848-12-20 | 1852-12-02 | Louis-Napoléon Bonaparte | Bonapartiste     | 1808 | 1873 |  40 |
+| FR      |     25 | 2017-05-14 | 2022-05-14 | Emmanuel Macron          | LREM             | 1977 |      |  40 |
+| FR      |     25 | 2022-05-14 |            | Emmanuel Macron          | LREM/Renaissance | 1977 |      |  45 |
+| GB      |      5 | 1756-11-16 | 1757-06-29 | William Cavendish        | Whig             | 1720 | 1764 |  36 |
+| GB      |      8 | 1765-07-13 | 1766-07-30 | Charles Watson-Wentworth | Whig             | 1730 | 1782 |  35 |
+| GB      |     10 | 1768-10-14 | 1770-01-28 | Augustus FitzRoy         | Whig             | 1735 | 1811 |  33 |
+| GB      |     11 | 1770-01-28 | 1782-03-27 | Frederick North          | Tory             | 1732 | 1792 |  38 |
+| GB      |     14 | 1783-12-19 | 1801-03-14 | William Pitt the Younger | Tory             | 1759 | 1806 |  24 |
+| JP      |      1 | 1885-12-22 | 1888-04-30 | 伊藤博文                 | 無所属           | 1841 | 1909 |  44 |
+| JP      |      2 | 1888-04-30 | 1889-10-25 | 黒田清隆                 | 無所属           | 1840 | 1900 |  48 |
+| JP      |     34 | 1937-06-04 | 1939-01-05 | 近衛文麿                 | 無所属           | 1891 | 1945 |  46 |
+| KR      |      5 | 1963-12-17 | 1967-06-30 | 박정희                   | 민주공화당       | 1917 | 1979 |  46 |
++---------+--------+------------+------------+--------------------------+------------------+------+------+-----+
+....
+
+====
+
+=== Advanced
+
+// AI: Advanced: selected 1 of 8 reviewed candidates in this original scope.
+// AI: Not selected: HOG_HEAD_A_01, HOG_HEAD_A_02, HOG_HEAD_A_03, HOG_HEAD_A_04, HOG_HEAD_A_06, HOG_HEAD_A_07, HOG_HEAD_A_08.
+
+// AI: Pick HOG_HEAD_A_05: Predecessor and successor queries exercise temporal ordering within a country.
+// AI: Copied from EXERCISES.asciidoc:1075, anchor HOG_HEAD_A_05; retain the permanent ID when revising.
+// AI: Registry: section=HEAD; tier=Advanced; sql=src/test/sql-exercises/head/03_advanced.sql; test=Head_Exercises_03_Advanced_PersistenceTest.HOG_HEAD_A_05_Test.
+// AI: Check the actual JPQL/Criteria solution: source SQL uses database-specific syntax or analytics; do not call that SQL portable JPQL.
+[[HOG_HEAD_A_05]]
+==== HOG_HEAD_A_05: Predecessor and successor
+
+For a person named exactly, each of their terms with who held the office immediately before and after it in that country; the incumbent has no successor.
+
+.`head/03_advanced.sql`, HOG_HEAD_A_05
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM (SELECT h.*,
+             LAG(name) OVER (PARTITION BY country ORDER BY term_start)  AS predecessor,
+             LEAD(name) OVER (PARTITION BY country ORDER BY term_start) AS successor
+      FROM head AS h)
+WHERE name = :name
+ORDER BY country ASC, term_start ASC
+----
+
+====
+
+== office
+
+The `office` table: a row per country's office.
+
+=== Basic
+
+// AI: Basic: selected 3 of 4 reviewed candidates in this original scope.
+// AI: Selection boundary: Do not extract a classification from the free-text numbering explanation; it is not structured data.
+// AI: Not selected: HOG_OFFICE_B_03.
+
+// AI: Pick HOG_OFFICE_B_01: Case-normalized parameter lookup of a string identifier.
+// AI: Copied from EXERCISES.asciidoc:1222, anchor HOG_OFFICE_B_01; retain the permanent ID when revising.
+// AI: Registry: section=OFFICE; tier=Basic; sql=src/test/sql-exercises/office/01_basic.sql; test=Office_Exercises_01_Basic_PersistenceTest.HOG_OFFICE_B_01_Test.
+[[HOG_OFFICE_B_01]]
+==== HOG_OFFICE_B_01: An office by country
+
+A reader has a country code, typed in whatever case, and wants that office.
+
+.`office/01_basic.sql`, HOG_OFFICE_B_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM office
+WHERE country = UPPER(:country)
+----
+
+====
+
+// AI: Pick HOG_OFFICE_B_02: A small, readable first entity list.
+// AI: Copied from EXERCISES.asciidoc:1239, anchor HOG_OFFICE_B_02; retain the permanent ID when revising.
+// AI: Registry: section=OFFICE; tier=Basic; sql=src/test/sql-exercises/office/01_basic.sql; test=Office_Exercises_01_Basic_PersistenceTest.HOG_OFFICE_B_02_Test.
+[[HOG_OFFICE_B_02]]
+==== HOG_OFFICE_B_02: The offices
+
+The front page lists every office with the title of its head, by country code.
+
+.`office/01_basic.sql`, HOG_OFFICE_B_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT country, head_kind, head_title
+FROM office
+ORDER BY country ASC
+----
+
+....
++---------+----------------+----------------------------+
+| country |   head_kind    |         head_title         |
++---------+----------------+----------------------------+
+| FR      | PRESIDENT      | Président de la République |
+| GB      | PRIME_MINISTER | Prime Minister             |
+| JP      | PRIME_MINISTER | 内閣総理大臣               |
+| KR      | PRESIDENT      | 대통령                     |
+| US      | PRESIDENT      | President                  |
++---------+----------------+----------------------------+
+....
+
+====
+
+// AI: Pick HOG_OFFICE_B_04: Filter an enum attribute using the mapped enum value.
+// AI: Copied from EXERCISES.asciidoc:1296, anchor HOG_OFFICE_B_04; retain the permanent ID when revising.
+// AI: Registry: section=OFFICE; tier=Basic; sql=src/test/sql-exercises/office/01_basic.sql; test=Office_Exercises_01_Basic_PersistenceTest.HOG_OFFICE_B_04_Test.
+[[HOG_OFFICE_B_04]]
+==== HOG_OFFICE_B_04: The offices headed by a prime minister
+
+The offices whose head is a prime minister (head_kind 'PRIME_MINISTER'), by country code.
+
+.`office/01_basic.sql`, HOG_OFFICE_B_04
+[%collapsible]
+====
+[source,sql]
+----
+SELECT *
+FROM office
+WHERE head_kind = 'PRIME_MINISTER'
+ORDER BY country ASC
+----
+
+....
++---------+----------------+----------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+| country |   head_kind    |   head_title   |                                                                     numbering                                                                      |
++---------+----------------+----------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+| GB      | PRIME_MINISTER | Prime Minister | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |
+| JP      | PRIME_MINISTER | 内閣総理大臣   | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |
++---------+----------------+----------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+....
+
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 1 of 3 reviewed candidates in this original scope.
+// AI: Selection boundary: Do not extract a classification from the free-text numbering explanation; it is not structured data.
+// AI: Not selected: HOG_OFFICE_I_01, HOG_OFFICE_I_02.
+
+// AI: Pick HOG_OFFICE_I_03: NOT EXISTS on the office's heads; an empty result is intentional here.
+// AI: Copied from EXERCISES.asciidoc:1383, anchor HOG_OFFICE_I_03; retain the permanent ID when revising.
+// AI: Registry: section=OFFICE; tier=Intermediate; sql=src/test/sql-exercises/office/02_intermediate.sql; test=Office_Exercises_02_Intermediate_PersistenceTest.HOG_OFFICE_I_03_Test.
+[[HOG_OFFICE_I_03]]
+==== HOG_OFFICE_I_03: Offices without an incumbent
+
+Every office should have a head in office now, a term with no end.
+List the offices that have none, by country code; the check passes when nothing comes back.
+
+.`office/02_intermediate.sql`, HOG_OFFICE_I_03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT g.*
+FROM office g
+WHERE NOT EXISTS (SELECT 1
+                  FROM head h
+                  WHERE h.country = g.country
+                    AND h.term_end IS NULL)
+ORDER BY g.country ASC
+----
+
+....
+no rows.
+....
+
+====
+
+=== Advanced
+
+// AI: Advanced: selected 0 of 1 reviewed candidates in this original scope.
+// AI: Selection boundary: Do not extract a classification from the free-text numbering explanation; it is not structured data.
+// AI: Not selected: HOG_OFFICE_A_01.
+// AI: No pick: the available exercises add peripheral SQL, fragile assumptions, audits, or repeat lessons selected elsewhere.
+
+== The schema
+
+Exercises that read both tables.
+
+=== Basic
+
+// AI: Basic: selected 3 of 5 reviewed candidates in this original scope.
+// AI: Not selected: HOG_SCHEMA_B_05, HOG_SCHEMA_B_06.
+
+// AI: Pick HOG_SCHEMA_B_01: Navigate the head-to-office association to display an office title.
+// AI: Copied from EXERCISES.asciidoc:1453, anchor HOG_SCHEMA_B_01; retain the permanent ID when revising.
+// AI: Registry: section=SCHEMA; tier=Basic; sql=src/test/sql-exercises/__/01_basic.sql; test=__Exercises_01_Basic_PersistenceTest.HOG_SCHEMA_B_01_Test.
+[[HOG_SCHEMA_B_01]]
+==== HOG_SCHEMA_B_01: The incumbents, with their titles
+
+The front page names each country's head of government today, with the title the country gives the office.
+
+.`__/01_basic.sql`, HOG_SCHEMA_B_01
+[%collapsible]
+====
+[source,sql]
+----
+SELECT g.*, h.*
+FROM office g
+         JOIN head h ON h.country = g.country AND h.term_end IS NULL
+ORDER BY g.country ASC
+----
+
+....
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+---------+--------+------------+----------+-----------------+------------------+------+------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | country | number | term_start | term_end |      name       |      party       | born | died |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+---------+--------+------------+----------+-----------------+------------------+------+------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               | FR      |     25 | 2022-05-14 |          | Emmanuel Macron | LREM/Renaissance | 1977 |      |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      | GB      |     59 | 2026-07-20 |          | Andy Burnham    | Labour           | 1970 |      |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each | JP      |    105 | 2026-02-18 |          | 高市早苗        | 自由民主党       | 1961 |      |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         | KR      |     21 | 2025-06-04 |          | 이재명          | 더불어민주당     | 1963 |      |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       | US      |     47 | 2025-01-20 |          | Donald Trump    | Republican       | 1946 |      |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+---------+--------+------------+----------+-----------------+------------------+------+------+
+....
+
+====
+
+// AI: Pick HOG_SCHEMA_B_03: Group terms by the mapped office rather than by a display string.
+// AI: Copied from EXERCISES.asciidoc:1483, anchor HOG_SCHEMA_B_03; retain the permanent ID when revising.
+// AI: Registry: section=SCHEMA; tier=Basic; sql=src/test/sql-exercises/__/01_basic.sql; test=__Exercises_01_Basic_PersistenceTest.HOG_SCHEMA_B_03_Test.
+[[HOG_SCHEMA_B_03]]
+==== HOG_SCHEMA_B_03: Terms per office
+
+Each office with the kind of head it has and how many terms the list holds.
+
+.`__/01_basic.sql`, HOG_SCHEMA_B_03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT g.country, g.head_kind, COUNT(h.term_start) AS terms
+FROM office g
+         LEFT JOIN head h ON h.country = g.country
+GROUP BY g.country
+ORDER BY g.country ASC
+----
+
+....
++---------+----------------+-------+
+| country |   head_kind    | terms |
++---------+----------------+-------+
+| FR      | PRESIDENT      |    31 |
+| GB      | PRIME_MINISTER |    81 |
+| JP      | PRIME_MINISTER |   105 |
+| KR      | PRESIDENT      |    21 |
+| US      | PRESIDENT      |    47 |
++---------+----------------+-------+
+....
+
+====
+
+// AI: Pick HOG_SCHEMA_B_07: A LEFT JOIN condition preserves offices with no matching terms.
+// AI: Copied from EXERCISES.asciidoc:1590, anchor HOG_SCHEMA_B_07; retain the permanent ID when revising.
+// AI: Registry: section=SCHEMA; tier=Basic; sql=src/test/sql-exercises/__/01_basic.sql; test=__Exercises_01_Basic_PersistenceTest.HOG_SCHEMA_B_07_Test.
+[[HOG_SCHEMA_B_07]]
+==== HOG_SCHEMA_B_07: Terms since 2000 per office
+
+Each office with the number of terms that began in 2000 or later, most first and, at a tie, by country code.
+The date goes into the join condition, not WHERE, so an office with no such term would still show, with 0.
+
+.`__/01_basic.sql`, HOG_SCHEMA_B_07
+[%collapsible]
+====
+[source,sql]
+----
+SELECT g.*, COUNT(h.term_start) AS terms
+FROM office g
+         LEFT JOIN head h ON h.country = g.country AND h.term_start >= '2000-01-01'
+GROUP BY g.country
+ORDER BY terms DESC, g.country ASC
+----
+
+....
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | terms |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |    21 |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |     8 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |     6 |
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |     5 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |     5 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+
+....
+
+====
+
+=== Intermediate
+
+// AI: Intermediate: selected 2 of 7 reviewed candidates in this original scope.
+// AI: Not selected: HOG_SCHEMA_I_01, HOG_SCHEMA_I_03, HOG_SCHEMA_I_05, HOG_SCHEMA_I_06, HOG_SCHEMA_I_07.
+
+// AI: Pick HOG_SCHEMA_I_02: Connect the composite key lesson to the non-unique official number.
+// AI: Copied from EXERCISES.asciidoc:1646, anchor HOG_SCHEMA_I_02; retain the permanent ID when revising.
+// AI: Registry: section=SCHEMA; tier=Intermediate; sql=src/test/sql-exercises/__/02_intermediate.sql; test=__Exercises_02_Intermediate_PersistenceTest.HOG_SCHEMA_I_02_Test.
+[[HOG_SCHEMA_I_02]]
+==== HOG_SCHEMA_I_02: Numbering in practice
+
+Per office: how many terms, how many distinct numbers, the highest number, and the rule; where terms exceed numbers, number is the person's and repeats.
+
+.`__/02_intermediate.sql`, HOG_SCHEMA_I_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT g.*,
+       COUNT(*)                 AS terms,
+       COUNT(DISTINCT h.number) AS numbers,
+       MAX(h.number)            AS highest
+FROM office g
+         JOIN head h ON h.country = g.country
+GROUP BY g.country
+ORDER BY g.country ASC
+----
+
+....
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+---------+---------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | terms | numbers | highest |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+---------+---------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |    31 |      25 |      25 |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |    81 |      59 |      59 |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |   105 |     105 |     105 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |    21 |      21 |      21 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |    47 |      47 |      47 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+-------+---------+---------+
+....
+
+====
+
+// AI: Pick HOG_SCHEMA_I_04: COUNT DISTINCT with an outer-join predicate preserves zero counts.
+// AI: Copied from EXERCISES.asciidoc:1715, anchor HOG_SCHEMA_I_04; retain the permanent ID when revising.
+// AI: Registry: section=SCHEMA; tier=Intermediate; sql=src/test/sql-exercises/__/02_intermediate.sql; test=__Exercises_02_Intermediate_PersistenceTest.HOG_SCHEMA_I_04_Test.
+[[HOG_SCHEMA_I_04]]
+==== HOG_SCHEMA_I_04: Living heads per office
+
+Per office, with its title, how many of its heads are still living, the incumbent included, and 0 where none is, by country code.
+A name is taken as one person within a country; the condition on died goes into the join, so an office without a living head still shows.
+
+.`__/02_intermediate.sql`, HOG_SCHEMA_I_04
+[%collapsible]
+====
+[source,sql]
+----
+SELECT g.*, COUNT(DISTINCT h.name) AS living
+FROM office g
+         LEFT JOIN head h ON h.country = g.country AND h.died IS NULL
+GROUP BY g.country
+ORDER BY g.country ASC
+----
+
+....
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+--------+
+| country |   head_kind    |         head_title         |                                                                     numbering                                                                      | living |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+--------+
+| FR      | PRESIDENT      | Président de la République | ordinal of the person by first election; a person re-elected has one line per term and keeps the same number on each                               |      3 |
+| GB      | PRIME_MINISTER | Prime Minister             | ordinal of the person by first appointment; a person who served non-consecutive terms has one line per term and keeps the same number on each      |     10 |
+| JP      | PRIME_MINISTER | 内閣総理大臣               | 代, one per appointment; a cabinet re-formed after a general election starts a new 代, so a person keeps one line per 代 with a new number on each |     12 |
+| KR      | PRESIDENT      | 대통령                     | 대, one per election; a person re-elected keeps one line per term with consecutive numbers                                                         |      5 |
+| US      | PRESIDENT      | President                  | presidency number, one per non-consecutive presidency; a person returning after an absence gets a new number                                       |      5 |
++---------+----------------+----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+--------+
+....
+
+====
+
+=== Advanced
+
+// AI: Advanced: selected 2 of 7 reviewed candidates in this original scope.
+// AI: Not selected: HOG_SCHEMA_A_04, HOG_SCHEMA_A_05, HOG_SCHEMA_A_06, HOG_SCHEMA_A_07, HOG_SCHEMA_A_08.
+
+// AI: Pick HOG_SCHEMA_A_02: An as-of query preserves vacant offices and introduces COALESCE.
+// AI: Copied from EXERCISES.asciidoc:1858, anchor HOG_SCHEMA_A_02; retain the permanent ID when revising.
+// AI: Registry: section=SCHEMA; tier=Advanced; sql=src/test/sql-exercises/__/03_advanced.sql; test=__Exercises_03_Advanced_PersistenceTest.HOG_SCHEMA_A_02_Test.
+[[HOG_SCHEMA_A_02]]
+==== HOG_SCHEMA_A_02: Every office on a day, vacant or not
+
+A reader gives a date and wants every office with its head on that day, or '(vacant)' where the office was empty or the list had not yet begun.
+On a handover day, the day one term ends and the next begins, both heads show.
+
+.`__/03_advanced.sql`, HOG_SCHEMA_A_02
+[%collapsible]
+====
+[source,sql]
+----
+SELECT g.country, g.head_title, COALESCE(h.name, '(vacant)') AS name, h.number, h.term_start, h.term_end
+FROM office g
+         LEFT JOIN head h ON h.country = g.country
+    AND h.term_start <= :date
+    AND (h.term_end IS NULL OR h.term_end >= :date)
+ORDER BY g.country ASC, h.term_start ASC NULLS FIRST
+----
+
+====
+
+// AI: Pick HOG_SCHEMA_A_03: A temporal self-join across offices combines associations and date conditions.
+// AI: Copied from EXERCISES.asciidoc:1879, anchor HOG_SCHEMA_A_03; retain the permanent ID when revising.
+// AI: Registry: section=SCHEMA; tier=Advanced; sql=src/test/sql-exercises/__/03_advanced.sql; test=__Exercises_03_Advanced_PersistenceTest.HOG_SCHEMA_A_03_Test.
+[[HOG_SCHEMA_A_03]]
+==== HOG_SCHEMA_A_03: The incumbents' contemporaries
+
+On the day each incumbent took office, who headed the other offices?
+One row per pair, the incumbent first.
+
+.`__/03_advanced.sql`, HOG_SCHEMA_A_03
+[%collapsible]
+====
+[source,sql]
+----
+SELECT i.country    AS country,
+       i.name       AS incumbent,
+       i.term_start AS took_office,
+       o.country    AS other_country,
+       g.head_title AS other_title,
+       o.name       AS other_head
+FROM head i
+         JOIN head o ON o.country <> i.country
+    AND o.term_start <= i.term_start
+    AND (o.term_end IS NULL OR o.term_end >= i.term_start)
+         JOIN office g ON g.country = o.country
+WHERE i.term_end IS NULL
+ORDER BY i.country ASC, o.country ASC, o.term_start ASC
+----
+
+....
++---------+-----------------+-------------+---------------+----------------------------+-----------------+
+| country |    incumbent    | took_office | other_country |        other_title         |   other_head    |
++---------+-----------------+-------------+---------------+----------------------------+-----------------+
+| FR      | Emmanuel Macron | 2022-05-14  | GB            | Prime Minister             | Boris Johnson   |
+| FR      | Emmanuel Macron | 2022-05-14  | JP            | 内閣総理大臣               | 岸田文雄        |
+| FR      | Emmanuel Macron | 2022-05-14  | KR            | 대통령                     | 윤석열          |
+| FR      | Emmanuel Macron | 2022-05-14  | US            | President                  | Joe Biden       |
+| GB      | Andy Burnham    | 2026-07-20  | FR            | Président de la République | Emmanuel Macron |
+| GB      | Andy Burnham    | 2026-07-20  | JP            | 内閣総理大臣               | 高市早苗        |
+| GB      | Andy Burnham    | 2026-07-20  | KR            | 대통령                     | 이재명          |
+| GB      | Andy Burnham    | 2026-07-20  | US            | President                  | Donald Trump    |
+| JP      | 高市早苗        | 2026-02-18  | FR            | Président de la République | Emmanuel Macron |
+| JP      | 高市早苗        | 2026-02-18  | GB            | Prime Minister             | Keir Starmer    |
++---------+-----------------+-------------+---------------+----------------------------+-----------------+
+....
+
+20 rows; the first 10.
+
+====
+
