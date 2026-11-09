@@ -55,7 +55,7 @@ There is no server to bring up; every test reads the SQLite file.
 ## Jakarta EE alignment
 
 Every `jakarta.*` API comes from the `jakarta.jakartaee-bom` 11.0.0 import and is never pinned
-directly. Implementations are pinned to their EE 11 aligned releases in the `jakarta-ee-11` profile's
+directly. Implementations are pinned to their EE 11 aligned releases in the `jakartaee-11` profile's
 `<properties>`:
 
 | Spec | Implementation |
@@ -64,7 +64,7 @@ directly. Implementations are pinned to their EE 11 aligned releases in the `jak
 
 Jakarta Persistence is the only spec implemented; there is no Validation or CDI on the classpath, so
 the unit leaves `<validation-mode>` at its `AUTO` default. Hibernate ORM is the only provider, so the
-Jakarta EE generation is the only build axis: one profile per generation, `jakarta-ee-11` (the
+Jakarta EE generation is the only build axis: one profile per generation, `jakartaee-11` (the
 default) so far. Dependency convergence is enforced on every build; see `CLAUDE.md` for the rules.
 
 ## The persistence unit

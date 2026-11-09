@@ -153,7 +153,7 @@ stale.
 ## Building and testing
 
 `maven.compiler.release` is 17 for main sources and 25 for test sources, so **building needs a JDK 25
-or newer**. One script per depth, each naming the `jakarta-ee-11` profile and prepending `clean`:
+or newer**. One script per depth, each naming the `jakartaee-11` profile and prepending `clean`:
 
 | runs | script |
 | --- | --- |
@@ -183,12 +183,12 @@ build and is not skipped; treat a divergence as a build defect, not a warning.
   `jakarta-ee-NN` profile, and the root `<properties>` gives them no default: a build with no
   generation active fails at the BOM import rather than quietly building one.
 - **Hibernate ORM is the only persistence provider**, and the project stays Hibernate-only. Profiles
-  exist only per Jakarta EE generation: `jakarta-ee-11` (`activeByDefault`) is the one so far, and a
+  exist only per Jakarta EE generation: `jakartaee-11` (`activeByDefault`) is the one so far, and a
   new generation gets a `jakarta-ee-NN` profile, never a provider. The one other axis is the static metamodel
   generator, which is not a provider: EclipseLink's processor is the root default, and
-  `jakarta-ee-11-metamodel-hibernate-orm`, named beside the generation
-  (`-Pjakarta-ee-11,jakarta-ee-11-metamodel-hibernate-orm`), switches to `hibernate-jpamodelgen`;
-  `jakarta-ee-11-metamodel-eclipselink` only names the default explicitly. Their names carry the generation, as
+  `jakartaee-11-metamodel-hibernate-orm`, named beside the generation
+  (`-Pjakartaee-11,jakartaee-11-metamodel-hibernate-orm`), switches to `hibernate-jpamodelgen`;
+  `jakartaee-11-metamodel-eclipselink` only names the default explicitly. Their names carry the generation, as
   each generation brings its own provider versions. EclipseLink's processor reads its own descriptor,
   `src/metamodel-eclipselink/META-INF/metamodel-eclipselink.xml`, which the build copies into `target/classes` and
   keeps out of the jar; `version.org.eclipse.persistence` sits in the
@@ -210,7 +210,7 @@ Consequences:
 - When a provider drags in a `jakarta.*` API newer or older than the BOM, align the provider with the
   platform generation; do not override the API version.
 - Check convergence:
-  `./mvnw -q -Pjakarta-ee-11 enforcer:enforce -Drules=dependencyConvergence`.
+  `./mvnw -q -Pjakartaee-11 enforcer:enforce -Drules=dependencyConvergence`.
 
 ### Keeping specs and implementations aligned
 

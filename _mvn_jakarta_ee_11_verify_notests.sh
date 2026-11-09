@@ -11,4 +11,4 @@
 # -DskipITs is what stops them. For either half on its own, see ./_mvn_jakarta_ee_11_verify.sh.
 cd "$(dirname "$0")" || exit 1
 
-exec ./mvnw -Pfailsafe,jakarta-ee-11 clean verify -DskipTests -DskipITs "$@"
+exec ./mvnw -Pfailsafe,jakartaee-11 clean verify -DskipTests -DskipITs "$@"

@@ -15,4 +15,4 @@
 #     ./_mvn_jakarta_ee_11_verify_notests.sh       # neither
 cd "$(dirname "$0")" || exit 1
 
-exec ./mvnw -Pfailsafe,jakarta-ee-11 clean verify "$@"
+exec ./mvnw -Pfailsafe,jakartaee-11 clean verify "$@"

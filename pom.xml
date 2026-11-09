@@ -63,7 +63,7 @@
          sets them, and nothing defaults them, so a build with no generation active fails instead of
          quietly picking one. -->
     <!-- The static metamodel generator on the annotation processor path; EclipseLink's unless
-         jakarta-ee-11-metamodel-hibernate-orm says otherwise. It only generates the *_ classes: the provider is
+         jakartaee-11-metamodel-hibernate-orm says otherwise. It only generates the *_ classes: the provider is
          Hibernate ORM either way. The version comes from the generation profile. -->
     <metamodel.generator.groupId>org.eclipse.persistence</metamodel.generator.groupId>
     <metamodel.generator.artifactId>org.eclipse.persistence.jpa.modelgen.processor</metamodel.generator.artifactId>
@@ -600,9 +600,9 @@
          which carry the generation in their name since each generation brings its own provider versions. The
          dependencies are the
          same in every generation and are declared once, above; a profile sets only the versions that
-         go with its generation. jakarta-ee-11 is the only one so far, and is active by default. -->
+         go with its generation. jakartaee-11 is the only one so far, and is active by default. -->
     <profile>
-      <id>jakarta-ee-11</id>
+      <id>jakartaee-11</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -627,10 +627,10 @@
     <!-- ====================================================================== metamodel ==== -->
     <!-- Which annotation processor generates the static metamodel (Office_, Head_), and nothing else: the
          persistence provider is Hibernate ORM in both, and will stay so. Name one alongside the generation,
-         -Pjakarta-ee-11,jakarta-ee-11-metamodel-hibernate-orm; with neither named, the root picks EclipseLink's,
-         which is the default. jakarta-ee-11-metamodel-eclipselink only says so explicitly. -->
+         -Pjakartaee-11,jakartaee-11-metamodel-hibernate-orm; with neither named, the root picks EclipseLink's,
+         which is the default. jakartaee-11-metamodel-eclipselink only says so explicitly. -->
     <profile>
-      <id>jakarta-ee-11-metamodel-hibernate-orm</id>
+      <id>jakartaee-11-metamodel-hibernate-orm</id>
       <properties>
         <metamodel.generator.groupId>org.hibernate.orm</metamodel.generator.groupId>
         <metamodel.generator.artifactId>hibernate-jpamodelgen</metamodel.generator.artifactId>
@@ -662,8 +662,8 @@
       </build>
     </profile>
     <profile>
-      <id>jakarta-ee-11-metamodel-eclipselink</id>
-      <!-- Naming any profile, -Pjakarta-ee-11 included, switches this off; the root <properties> and build carry the
+      <id>jakartaee-11-metamodel-eclipselink</id>
+      <!-- Naming any profile, -Pjakartaee-11 included, switches this off; the root <properties> and build carry the
            same values, so EclipseLink's processor stays the default either way. -->
       <activation>
         <activeByDefault>true</activeByDefault>

@@ -5,4 +5,4 @@
 # generation is named here even though it is the default one.
 cd "$(dirname "$0")" || exit 1
 
-exec ./mvnw -Pjakarta-ee-11 clean test "$@"
+exec ./mvnw -Pjakartaee-11 clean test "$@"

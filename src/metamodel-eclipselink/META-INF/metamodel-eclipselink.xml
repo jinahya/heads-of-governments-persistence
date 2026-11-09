@@ -19,7 +19,7 @@
   #L%
   -->
 
-<!-- Read by EclipseLink's static metamodel processor alone, the default one; jakarta-ee-11-metamodel-hibernate-orm
+<!-- Read by EclipseLink's static metamodel processor alone, the default one; jakartaee-11-metamodel-hibernate-orm
      skips it. The build copies it into target/classes before compile (the processor reads only from there) and keeps
      it out of the jar. It is not META-INF/persistence.xml, so no provider ever reads it. It lists no class: the
      processor then generates the metamodel of every managed class it compiles. -->

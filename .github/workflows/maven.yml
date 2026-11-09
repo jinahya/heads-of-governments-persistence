@@ -51,7 +51,7 @@ jobs:
       uses: advanced-security/maven-dependency-submission-action@v4
 
   # One cell per Jakarta EE generation. Hibernate ORM is the only persistence provider, so the
-  # generation is the only thing worth varying; jakarta-ee-11 is the only one so far, and a new
+  # generation is the only thing worth varying; jakartaee-11 is the only one so far, and a new
   # generation is a new profile and a new cell here.
   #
   # Naming any profile on the command line deactivates every activeByDefault profile, which is fine:
@@ -71,7 +71,7 @@ jobs:
       fail-fast: false
       matrix:
         profile:
-          - jakarta-ee-11
+          - jakartaee-11
 
     name: ${{ matrix.profile }}
 
