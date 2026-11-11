@@ -153,7 +153,7 @@ stale.
 
 ## Building and testing
 
-`maven.compiler.release` is 17 for main sources and 25 for test sources, so **building needs a JDK 25
+`maven.compiler.release` is 21 for main sources and 25 for test sources, so **building needs a JDK 25
 or newer**. One script per depth, each naming the `jakartaee-11` profile and prepending `clean`:
 
 | runs | script |

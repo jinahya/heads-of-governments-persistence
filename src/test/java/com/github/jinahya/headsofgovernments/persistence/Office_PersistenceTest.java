@@ -38,6 +38,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.github.jinahya.headsofgovernments.persistence.PersistenceTestUtils.applyEntityManager;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
@@ -57,7 +58,7 @@ class Office_PersistenceTest {
 
             @Test
             void __1() {
-                final var found = PersistenceTestUtils.applyEntityManager(em -> {
+                final var found = applyEntityManager(em -> {
                     try {
                         return em.find(Office.class, "FR");
                     } finally {
@@ -72,7 +73,7 @@ class Office_PersistenceTest {
 
             @Test
             void __QueryLanguage() {
-                final var found = PersistenceTestUtils.applyEntityManager(em -> {
+                final var found = applyEntityManager(em -> {
                     try {
                         return em.createQuery(
                                         """
@@ -97,7 +98,7 @@ class Office_PersistenceTest {
 
             @Test
             void __CriteriaApi() {
-                final var found = PersistenceTestUtils.applyEntityManager(em -> {
+                final var found = applyEntityManager(em -> {
                     final var builder = em.getCriteriaBuilder();
                     final var query = builder.createQuery(Office.class);
                     final var root = query.from(Office.class);
@@ -121,9 +122,7 @@ class Office_PersistenceTest {
         @ValueSource(strings = {"FR", "GB", "JP", "KR", "US"})
         @ParameterizedTest
         void __1(final String country) {
-            final var found = PersistenceTestUtils.applyEntityManager(em -> {
-                return em.find(Office.class, country);
-            });
+            final var found = applyEntityManager(em -> em.find(Office.class, country));
             assertThat(found)
                     .isNotNull()
                     .extracting(Office::getCountry)
@@ -139,7 +138,7 @@ class Office_PersistenceTest {
         @MethodSource({"countries"})
         @ParameterizedTest
         void __2(final String country) {
-            final var found = PersistenceTestUtils.applyEntityManager(em -> {
+            final var found = applyEntityManager(em -> {
                 return em.find(Office.class, country);
             });
             if (found == null) {
@@ -188,7 +187,7 @@ class Office_PersistenceTest {
         @EnumSource(Office.HeadKind.class)
         @ParameterizedTest
         void __QueryLanguage(final Office.HeadKind headKind) {
-            final var list = PersistenceTestUtils.applyEntityManager(em -> {
+            final var list = applyEntityManager(em -> {
                 return em.createQuery(
                                 """
                                         SELECT e
@@ -206,7 +205,7 @@ class Office_PersistenceTest {
         @EnumSource(Office.HeadKind.class)
         @ParameterizedTest
         void __CriteriaApi(final Office.HeadKind headKind) {
-            final var list = PersistenceTestUtils.applyEntityManager(em -> {
+            final var list = applyEntityManager(em -> {
                 final var builder = em.getCriteriaBuilder();
                 final var query = builder.createQuery(Office.class);
                 final var root = query.from(Office.class);
@@ -237,7 +236,7 @@ class Office_PersistenceTest {
 
             @Test
             void __QueryLanguage() {
-                final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                final var list = applyEntityManager(em -> {
                     return em.createQuery(
                                     """
                                             SELECT e, COUNT(h)
@@ -252,7 +251,7 @@ class Office_PersistenceTest {
 
             @Test
             void __CriteriaApi() {
-                final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                final var list = applyEntityManager(em -> {
                     final var builder = em.getCriteriaBuilder();
                     final var query = builder.createQuery(Object[].class);
                     final var root = query.from(Office.class);
@@ -281,7 +280,7 @@ class Office_PersistenceTest {
 
             @Test
             void __QueryLanguage() {
-                final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                final var list = applyEntityManager(em -> {
                     return em.createQuery(
                                     """
                                             SELECT e, MIN(h.termStart), MAX(h.termStart)
@@ -296,7 +295,7 @@ class Office_PersistenceTest {
 
             @Test
             void __CriteriaApi() {
-                final var list = PersistenceTestUtils.applyEntityManager(em -> {
+                final var list = applyEntityManager(em -> {
                     final var builder = em.getCriteriaBuilder();
                     final var query = builder.createQuery(Object[].class);
                     final var root = query.from(Office.class);
