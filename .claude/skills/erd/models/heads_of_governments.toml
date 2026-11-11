@@ -1,5 +1,5 @@
-# The logical model of src/main/resources/heads_of_governments.sqlite3, from db/schema.sql: each table's keys. Two
-# tables make no groups.
+# The logical model of src/main/resources/heads_of_governments.sqlite3: each table's keys, and the tables each view
+# reads. Two tables make no groups.
 schema = "heads_of_governments"
 title = "heads_of_governments"
 output = "docs/erd"
@@ -12,3 +12,11 @@ pk = ["country", "term_start"]
 [[table.head.fk]]
 columns = ["country"]
 references = "office"
+
+[view.incumbent]
+kind = "view"
+sources = ["office", "head"]
+
+[view.contemporary]
+kind = "view"
+sources = ["head"]
