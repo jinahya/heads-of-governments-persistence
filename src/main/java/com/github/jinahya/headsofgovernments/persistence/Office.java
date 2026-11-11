@@ -21,7 +21,6 @@ package com.github.jinahya.headsofgovernments.persistence;
  */
 
 import jakarta.persistence.Basic;
-import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -59,8 +58,7 @@ import java.util.Objects;
                     FROM Office AS e
                     ORDER BY e.country ASC""")
 @Entity(name = "Office")
-@Table(name = "office",
-       check = @CheckConstraint(constraint = "head_kind IN ('PRESIDENT', 'PRIME_MINISTER')"))
+@Table(name = "office")
 @Getter
 @Slf4j
 public class Office {
@@ -127,22 +125,21 @@ public class Office {
     // ---------------------------------------------------------------------------------------------
     @jakarta.persistence.Id
     @jakarta.persistence.Basic(fetch = FetchType.EAGER, optional = false)
-    @jakarta.persistence.Column(name = "country", nullable = false, insertable = false,
-                                updatable = false)
+    @jakarta.persistence.Column(name = "country", insertable = false, updatable = false)
     private String country;
 
     // ---------------------------------------------------------------------------------------------
     @Enumerated(EnumType.STRING)
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(name = "head_kind", nullable = false, insertable = false, updatable = false)
+    @Column(name = "head_kind", insertable = false, updatable = false)
     private HeadKind headKind;
 
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(name = "head_title", nullable = false, insertable = false, updatable = false)
+    @Column(name = "head_title", insertable = false, updatable = false)
     private String headTitle;
 
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(name = "numbering", nullable = false, insertable = false, updatable = false)
+    @Column(name = "numbering", insertable = false, updatable = false)
     private String numbering;
 
     // ---------------------------------------------------------------------------------------------

@@ -22,7 +22,6 @@ package com.github.jinahya.headsofgovernments.persistence;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Basic;
-import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
@@ -96,12 +95,7 @@ import java.util.Optional;
                     ORDER BY e.number ASC""")
 @IdClass(HeadId.class)
 @Entity(name = "Head")
-@Table(name = "head",
-       check = {
-               @CheckConstraint(constraint = "term_end IS NULL OR term_end >= term_start"),
-               @CheckConstraint(constraint = "died IS NULL OR died >= born")
-       }
-)
+@Table(name = "head")
 @Getter
 @Slf4j
 public class Head {
@@ -225,48 +219,48 @@ public class Head {
     // ---------------------------------------------------------------------------------------------
     @Id
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(name = "country", nullable = false, updatable = false)
+    @Column(name = "country", updatable = false)
     @Getter(AccessLevel.PACKAGE)
     private String country;
 
     @ManyToOne(targetEntity = Office.class, fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "country", referencedColumnName = "country", nullable = false,
-                insertable = false, updatable = false)
+    @JoinColumn(name = "country", referencedColumnName = "country", insertable = false,
+                updatable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Office office;
 
     // ---------------------------------------------------------------------------------------------
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(name = "number", nullable = false, insertable = false, updatable = false)
+    @Column(name = "number", insertable = false, updatable = false)
     private Integer number;
 
     // ---------------------------------------------------------------------------------------------
     @Id
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(name = "term_start", nullable = false, updatable = false)
+    @Column(name = "term_start", updatable = false)
     private String termStart;
 
     @jakarta.persistence.Convert(converter = LocalDateConverter.class)
     @Basic(fetch = FetchType.EAGER, optional = true)
-    @Column(name = "term_end", nullable = true, insertable = false, updatable = false)
+    @Column(name = "term_end", insertable = false, updatable = false)
     private LocalDate termEnd;
 
     // ---------------------------------------------------------------------------------------------
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(name = "name", nullable = false, insertable = false, updatable = false)
+    @Column(name = "name", insertable = false, updatable = false)
     private String name;
 
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(name = "party", nullable = false, insertable = false, updatable = false)
+    @Column(name = "party", insertable = false, updatable = false)
     private String party;
 
     // ---------------------------------------------------------------------------------------------
     @Basic(fetch = FetchType.EAGER, optional = false)
-    @Column(name = "born", nullable = false, insertable = false, updatable = false)
+    @Column(name = "born", insertable = false, updatable = false)
     private Integer born;
 
     @Basic(fetch = FetchType.EAGER, optional = true)
-    @Column(name = "died", nullable = true, insertable = false, updatable = false)
+    @Column(name = "died", insertable = false, updatable = false)
     private Year died;
 }

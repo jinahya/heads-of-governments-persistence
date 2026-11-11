@@ -93,12 +93,13 @@ Conventions the two classes follow, and new members must keep:
   `unique = false`, `length = 255`, `cascade = {}`, `catalog`/`schema`, `targetEntity` (the field
   type gives it), `referencedColumnName` (the referenced primary key). Names are always written
   out: `@Entity(name = ...)` and `@Table(name = ...)` on both entities and `name` on every `@Column`
-  and the `@JoinColumn`, even where the name matches the class or the column the field. A `NOT NULL` column carries `@Basic(optional = false)` and
-  `@Column(nullable = false)`, ids included, as do the `@ManyToOne`/`@JoinColumn` pair; a nullable column
-  says `nullable = true` and `@Basic(optional = true)` explicitly. Every `@Basic`,
+  and the `@JoinColumn`, even where the name matches the class or the column the field. A `NOT NULL` column carries `@Basic(optional = false)`, ids
+  included, as does the `@ManyToOne`; a nullable column says `@Basic(optional = true)` explicitly. The project
+  only reads, so nothing that serves schema generation alone is written: no `nullable` on `@Column` or
+  `@JoinColumn`, and no `check` on `@Table`. Every `@Basic`,
   `@ManyToOne` and `@OneToMany` names its `fetch` explicitly, default or not: `EAGER` on the basics
   and on `office`, `LAZY` on `heads`. Do not add
-  `columnDefinition`, `options`, `check`, `comment`, `table`, `precision`, `scale`, `secondPrecision`, `indexes` or `uniqueConstraints`. The database's own `CHECK` constraints
+  `nullable`, `columnDefinition`, `options`, `check`, `comment`, `table`, `precision`, `scale`, `secondPrecision`, `indexes` or `uniqueConstraints`. The database's own `CHECK` constraints
   and indexes are not repeated in the annotations.
 - **Attributes are declared in table column order**, accessors and fields alike, with an association
   placed directly after the column it maps (`office` right after `country`, which it maps read-only; the
