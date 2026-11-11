@@ -42,7 +42,7 @@ The exercises are listed, with their ids, in [EXERCISES.asciidoc](src/test/sql-e
 
 ## Building
 
-Main sources target Java 17 and test sources Java 25, so the build needs a **JDK 25 or newer**.
+Main sources target Java 21 and test sources Java 25, so the build needs a **JDK 25 or newer**.
 
 ```shell
 $ ./_mvn_jakarta_ee_11_test.sh              # unit tests
