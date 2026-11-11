@@ -425,7 +425,7 @@
           <execution>
             <!-- a -P naming a profile that does not exist is silently ignored by Maven; this turns
                  that into a build failure. The Jakarta EE profile ids are named from the
-                 _mvn_jakarta_ee_11_*.sh scripts and from the CI matrix, so a rename that misses one
+                 _mvn_jakartaee_11_*.sh scripts and from the CI matrix, so a rename that misses one
                  of them would otherwise just run the default profile and look green. -->
             <id>enforce-require-profile-ids-exist</id>
             <goals>

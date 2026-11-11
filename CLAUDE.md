@@ -158,9 +158,9 @@ or newer**. One script per depth, each naming the `jakartaee-11` profile and pre
 
 | runs | script |
 | --- | --- |
-| unit tests | `_mvn_jakarta_ee_11_test.sh` |
-| unit tests and ITs | `_mvn_jakarta_ee_11_verify.sh` |
-| no tests, but compiles them | `_mvn_jakarta_ee_11_verify_notests.sh` |
+| unit tests | `_mvn_jakartaee_11_test.sh` |
+| unit tests and ITs | `_mvn_jakartaee_11_verify.sh` |
+| no tests, but compiles them | `_mvn_jakartaee_11_verify_notests.sh` |
 
 The `_verify` scripts name the `failsafe` profile, which binds `maven-failsafe-plugin` to `**/*IT.java`;
 the plain `verify` in CI does not, so no `*IT` class runs there. Nothing needs a server: the unit tests

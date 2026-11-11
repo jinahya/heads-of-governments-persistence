@@ -45,9 +45,9 @@ The exercises are listed, with their ids, in [EXERCISES.asciidoc](src/test/sql-e
 Main sources target Java 21 and test sources Java 25, so the build needs a **JDK 25 or newer**.
 
 ```shell
-$ ./_mvn_jakarta_ee_11_test.sh              # unit tests
-$ ./_mvn_jakarta_ee_11_verify.sh            # and the ITs (the `failsafe` profile)
-$ ./_mvn_jakarta_ee_11_verify_notests.sh    # the whole lifecycle, tests compiled but not run
+$ ./_mvn_jakartaee_11_test.sh              # unit tests
+$ ./_mvn_jakartaee_11_verify.sh            # and the ITs (the `failsafe` profile)
+$ ./_mvn_jakartaee_11_verify_notests.sh    # the whole lifecycle, tests compiled but not run
 ```
 
 There is no server to bring up; every test reads the SQLite file.

@@ -10,9 +10,9 @@
 # so the two halves are selected separately -- and that is a property of ${version.maven-failsafe};
 # under 3.5.x and earlier -DskipTests reached both:
 #
-#     ./_mvn_jakarta_ee_11_verify.sh -DskipTests   # the ITs alone
-#     ./_mvn_jakarta_ee_11_verify.sh -DskipITs     # the unit tests alone
-#     ./_mvn_jakarta_ee_11_verify_notests.sh       # neither
+#     ./_mvn_jakartaee_11_verify.sh -DskipTests   # the ITs alone
+#     ./_mvn_jakartaee_11_verify.sh -DskipITs     # the unit tests alone
+#     ./_mvn_jakartaee_11_verify_notests.sh       # neither
 cd "$(dirname "$0")" || exit 1
 
 exec ./mvnw -Pfailsafe,jakartaee-11 clean verify "$@"
